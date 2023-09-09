@@ -1,6 +1,0 @@
-<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="m28.504 8.136-12-7a1 1 0 0 0-1.008 0l-12 7A1 1 0 0 0 3 9v14a1 1 0 0 0 .496.864l12 7a1 1 0 0 0 1.008 0l12-7A1 1 0 0 0 29 23V9a1 1 0 0 0-.496-.864ZM16 3.158 26.016 9 16 14.842 5.984 9ZM5 10.74l10 5.833V28.26L5 22.426ZM17 28.26V16.574l10-5.833v11.685Z" fill="#6101c8" class="fill-000000"></path><path data-name="<Transparent Rectangle>" d="M0 0h32v32H0z" fill="none"></path></svg>
- onClick={() => {
-                setActive('home');
-              }}
-              href="#"
-              className={`nav-link ${active === 'home' && 'active'}`}
