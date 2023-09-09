@@ -1,9 +1,12 @@
 'use client';
 import React from 'react';
 import { useState } from 'react';
-import 'bootstrap/dist/js/bootstrap.bundle';
+import { useEffect } from 'react';
 
 export default function Navbar() {
+  useEffect(() => {
+    require('bootstrap/dist/js/bootstrap.bundle.min.js');
+  }, []);
   const [active, setActive] = useState<string>('Home');
   return (
     <nav className="navbar navbar-expand-lg bg-white container-fluid fixed-top z-1">

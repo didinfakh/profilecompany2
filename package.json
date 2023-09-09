@@ -21,5 +21,8 @@
     "react-bootstrap": "^2.8.0",
     "react-dom": "18.2.0",
     "typescript": "5.2.2"
+  },
+  "devDependencies": {
+    "@types/bootstrap": "^5.2.6"
   }
 }
