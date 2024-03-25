@@ -29,3 +29,6 @@ Route::resource('sys-groups', App\Http\Controllers\API\SysGroupAPIController::cl
 
 Route::resource('sys-group-menus', App\Http\Controllers\API\SysGroupMenuAPIController::class)
     ->except(['create', 'edit']);
+
+Route::resource('sys-settings', App\Http\Controllers\API\SysSettingAPIController::class)
+    ->except(['create', 'edit']);

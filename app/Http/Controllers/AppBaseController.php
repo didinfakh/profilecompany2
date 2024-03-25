@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use InfyOm\Generator\Utils\ResponseUtil;
+use App\Utils\ResponseUtil;
 
 /**
  * @OA\Server(url="/api")
@@ -15,21 +15,19 @@ use InfyOm\Generator\Utils\ResponseUtil;
  */
 class AppBaseController extends Controller
 {
+    use ResponseUtil;
     public function sendResponse($result, $message)
     {
-        return response()->json(ResponseUtil::makeResponse($message, $result));
+        return $this->success($result, $message);
     }
 
     public function sendError($error, $code = 404)
     {
-        return response()->json(ResponseUtil::makeError($error), $code);
+        return $this->fail($error, $code);
     }
 
     public function sendSuccess($message)
     {
-        return response()->json([
-            'success' => true,
-            'message' => $message
-        ], 200);
+        return $this->success(null, $message);
     }
 }
