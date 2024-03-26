@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Str;
 
 class CrudApi extends Command
 {
@@ -161,17 +162,17 @@ class CrudApi extends Command
 
     private function getModelName($tableName): String
     {
-        return pascalize($tableName) . 'Model';
+        return Str::studly($tableName);
     }
 
     private function getEntityName($tableName): String
     {
-        return pascalize($tableName);
+        return Str::studly($tableName);
     }
 
     private function getControllerName($tableName): String
     {
-        return pascalize(plural($tableName));
+        return Str::studly(Str::plural($tableName));
     }
 
     private function replaceTemplate($stub, $search, $replace)
