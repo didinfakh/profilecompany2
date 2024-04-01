@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-
-class SysMenu extends Model
+class SysMenu extends BaseModel
 {
     public $table = 'sys_menu';
+
+    public $primaryKey = "id_menu";
 
     public $fillable = [
         'id_parent_menu',
@@ -23,9 +23,9 @@ class SysMenu extends Model
         'icon' => 'string'
     ];
 
-    public static array $rules = [
+    public array $rules = [
         'id_parent_menu' => 'nullable',
-        'nama' => 'nullable|string|max:100',
+        'nama' => 'required|string|max:100',
         'url' => 'nullable|string|max:300',
         'deleted_at' => 'nullable',
         'sort' => 'nullable',

@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
+use Illuminate\Filesystem\Filesystem;
 
 class CrudApi extends Command
 {
@@ -35,6 +36,7 @@ class CrudApi extends Command
      * @var array
      */
     protected $options = [];
+    protected $files;
 
     private $db;
     private $routes = [];
@@ -42,6 +44,13 @@ class CrudApi extends Command
     private $decimalType = ['decimal', 'float', 'double'];
     private $dateType = ['date'];
     private $timeType = ['timestamp without time zone'];
+
+    public function __construct(Filesystem $files)
+    {
+        parent::__construct();
+
+        $this->files = $files;
+    }
 
     /**
      * Generate api
@@ -154,7 +163,7 @@ class CrudApi extends Command
             'validationRules' => implode(',' . PHP_EOL . '		', $validationRules),
             'docPropertySchema' => $docPropertySchemaStr
         ];
-        $this->createEntity($dataSource);
+        // $this->createEntity($dataSource);
         $this->createModel($dataSource);
         $this->createController($dataSource);
         $this->appendRoute($tableName, $controllerName);
@@ -185,10 +194,16 @@ class CrudApi extends Command
         return $stub;
     }
 
+
+    protected function rootNamespace()
+    {
+        return $this->laravel->getNamespace();
+    }
+
     private function createModel(array $dataSource)
     {
         $this->info('Generate model ' . $dataSource['modelName']);
-        $template = file_get_contents(__DIR__ . '/template/model.stub');
+        $template = file_get_contents(__DIR__ . '/stub/model.stub');
         $replaceData = [
             'modelName' => $dataSource['modelName'],
             'tableName' => $dataSource['tableName'],
@@ -198,33 +213,33 @@ class CrudApi extends Command
             'validationRules' => $dataSource['validationRules']
         ];
         $dataFile = $this->replaceTemplate($template, ['{{modelName}}', '{{tableName}}', '{{entityName}}', '{{primaryKey}}', '{{allowFields}}', '{{validationRules}}'], $replaceData);
-        $path = APPPATH . '/Models/' . $dataSource['modelName'] . '.php';
-        if (!write_file($path, $dataFile)) {
-            CLI::error('Generate model failed, set your folder writable ' . $path);
+        $path = app_path() . '/Models/' . $dataSource['modelName'] . '.php';
+        if (!$this->files->put($path, $dataFile)) {
+            $this->error('Generate model failed, set your folder writable ' . $path);
             return;
         }
     }
 
-    private function createEntity(array $dataSource)
-    {
-        $this->info('Generate entity ' . $dataSource['entityName']);
-        $template = file_get_contents(__DIR__ . '/template/entity.stub');
-        $replaceData = [
-            'entityName' => $dataSource['entityName'],
-            'swaggerDoc' => $dataSource['docPropertySchema']
-        ];
-        $dataFile = $this->replaceTemplate($template, ['{{entityName}}', '{{swaggerDoc}}'], $replaceData);
-        $path = APPPATH . '/Entities/' . $dataSource['entityName'] . '.php';
-        if (!write_file($path, $dataFile)) {
-            CLI::error('Generate entity failed, set your folder writable ' . $path);
-            return;
-        }
-    }
+    // private function createEntity(array $dataSource)
+    // {
+    //     $this->info('Generate entity ' . $dataSource['entityName']);
+    //     $template = file_get_contents(__DIR__ . '/stub/entity.stub');
+    //     $replaceData = [
+    //         'entityName' => $dataSource['entityName'],
+    //         'swaggerDoc' => $dataSource['docPropertySchema']
+    //     ];
+    //     $dataFile = $this->replaceTemplate($template, ['{{entityName}}', '{{swaggerDoc}}'], $replaceData);
+    //     $path = app_path() . '/Entities/' . $dataSource['entityName'] . '.php';
+    //     if (!$this->files->put($path, $dataFile)) {
+    //         $this->error('Generate entity failed, set your folder writable ' . $path);
+    //         return;
+    //     }
+    // }
 
     private function createController(array $dataSource)
     {
         $this->info('Generate controller ' . $dataSource['controllerName']);
-        $template = file_get_contents(__DIR__ . '/template/controller.stub');
+        $template = file_get_contents(__DIR__ . '/stub/controller.stub');
         $replaceData = [
             'controllerName' => $dataSource['controllerName'],
             'modelName' => $dataSource['modelName'],
@@ -232,9 +247,9 @@ class CrudApi extends Command
             'routeName' => lcfirst($dataSource['controllerName'])
         ];
         $dataFile = $this->replaceTemplate($template, ['{{controllerName}}', '{{modelName}}', '{{tag}}', '{{routeName}}'], $replaceData);
-        $path = APPPATH . '/Controllers/' . $dataSource['controllerName'] . '.php';
-        if (!write_file($path, $dataFile)) {
-            CLI::error('Generate controller failed, set your folder writable ' . $path);
+        $path = app_path() . 'Http/Controllers/API/Controllers/' . $dataSource['controllerName'] . '.php';
+        if (!$this->files->put($path, $dataFile)) {
+            $this->error('Generate controller failed, set your folder writable ' . $path);
             return;
         }
     }

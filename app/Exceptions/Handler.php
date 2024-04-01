@@ -4,6 +4,8 @@ namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
+use Illuminate\Support\Arr;
+use Illuminate\Validation\ValidationException;
 
 class Handler extends ExceptionHandler
 {
@@ -44,5 +46,31 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+    protected function convertExceptionToArray(Throwable $e)
+    {
+        return config('app.debug') ? [
+            "status" => 500,
+            "error" => 500,
+            'messages' => ['errors' => $e->getMessage()],
+            'exception' => get_class($e),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+            'trace' => collect($e->getTrace())->map(fn ($trace) => Arr::except($trace, ['args']))->all(),
+        ] : [
+            "status" => 500,
+            "error" => 500,
+            'messages' => ['errors' => $this->isHttpException($e) ? $e->getMessage() : 'Server Error'],
+        ];
+    }
+
+    protected function invalidJson($request, ValidationException $exception)
+    {
+        return response()->json([
+            'status' => $exception->status,
+            'error' => $exception->status,
+            'messages' => ['errors' => $exception->getMessage()],
+            'errors' => $exception->errors(),
+        ], $exception->status);
     }
 }
