@@ -65,6 +65,13 @@ class ModelGenerator extends ModelGeneratorInfy
         // if ($primary === 'id') {
         //     return null;
         // }
+        
+        
+        $primary = 'id';
+        foreach ($this->config->fields as $field) {
+            if ($field->isPrimary)
+                $primary = $field->name;
+        }
 
         return $primary;
     }

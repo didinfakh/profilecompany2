@@ -17,7 +17,7 @@ class APIRoutesGenerator extends APIRoutesGeneratorInfy
     public function generate()
     {
         $routeContents = g_filesystem()->getFile($this->path);
-
+        $this->config->modelNames->dashedPlural = $this->config->tableName;
         $routes = view('laravel-generator::api.routes', $this->variables())->render();
 
         if (Str::contains($routeContents, $routes)) {
