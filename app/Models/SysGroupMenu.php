@@ -8,14 +8,14 @@ class SysGroupMenu extends BaseModel
 {
     public $table = 'sys_group_menu';
 
+    public $primaryKey = 'id_group_menu';
+
     public $fillable = [
         'id_group',
         'id_menu'
     ];
 
-    protected $casts = [
-        
-    ];
+    protected $casts = [];
 
     public array $rules = [
         'id_group' => 'nullable',
