@@ -45,10 +45,10 @@ class SysGroupAPIController extends BaseResourceController
         //     $ret = $groupmenuModel->where("id_group", $id_group)->delete();
 
         // $ret = $groupmenuModel->delete("delete from sys_group_menu where id_group = " . $id_group);
+
         $data = $request->all();
         if ($ret) {
             $ret = $this->_setmenu($groupmenuModel, $groupactionModel, $data, $id_group);
-            return $this->respond(['success' => $ret]);
         }
 
 
@@ -79,14 +79,33 @@ class SysGroupAPIController extends BaseResourceController
                 }
 
             if ($d['selected']) {
-                $ret = $id_group_menu = $groupmenuModel->insert(["id_group" => $id_group, "id_menu" => $d['id_menu']]);
+                // $ret = $id_group_menu = DB::table('sys_group_menu')->create([
+                //     "id_group" => $id_group,
+                //     "id_menu" => $d['id_menu']
+                // ]);
+                $ret = $id_group_menu = $groupmenuModel->create([
+                    "id_group" => $id_group,
+                    "id_menu" => $d['id_menu']
+                ]);
+
+
+
+
                 if ($d['action'])
                     foreach ($d['action'] as $da) {
                         if (!$ret)
                             break;
 
                         if ($da['selected']) {
-                            $ret = $groupactionModel->insert(["id_group_menu" => $id_group_menu, "id_action" => $da['id_action']]);
+                            $ret = DB::table("sys_group_action")->insert([
+                                "id_group_menu" => $id_group_menu['id_group_menu'],
+                                "id_action" => $da['id_action']
+                            ]);
+                            // $ret = $groupactionModel->create([
+                            //     "id_group_menu" => $id_group_menu,
+                            //     "id_action" => $da['id_action']
+                            // ]);
+                            // dd($ret);
                         }
                     }
             }
