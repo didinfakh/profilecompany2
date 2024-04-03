@@ -102,15 +102,14 @@ class SysGroupAPIController extends BaseResourceController
         $menuModel = new \App\Models\SysMenu();
         $actionModel = new \App\Models\SysAction();
 
-        $rows = $menuModel->orderBy("sort", "asc")->orderBy("id_menu")->get();
-        // dd($rows);
+        $rows = $menuModel->orderBy("sort", "asc")->orderBy("id_menu")->get()->toarray();
         $menuarr = array();
         $menuarr1 = array();
         foreach ($rows as $r) {
-            if ($r->nama)
-                $menuarr[$r->id_menu] = $r;
+            if ($r['nama'])
+                $menuarr[$r['id_menu']] = $r;
 
-            $menuarr1[$r->id_menu] = $r;
+            $menuarr1[$r['id_menu']] = $r;
         }
 
 
@@ -140,28 +139,28 @@ class SysGroupAPIController extends BaseResourceController
             // case when sys_group_action.id_action is not null then 1 
             // else 0 end as selected ", FALSE)->join("sys_group_action", "sys_group_action.id_action = sys_action.id_action and 
             // sys_group_action.id_group_menu = coalesce(" . DB::escape($groupmenu->id_group_menu) . ", 0)", "left")->where("id_menu", $idmenu)->findAll();
-
-            dd($groupmenu);
-            $action = DB::select("select sys_action.*, 
+            $action = [];
+            if ($groupmenu)
+                $action = DB::select("select sys_action.*, 
             case when sys_group_action.id_action is not null then 1 
             else 0 end as selected 
             from sys_action 
             left join sys_group_action on sys_group_action.id_action = sys_action.id_action and 
-            sys_group_action.id_group_menu = coalesce(" . DB::escape($groupmenu->id_group_menu) . ", 0)
+            sys_group_action.id_group_menu = coalesce(" . DB::escape($groupmenu['id_group_menu']) . ", 0)
             where id_menu = " . DB::escape($idmenu));
 
 
-            if ($r->id_parent_menu == $idparent) {
+            if ($r['id_parent_menu'] == $idparent) {
                 unset($menuarr[$idmenu]);
                 $submenu = $this->_getChild($menuarr, $id_group, $idmenu);
                 $menu[] = [
-                    "page" => $r->url,
+                    "page" => $r['url'],
                     "id_menu" => $idmenu,
-                    "label" => $r->nama,
-                    "icon" => $r->icon,
+                    "label" => $r['nama'],
+                    "icon" => $r['icon'],
                     'submenu' => $submenu,
                     "action" => $action,
-                    "selected" => ($groupmenu->id_group_menu ? 1 : 0)
+                    "selected" => (!empty($groupmenu['id_group_menu']) ? 1 : 0)
                 ];
             }
         }
@@ -172,19 +171,29 @@ class SysGroupAPIController extends BaseResourceController
 
                 $action = array();
 
-                $action = $actionModel->select("sys_action.*, 
+                //     $action = $actionModel->select("sys_action.*, 
+                // case when sys_group_action.id_action is not null then 1 
+                // else 0 end as selected ", FALSE)->join("sys_group_action", "sys_group_action.id_action = sys_action.id_action and 
+                // sys_group_action.id_group_menu = coalesce(" . DB::escape($groupmenu->id_group_menu) . ", 0)", "left")->where("id_menu", $idmenu)->findAll();
+
+                $action = [];
+                if ($groupmenu)
+                    $action = DB::select("select sys_action.*, 
             case when sys_group_action.id_action is not null then 1 
-            else 0 end as selected ", FALSE)->join("sys_group_action", "sys_group_action.id_action = sys_action.id_action and 
-            sys_group_action.id_group_menu = coalesce(" . DB::escape($groupmenu->id_group_menu) . ", 0)", "left")->where("id_menu", $idmenu)->findAll();
+            else 0 end as selected 
+            from sys_action 
+            left join sys_group_action on sys_group_action.id_action = sys_action.id_action and 
+            sys_group_action.id_group_menu = coalesce(" . DB::escape($groupmenu['id_group_menu']) . ", 0)
+            where id_menu = " . DB::escape($idmenu));
 
                 $menu[] = [
-                    "page" => $r->url,
+                    "page" => $r['url'],
                     "id_menu" => $idmenu,
-                    "label" => $r->nama,
-                    "icon" => $r->icon,
+                    "label" => $r['nama'],
+                    "icon" => $r['icon'],
                     'submenu' => $submenu,
                     "action" => $action,
-                    "selected" => ($groupmenu->id_group_menu ? 1 : 0)
+                    "selected" => (!empty($groupmenu['id_group_menu']) ? 1 : 0)
                 ];
             }
         }
