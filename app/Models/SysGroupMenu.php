@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class SysGroupMenu extends Model
+class SysGroupMenu extends BaseModel
 {
     public $table = 'sys_group_menu';
 
@@ -17,7 +17,7 @@ class SysGroupMenu extends Model
         
     ];
 
-    public static array $rules = [
+    public array $rules = [
         'id_group' => 'nullable',
         'id_menu' => 'nullable'
     ];

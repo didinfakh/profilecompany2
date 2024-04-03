@@ -4,9 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class SysGroup extends Model
+class SysGroup extends BaseModel
 {
     public $table = 'sys_group';
+    public $primaryKey = 'id_group';
 
     public $fillable = [
         'nama',
@@ -18,7 +19,7 @@ class SysGroup extends Model
         'delete_at' => 'datetime'
     ];
 
-    public static array $rules = [
+    public array $rules = [
         'nama' => 'nullable|string|max:100',
         'delete_at' => 'nullable'
     ];

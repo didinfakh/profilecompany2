@@ -30,7 +30,11 @@ class ModelGenerator extends ModelGeneratorInfy
 
     public function generate()
     {
-        $templateData = view('laravel-generator::model.model', $this->variables())->render();
+        // $templateData = view('laravel-generator::model.model', $this->variables())->render();
+        $viewName = 'model';
+
+        $templateData = view($viewName, $this->variables())->render();
+
 
         g_filesystem()->createFile($this->path . $this->fileName, $templateData);
 

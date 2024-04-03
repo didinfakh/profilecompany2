@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class MtRiskKriteriaDampak extends Model
+class MtRiskKriteriaDampak extends BaseModel
 {
     public $table = 'mt_risk_kriteria_dampak';
 
@@ -28,7 +28,7 @@ class MtRiskKriteriaDampak extends Model
         'modified_by_desc' => 'string'
     ];
 
-    public static array $rules = [
+    public array $rules = [
         'nama' => 'nullable|string|max:200',
         'id_induk' => 'nullable',
         'kode' => 'nullable|string|max:20',
