@@ -102,8 +102,8 @@ class SysGroupAPIController extends BaseResourceController
         $menuModel = new \App\Models\SysMenu();
         $actionModel = new \App\Models\SysAction();
 
-        $rows = $menuModel->orderBy("sort, id_menu")->findAll();
-
+        $rows = $menuModel->orderBy("sort", "asc")->orderBy("id_menu")->get();
+        // dd($rows);
         $menuarr = array();
         $menuarr1 = array();
         foreach ($rows as $r) {
@@ -136,10 +136,19 @@ class SysGroupAPIController extends BaseResourceController
             $action = array();
             $groupmenu = $groupmenuModel->where("id_menu", $idmenu)->where("id_group", $id_group)->first();
 
-            $action = $actionModel->select("sys_action.*, 
+            // $action = $actionModel->select("sys_action.*, 
+            // case when sys_group_action.id_action is not null then 1 
+            // else 0 end as selected ", FALSE)->join("sys_group_action", "sys_group_action.id_action = sys_action.id_action and 
+            // sys_group_action.id_group_menu = coalesce(" . DB::escape($groupmenu->id_group_menu) . ", 0)", "left")->where("id_menu", $idmenu)->findAll();
+
+            dd($groupmenu);
+            $action = DB::select("select sys_action.*, 
             case when sys_group_action.id_action is not null then 1 
-            else 0 end as selected ", FALSE)->join("sys_group_action", "sys_group_action.id_action = sys_action.id_action and 
-            sys_group_action.id_group_menu = coalesce(" . $actionModel->db->escape($groupmenu->id_group_menu) . ", 0)", "left")->where("id_menu", $idmenu)->findAll();
+            else 0 end as selected 
+            from sys_action 
+            left join sys_group_action on sys_group_action.id_action = sys_action.id_action and 
+            sys_group_action.id_group_menu = coalesce(" . DB::escape($groupmenu->id_group_menu) . ", 0)
+            where id_menu = " . DB::escape($idmenu));
 
 
             if ($r->id_parent_menu == $idparent) {
@@ -166,7 +175,7 @@ class SysGroupAPIController extends BaseResourceController
                 $action = $actionModel->select("sys_action.*, 
             case when sys_group_action.id_action is not null then 1 
             else 0 end as selected ", FALSE)->join("sys_group_action", "sys_group_action.id_action = sys_action.id_action and 
-            sys_group_action.id_group_menu = coalesce(" . $actionModel->db->escape($groupmenu->id_group_menu) . ", 0)", "left")->where("id_menu", $idmenu)->findAll();
+            sys_group_action.id_group_menu = coalesce(" . DB::escape($groupmenu->id_group_menu) . ", 0)", "left")->where("id_menu", $idmenu)->findAll();
 
                 $menu[] = [
                     "page" => $r->url,
