@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 
 class BaseResourceController extends ResourceController
 {
-
     /**
      *
      * @var int limit data to show
@@ -49,7 +48,7 @@ class BaseResourceController extends ResourceController
 
         // if($filter)
         // 	$db = $db->where($filter);
-        $data = $db->paginate($limit,1);
+        $data = $db->paginate($limit, 1);
         // $pagination = [
         // 	'currentPage' => $this->model->pager->getCurrentPage(),
         // 	'totalPage' => $this->model->pager->getPageCount(),

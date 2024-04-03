@@ -2,7 +2,10 @@
 
 namespace App\Models;
 
-class SysGroupAction extends BaseModel
+use Illuminate\Database\Eloquent\Model;
+
+
+class SysGroupAction extends Model
 {
     public $table = 'sys_group_action';
 
@@ -22,6 +25,7 @@ class SysGroupAction extends BaseModel
         'id_group_menu' => 'required|integer',
         'id_action' => 'required|integer',
     ];
+
 
     public function sysActions(): \Illuminate\Database\Eloquent\Relations\HasMany
     {

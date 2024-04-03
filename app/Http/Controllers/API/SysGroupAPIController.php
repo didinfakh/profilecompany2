@@ -9,131 +9,56 @@ use App\Models\SysGroupAction;
 use App\Repositories\SysGroupRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Http\Controllers\AppBaseController;
+use App\Http\Controllers\BaseResourceController;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Query\Builder;
 
 /**
  * Class SysGroupAPIController
  */
-class SysGroupAPIController extends AppBaseController
+class SysGroupAPIController extends BaseResourceController
 {
-    private SysGroupRepository $sysGroupRepository;
-
-    public function __construct(SysGroupRepository $sysGroupRepo)
+    public function __construct()
     {
-        $this->sysGroupRepository = $sysGroupRepo;
-    }
-
-    /**
-     * Display a listing of the SysGroups.
-     * GET|HEAD /sys-groups
-     */
-    public function index(Request $request): JsonResponse
-    {
-        $sysGroups = $this->sysGroupRepository->all(
-            $request->except(['skip', 'limit']),
-            $request->get('skip'),
-            $request->get('limit')
-        );
-
-        return $this->sendResponse($sysGroups->toArray(), 'Sys Groups retrieved successfully');
-    }
-
-    /**
-     * Store a newly created SysGroup in storage.
-     * POST /sys-groups
-     */
-    public function store(CreateSysGroupAPIRequest $request): JsonResponse
-    {
-        $input = $request->all();
-
-        $sysGroup = $this->sysGroupRepository->create($input);
-
-        return $this->sendResponse($sysGroup->toArray(), 'Sys Group saved successfully');
-    }
-
-    /**
-     * Display the specified SysGroup.
-     * GET|HEAD /sys-groups/{id}
-     */
-    public function show($id): JsonResponse
-    {
-        /** @var SysGroup $sysGroup */
-        $sysGroup = $this->sysGroupRepository->find($id);
-
-        if (empty($sysGroup)) {
-            return $this->sendError('Sys Group not found');
-        }
-
-        return $this->sendResponse($sysGroup->toArray(), 'Sys Group retrieved successfully');
-    }
-
-    /**
-     * Update the specified SysGroup in storage.
-     * PUT/PATCH /sys-groups/{id}
-     */
-    public function update($id, UpdateSysGroupAPIRequest $request): JsonResponse
-    {
-        $input = $request->all();
-
-        /** @var SysGroup $sysGroup */
-        $sysGroup = $this->sysGroupRepository->find($id);
-
-        if (empty($sysGroup)) {
-            return $this->sendError('Sys Group not found');
-        }
-
-        $sysGroup = $this->sysGroupRepository->update($input, $id);
-
-        return $this->sendResponse($sysGroup->toArray(), 'SysGroup updated successfully');
-    }
-
-    /**
-     * Remove the specified SysGroup from storage.
-     * DELETE /sys-groups/{id}
-     *
-     * @throws \Exception
-     */
-    public function destroy($id): JsonResponse
-    {
-        /** @var SysGroup $sysGroup */
-        $sysGroup = $this->sysGroupRepository->find($id);
-
-        if (empty($sysGroup)) {
-            return $this->sendError('Sys Group not found');
-        }
-
-        $sysGroup->delete();
-
-        return $this->sendSuccess('Sys Group deleted successfully');
+        $this->model = new \App\Models\SysGroup;
     }
 
     #function pindahan ci4
-    public function setmenu($id_group = null)
+    public function setmenu($id_group = null, Request $request)
     {
         $groupmenuModel = new \App\Models\SysGroupMenu();
         $groupactionModel = new \App\Models\SysGroupAction();
 
         $ret = true;
-        $groupactionModel->db->transStart();
-        $rows = $groupmenuModel->where("id_group", $id_group)->findAll();
-        foreach ($rows as $r) {
-            if (!$ret)
-                break;
+        // $groupactionModel->db->transStart();
+        DB::beginTransaction();
+        $rows = $groupmenuModel->where("id_group", $id_group)->get();
 
-            $ret = $groupactionModel->db->query('delete from sys_group_action where id_group_menu = ' . $r->id_group_menu);
-        }
-        if ($ret)
-            $ret = $groupmenuModel->db->query("delete from sys_group_menu where id_group = " . $id_group);
+        // foreach ($rows as $r) {
+        //     if (!$ret)
+        //         break;
 
-        $data = $this->request->getJSON();
-        if ($ret)
+        //     // $ret = $groupactionModel->delete('delete from sys_group_action where id_group_menu = ' . $r->id_group_menu);
+        //     $ret = $groupactionModel->where('id_group_menu', $r->id_group_menu)->delete();
+        // }
+        // if ($ret)
+        //     $ret = $groupmenuModel->where("id_group", $id_group)->delete();
+
+        // $ret = $groupmenuModel->delete("delete from sys_group_menu where id_group = " . $id_group);
+        $data = $request->all();
+        if ($ret) {
             $ret = $this->_setmenu($groupmenuModel, $groupactionModel, $data, $id_group);
+            return $this->respond(['success' => $ret]);
+        }
+
 
         if ($ret) {
-            $groupactionModel->db->transCommit();
+            // $groupactionModel->db->transCommit();
+            DB::commit();
             return $this->respond(['success' => true]);
         } else {
-            $groupactionModel->db->transRollback();
+            // $groupactionModel->db->transRollback();
+            DB::rollBack();
             return $this->fail(['errorr' => true]);
         }
     }
@@ -142,13 +67,14 @@ class SysGroupAPIController extends AppBaseController
     {
         $ret = true;
         foreach ($data as $d) {
+
             if (!$ret)
                 break;
 
-            if ($d->action)
-                foreach ($d->action as $da) {
-                    if ($da->selected) {
-                        $d->selected = 1;
+            if ($d['action'])
+                foreach ($d['action'] as $da) {
+                    if ($da['selected']) {
+                        $d['selected'] = 1;
                     }
                 }
 
