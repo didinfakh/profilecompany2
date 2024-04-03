@@ -4,11 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class SysLog extends Model
+class SysLog extends BaseModel
 {
     public $table = 'sys_log';
 
-    public $primaryKey = "id_log";
+    protected $primaryKey = 'id_log';
 
     public $fillable = [
         'page',
@@ -17,8 +17,7 @@ class SysLog extends Model
         'activity_time',
         'user_desc',
         'action',
-        'table_name',
-        'id_log'
+        'table_name'
     ];
 
     protected $casts = [
@@ -31,14 +30,15 @@ class SysLog extends Model
         'table_name' => 'string'
     ];
 
-    public static array $rules = [
+    public array $rules = [
         'page' => 'nullable|string|max:500',
         'activity' => 'nullable|string',
         'ip' => 'nullable|string|max:50',
         'activity_time' => 'nullable',
         'user_desc' => 'nullable|string|max:200',
         'action' => 'nullable|string|max:50',
-        'table_name' => 'nullable|string|max:100',
-        'id_log' => 'required'
+        'table_name' => 'nullable|string|max:100'
     ];
+
+    
 }

@@ -23,9 +23,9 @@ class BaseResourceController extends ResourceController
     {
         $search = $request->get('q');
         if ($search) {
-            if ($search['nama'] !== null)
+            if (!empty($search['nama']))
                 $search['nama'] = "%" . $search['nama'] . "%";
-            if ($search['kode'] !== null)
+            if (!empty($search['kode']))
                 $search['kode'] = "%" . $search['kode'] . "%";
         }
         // $filter = $request->get('q');
@@ -44,11 +44,13 @@ class BaseResourceController extends ResourceController
 
                 $db = $db->orderBy($column, $sc);
             }
+        } else if ($this->model->primaryKey) {
+            $db = $db->orderBy($this->model->primaryKey);
         }
 
         // if($filter)
         // 	$db = $db->where($filter);
-        $data = $db->paginate($limit, 1);
+        $data = $db->paginate($limit);
         // $pagination = [
         // 	'currentPage' => $this->model->pager->getCurrentPage(),
         // 	'totalPage' => $this->model->pager->getPageCount(),

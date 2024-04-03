@@ -22,26 +22,12 @@ class APIControllerGenerator extends APIControllerGeneratorInfy
         return array_merge([], $this->docsVariables());
     }
 
-    public function getViewName(): string
-    {
-        if ($this->config->options->repositoryPattern) {
-            $templateName = 'repository.controller';
-        } else {
-            $templateName = 'model.controller';
-        }
-
-        if ($this->config->options->resources) {
-            $templateName .= '_resource';
-        }
-
-        return $templateName;
-    }
 
     public function generate()
     {
-        $viewName = $this->getViewName();
+        $viewName = 'controller';
 
-        $templateData = view('laravel-generator::api.controller.' . $viewName, $this->variables())->render();
+        $templateData = view($viewName, $this->variables())->render();
 
         g_filesystem()->createFile($this->path . $this->fileName, $templateData);
 

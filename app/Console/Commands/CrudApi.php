@@ -8,7 +8,7 @@ use Illuminate\Filesystem\Filesystem;
 
 class CrudApi extends APIScaffoldGeneratorCommand
 {
-    protected $signature = 'app:crud-api';
+    protected $name = 'app:crud-api';
 
 
     public function generateCommonItems()

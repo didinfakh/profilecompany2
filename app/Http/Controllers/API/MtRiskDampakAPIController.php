@@ -1,16 +1,15 @@
 <?php
 
 namespace App\Http\Controllers\API;
-
 use App\Http\Controllers\BaseResourceController;
 
 /**
- * Class SysMenuAPIController
+ * Class MtRiskDampakAPIController
  */
-class SysMenuAPIController extends BaseResourceController
+class MtRiskDampakAPIController extends BaseResourceController
 {
     public function __construct()
     {
-        $this->model = new \App\Models\SysMenu;
+        $this->model = new \App\Models\MtRiskDampak;
     }
 }
