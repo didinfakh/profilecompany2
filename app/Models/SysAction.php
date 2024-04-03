@@ -8,6 +8,8 @@ class SysAction extends BaseModel
 {
     public $table = 'sys_action';
 
+    public $primaryKey = "id_action";
+
     public $fillable = [
         'nama',
         'id_menu'
