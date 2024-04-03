@@ -29,6 +29,8 @@ Route::resource('sys_group', App\Http\Controllers\API\SysGroupAPIController::cla
 
 Route::post('sys_group/setmenu/{id_group}', [App\Http\Controllers\API\SysGroupAPIController::class, 'setmenu']);
 
+Route::post('sys_group/getmenu/{id_group}', [App\Http\Controllers\API\SysGroupAPIController::class, 'getmenu']);
+
 Route::resource('sys_group_menu', App\Http\Controllers\API\SysGroupMenuAPIController::class)
     ->except(['create', 'edit']);
 
