@@ -78,20 +78,20 @@ class SysGroupAPIController extends BaseResourceController
                     }
                 }
 
-            if ($d->selected) {
-                $ret = $id_group_menu = $groupmenuModel->insert(["id_group" => $id_group, "id_menu" => $d->id_menu]);
-                if ($d->action)
-                    foreach ($d->action as $da) {
+            if ($d['selected']) {
+                $ret = $id_group_menu = $groupmenuModel->insert(["id_group" => $id_group, "id_menu" => $d['id_menu']]);
+                if ($d['action'])
+                    foreach ($d['action'] as $da) {
                         if (!$ret)
                             break;
 
-                        if ($da->selected) {
-                            $ret = $groupactionModel->insert(["id_group_menu" => $id_group_menu, "id_action" => $da->id_action]);
+                        if ($da['selected']) {
+                            $ret = $groupactionModel->insert(["id_group_menu" => $id_group_menu, "id_action" => $da['id_action']]);
                         }
                     }
             }
-            if ($d->submenu && $ret) {
-                $ret = $this->_setmenu($groupmenuModel, $groupactionModel, $d->submenu, $id_group);
+            if ($d['submenu'] && $ret) {
+                $ret = $this->_setmenu($groupmenuModel, $groupactionModel, $d['submenu'], $id_group);
             }
         }
         return $ret;
@@ -169,7 +169,7 @@ class SysGroupAPIController extends BaseResourceController
             foreach ($menuarr as $idmenu => $r) {
                 $groupmenu = $groupmenuModel->where("id_menu", $idmenu)->where("id_group", $id_group)->first();
 
-                $action = array();
+                // $action = array();
 
                 //     $action = $actionModel->select("sys_action.*, 
                 // case when sys_group_action.id_action is not null then 1 
@@ -193,7 +193,7 @@ class SysGroupAPIController extends BaseResourceController
                     "icon" => $r['icon'],
                     'submenu' => $submenu,
                     "action" => $action,
-                    "selected" => (!empty($groupmenu['id_group_menu']) ? 1 : 0)
+                    "selected" => ($groupmenu['id_group_menu'] ? 1 : 0)
                 ];
             }
         }
