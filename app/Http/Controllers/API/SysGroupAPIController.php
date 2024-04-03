@@ -139,9 +139,10 @@ class SysGroupAPIController extends BaseResourceController
             // case when sys_group_action.id_action is not null then 1 
             // else 0 end as selected ", FALSE)->join("sys_group_action", "sys_group_action.id_action = sys_action.id_action and 
             // sys_group_action.id_group_menu = coalesce(" . DB::escape($groupmenu->id_group_menu) . ", 0)", "left")->where("id_menu", $idmenu)->findAll();
-            $action = [];
-            if ($groupmenu)
-                $action = DB::select("select sys_action.*, 
+            if (!$groupmenu)
+                $groupmenu['id_group_menu'] = 0;
+
+            $action = DB::select("select sys_action.*, 
             case when sys_group_action.id_action is not null then 1 
             else 0 end as selected 
             from sys_action 
@@ -175,10 +176,10 @@ class SysGroupAPIController extends BaseResourceController
                 // case when sys_group_action.id_action is not null then 1 
                 // else 0 end as selected ", FALSE)->join("sys_group_action", "sys_group_action.id_action = sys_action.id_action and 
                 // sys_group_action.id_group_menu = coalesce(" . DB::escape($groupmenu->id_group_menu) . ", 0)", "left")->where("id_menu", $idmenu)->findAll();
+                if (!$groupmenu)
+                    $groupmenu['id_group_menu'] = 0;
 
-                $action = [];
-                if ($groupmenu)
-                    $action = DB::select("select sys_action.*, 
+                $action = DB::select("select sys_action.*, 
             case when sys_group_action.id_action is not null then 1 
             else 0 end as selected 
             from sys_action 
