@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class SysLog extends Model
+class SysLog extends BaseModel
 {
     public $table = 'sys_log';
 
@@ -30,7 +30,7 @@ class SysLog extends Model
         'table_name' => 'string'
     ];
 
-    public static array $rules = [
+    public array $rules = [
         'page' => 'nullable|string|max:500',
         'activity' => 'nullable|string',
         'ip' => 'nullable|string|max:50',

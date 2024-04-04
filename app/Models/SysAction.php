@@ -4,9 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class SysAction extends Model
+class SysAction extends BaseModel
 {
     public $table = 'sys_action';
+
+    public $primaryKey = "id_action";
 
     public $fillable = [
         'nama',
@@ -17,7 +19,7 @@ class SysAction extends Model
         'nama' => 'string'
     ];
 
-    public static array $rules = [
+    public array $rules = [
         'nama' => 'nullable|string|max:200',
         'id_menu' => 'nullable'
     ];

@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class SysSetting extends Model
+class SysSetting extends BaseModel
 {
     public $table = 'sys_setting';
 
@@ -18,7 +18,7 @@ class SysSetting extends Model
         'isi' => 'string'
     ];
 
-    public static array $rules = [
+    public array $rules = [
         'nama' => 'nullable|string|max:100',
         'isi' => 'nullable|string|max:500'
     ];

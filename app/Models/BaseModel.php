@@ -11,17 +11,19 @@ class BaseModel extends Model
     use SoftDeletes;
     public function search($search)
     {
+        $ret = $this;
         if (!empty($search)) {
             foreach ($search as $k => $v) {
                 $hasLikeExpression = $this->getLikeExpression($v);
                 if (!is_null($hasLikeExpression)) {
-                    $this->where($k, 'like', $v);
+                    $ret = $ret->where($k, 'like', $v);
                 } else {
-                    $this->where($k, $v);
+                    $ret = $ret->where($k, $v);
                 }
             }
         }
-        return $this;
+
+        return $ret;
     }
 
     private function getLikeExpression(String $value)
@@ -58,10 +60,11 @@ class BaseModel extends Model
         $user_desc .= "#" . (auth()->user() ? auth()->user()->name : null);
         $rec['user_desc'] = $user_desc;
 
-        $rec["activity"] = json_encode((array)$rec["activity"]);
+        // $rec["activity"] = json_encode((array)$rec["activity"]);
+        $rec["activity"] = '';
 
-        $log = new \App\Models\SysLog();
-        $log->insert($rec);
+        // $log = new \App\Models\SysLog();
+        // $log->insert($rec);
     }
 
     // /**

@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class MtSdmPegawai extends Model
+class MtSdmPegawai extends BaseModel
 {
     public $table = 'mt_sdm_pegawai';
 
@@ -29,7 +29,7 @@ class MtSdmPegawai extends Model
         'modified_by_desc' => 'string'
     ];
 
-    public static array $rules = [
+    public array $rules = [
         'email' => 'nullable|string|max:500',
         'position_id' => 'nullable|string|max:10',
         'nama_lengkap' => 'nullable|string|max:500',

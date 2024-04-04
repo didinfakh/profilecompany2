@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class MtSdmUnit extends Model
+class MtSdmUnit extends BaseModel
 {
     public $table = 'mt_sdm_unit';
 
@@ -33,7 +33,7 @@ class MtSdmUnit extends Model
         'modified_by_desc' => 'string'
     ];
 
-    public static array $rules = [
+    public array $rules = [
         'table_desc' => 'required|string|max:100',
         'is_aktif' => 'required|string|max:1',
         'kode_distrik' => 'nullable|string|max:2',
