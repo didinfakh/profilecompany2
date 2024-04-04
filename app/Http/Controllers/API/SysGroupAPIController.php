@@ -34,15 +34,15 @@ class SysGroupAPIController extends BaseResourceController
         DB::beginTransaction();
         $rows = $groupmenuModel->where("id_group", $id_group)->get();
 
-        // foreach ($rows as $r) {
-        //     if (!$ret)
-        //         break;
+        foreach ($rows as $r) {
+            if (!$ret)
+                break;
 
-        //     // $ret = $groupactionModel->delete('delete from sys_group_action where id_group_menu = ' . $r->id_group_menu);
-        //     $ret = $groupactionModel->where('id_group_menu', $r->id_group_menu)->delete();
-        // }
-        // if ($ret)
-        //     $ret = $groupmenuModel->where("id_group", $id_group)->delete();
+            // $ret = $groupactionModel->delete('delete from sys_group_action where id_group_menu = ' . $r->id_group_menu);
+            $ret = $groupactionModel->where('id_group_menu', $r->id_group_menu)->delete();
+        }
+        if ($ret)
+            $ret = $groupmenuModel->where("id_group", $id_group)->delete();
 
         // $ret = $groupmenuModel->delete("delete from sys_group_menu where id_group = " . $id_group);
 
