@@ -31,6 +31,10 @@ class CrudApi extends APIScaffoldGeneratorCommand
             $routesGenerator = app(APIRoutesGenerator::class);
             $routesGenerator->generate();
         }
+        // if (!$this->isSkip('routes') and !$this->isSkip('api_routes')) {
+            $routesGenerator = app(ViewGenerator::class);
+            $routesGenerator->generate();
+        // }
     }
 
     public function generateScaffoldItems()
