@@ -110,6 +110,24 @@ class BaseResourceController extends ResourceController
     }
 
     /**
+     * Create a new resource object, from "posted" parameters
+     *
+     * @return array	an array
+     */
+    public function create(Request $request): JsonResponse
+    {
+        $data = $request->getJSON();
+
+        $id = $this->model->insert($data);
+        if (!$id) {
+            return $this->fail($this->model->errors());
+        }
+        $data->{$this->model->primaryKey} = $id;
+
+        return $this->respondCreated($data, 'data created');
+    }
+
+    /**
      * Add or update a model resource, from "posted" properties
      *
      * @return array	an array
