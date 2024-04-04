@@ -51,7 +51,6 @@ class SysGroupAPIController extends BaseResourceController
             $ret = $this->_setmenu($groupmenuModel, $groupactionModel, $data, $id_group);
         }
 
-
         if ($ret) {
             // $groupactionModel->db->transCommit();
             DB::commit();
@@ -59,7 +58,7 @@ class SysGroupAPIController extends BaseResourceController
         } else {
             // $groupactionModel->db->transRollback();
             DB::rollBack();
-            return $this->fail(['errorr' => true]);
+            return $this->fail(['errorr' => $ret]);
         }
     }
 
