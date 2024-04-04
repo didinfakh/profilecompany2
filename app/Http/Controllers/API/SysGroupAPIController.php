@@ -32,12 +32,11 @@ class SysGroupAPIController extends BaseResourceController
         $ret = true;
         // $groupactionModel->db->transStart();
         DB::beginTransaction();
-        $rows = $groupmenuModel->where("id_group", $id_group)->get();
+        $rows = DB::select("select * from sys_group_menu where id_group = " . DB::escape($id_group));
 
         foreach ($rows as $r) {
             if (!$ret)
                 break;
-
             // $ret = $groupactionModel->delete('delete from sys_group_action where id_group_menu = ' . $r->id_group_menu);
             $ret = $groupactionModel->where('id_group_menu', $r->id_group_menu)->delete();
         }
@@ -50,15 +49,14 @@ class SysGroupAPIController extends BaseResourceController
         if ($ret) {
             $ret = $this->_setmenu($groupmenuModel, $groupactionModel, $data, $id_group);
         }
-
-        if ($ret) {
+        if ($ret || $ret === 0) {
             // $groupactionModel->db->transCommit();
             DB::commit();
             return $this->respond(['success' => true]);
         } else {
             // $groupactionModel->db->transRollback();
             DB::rollBack();
-            return $this->fail(['errorr' => $ret]);
+            return $this->fail(['errorr' => false]);
         }
     }
 
