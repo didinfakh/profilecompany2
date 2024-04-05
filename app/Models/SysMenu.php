@@ -7,6 +7,7 @@ class SysMenu extends BaseModel
     public $table = 'sys_menu';
 
     public $primaryKey = "id_menu";
+    public $orderDefault = "sort";
 
     public $fillable = [
         'id_parent_menu',

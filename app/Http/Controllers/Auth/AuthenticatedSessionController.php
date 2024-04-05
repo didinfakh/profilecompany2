@@ -103,8 +103,10 @@ class AuthenticatedSessionController extends AppBaseController
         ))");
 
         foreach ($rows as $r) {
-            $access[] = ["page" => $menuarr[$r->id_menu]->url . '_' . $r->nama];
-            $accessmethod[$menuarr1[$r->id_menu]->url][$r->nama] = true;
+            if (!empty($menuarr[$r->id_menu]) && !empty($r->nama)) {
+                $access[] = ["page" => $menuarr[$r->id_menu]->url . '_' . $r->nama];
+                $accessmethod[$menuarr1[$r->id_menu]->url][$r->nama] = true;
+            }
         }
 
         return array($access, $menu, $accessmethod);
@@ -118,6 +120,8 @@ class AuthenticatedSessionController extends AppBaseController
                 unset($menuarr[$idmenu]);
                 $submenu = $this->_getChild($menuarr, $idmenu);
                 $menu[] = [
+                    "id_menu" => $idmenu,
+                    "id_prent_menu" => $r->id_parent_menu,
                     "page" => $r->url,
                     "label" => $r->nama,
                     "icon" => $r->icon,
@@ -129,6 +133,8 @@ class AuthenticatedSessionController extends AppBaseController
         if (!$idparent) {
             foreach ($menuarr as $idmenu => $r) {
                 $menu[] = [
+                    "id_menu" => $idmenu,
+                    "id_prent_menu" => $r->id_parent_menu,
                     "page" => $r->url,
                     "label" => $r->nama,
                     "icon" => $r->icon,

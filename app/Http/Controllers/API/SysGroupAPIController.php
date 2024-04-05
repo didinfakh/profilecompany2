@@ -35,21 +35,24 @@ class SysGroupAPIController extends BaseResourceController
         $rows = DB::select("select * from sys_group_menu where id_group = " . DB::escape($id_group));
 
         foreach ($rows as $r) {
-            if (!$ret)
+            if ($ret === false)
                 break;
-            // $ret = $groupactionModel->delete('delete from sys_group_action where id_group_menu = ' . $r->id_group_menu);
-            $ret = $groupactionModel->where('id_group_menu', $r->id_group_menu)->delete();
-        }
-        if ($ret)
-            $ret = $groupmenuModel->where("id_group", $id_group)->delete();
 
-        // $ret = $groupmenuModel->delete("delete from sys_group_menu where id_group = " . $id_group);
+            $ret = DB::delete('delete from sys_group_action where id_group_menu = ' . $r->id_group_menu);
+            // $ret = $groupactionModel->where('id_group_menu', $r->id_group_menu)->delete();
+        }
+        if ($ret !== false)
+            $ret = DB::delete("delete from sys_group_menu where id_group = " . DB::escape($id_group));
+        // $ret = $groupmenuModel->where("id_group", $id_group)->delete();
+
+        // dd(DB::getQueryLog());
+        // return $this->fail(DB::getQueryLog());
 
         $data = $request->all();
-        if ($ret) {
+        if ($ret !== false) {
             $ret = $this->_setmenu($groupmenuModel, $groupactionModel, $data, $id_group);
         }
-        if ($ret || $ret === 0) {
+        if ($ret !== false) {
             // $groupactionModel->db->transCommit();
             DB::commit();
             return $this->respond(['success' => true]);
