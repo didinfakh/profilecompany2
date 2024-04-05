@@ -121,6 +121,7 @@ class AuthenticatedSessionController extends AppBaseController
                 $submenu = $this->_getChild($menuarr, $idmenu);
                 $menu[] = [
                     "id_menu" => $idmenu,
+                    "id_prent_menu" => $r->id_parent_menu,
                     "page" => $r->url,
                     "label" => $r->nama,
                     "icon" => $r->icon,
@@ -132,6 +133,8 @@ class AuthenticatedSessionController extends AppBaseController
         if (!$idparent) {
             foreach ($menuarr as $idmenu => $r) {
                 $menu[] = [
+                    "id_menu" => $idmenu,
+                    "id_prent_menu" => $r->id_parent_menu,
                     "page" => $r->url,
                     "label" => $r->nama,
                     "icon" => $r->icon,
