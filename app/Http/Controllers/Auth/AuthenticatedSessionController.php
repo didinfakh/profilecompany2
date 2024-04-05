@@ -120,6 +120,7 @@ class AuthenticatedSessionController extends AppBaseController
                 unset($menuarr[$idmenu]);
                 $submenu = $this->_getChild($menuarr, $idmenu);
                 $menu[] = [
+                    "id_menu" => $idmenu,
                     "page" => $r->url,
                     "label" => $r->nama,
                     "icon" => $r->icon,
