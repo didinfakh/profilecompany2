@@ -35,14 +35,14 @@ class SysGroupAPIController extends BaseResourceController
         $rows = DB::select("select * from sys_group_menu where id_group = " . DB::escape($id_group));
 
         foreach ($rows as $r) {
-            if (!$ret !== false)
+            if ($ret === false)
                 break;
 
             $ret = DB::delete('delete from sys_group_action where id_group_menu = ' . $r->id_group_menu);
             // $ret = $groupactionModel->where('id_group_menu', $r->id_group_menu)->delete();
         }
         if ($ret !== false)
-            $ret = DB::delete("delete from sys_group_menu where id_group = " . $id_group);
+            $ret = DB::delete("delete from sys_group_menu where id_group = " . DB::escape($id_group));
         // $ret = $groupmenuModel->where("id_group", $id_group)->delete();
 
         // dd(DB::getQueryLog());
