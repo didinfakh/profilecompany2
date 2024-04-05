@@ -6,6 +6,7 @@ use Illuminate\Support\Str;
 use InfyOm\Generator\Utils\TableFieldsGenerator;
 use InfyOm\Generator\Generators\ModelGenerator as ModelGeneratorInfy;
 use InfyOm\Generator\Generators\SwaggerGenerator;
+use Mockery\Undefined;
 
 class ViewGenerator extends ModelGeneratorInfy
 {
@@ -61,6 +62,14 @@ class ViewGenerator extends ModelGeneratorInfy
             'customSoftDelete' => $this->customSoftDelete(),
             'relations'        => $this->generateRelations(),
             'timestamps'       => config('laravel_generator.timestamps.enabled', true),
+            'headersFrontend'  => implode('},' . infy_nl_tab(1, 2), $this->generateHeadersFrontend()) . "}",
+            'rulesFrontend'  => $this->generateRulesFrontend(),
+            'tbodyFrontend'  => $this->generateTbodyFrontend(),
+            'recordsFrontend'  => $this->generateRecordsFrontend(),
+            'bodyInsertFrontend'  => $this->generateBodyInsertFrontend(),
+            'setRecordsFrontend'  => $this->generateSetRecordsFrontend(),
+            'inputsFrontendL'  => $this->generateInputsFrontend('left'),
+            'inputsFrontendR'  => $this->generateInputsFrontend('right'),
         ];
     }
 
@@ -75,8 +84,8 @@ class ViewGenerator extends ModelGeneratorInfy
         // if ($primary === 'id') {
         //     return null;
         // }
-        
-        
+
+
         $primary = 'id';
         foreach ($this->config->fields as $field) {
             if ($field->isPrimary)
@@ -189,6 +198,7 @@ class ViewGenerator extends ModelGeneratorInfy
         $rules = [];
 
         foreach ($this->config->fields as $field) {
+
             if (!$field->isPrimary && !in_array($field->name, $dont_require_fields)) {
                 if ($field->isNotNull && empty($field->validations)) {
                     $field->validations = 'required';
@@ -247,6 +257,137 @@ class ViewGenerator extends ModelGeneratorInfy
         }
 
         return $rules;
+    }
+
+    function escapeColumnName($col): bool
+    {
+        $column = array();
+        $column["created_date"] = 1;
+        $column["modified_date"] = 1;
+        $column["created_by"] = 1;
+        $column["modified_by"] = 1;
+        $column["created_by_desc"] = 1;
+        $column["modified_by_desc"] = 1;
+
+        if (empty($column[$col])) {
+            return false;
+        }
+        return true;
+    }
+
+    protected function generateRulesFrontend(): string
+    {
+        $dont_require_fields = config('laravel_generator.options.hidden_fields', [])
+            + config('laravel_generator.options.excluded_fields', $this->excluded_fields);
+
+        $str = "";
+        $timestamps = TableFieldsGenerator::getTimestampFieldNames();
+        foreach ($this->config->fields as $field) {
+            if (in_array($field->name, $timestamps)) {
+                continue;
+            }
+            $colescape = $this->escapeColumnName($field->name);
+            if ($colescape) {
+                continue;
+            }
+            // if (!$field->isPrimary && !in_array($field->name, $dont_require_fields)) {
+            //     $is_required = "false";
+            //     if ($field->isNotNull && empty($field->validations)) {
+            //         $field->validations = 'required';
+            //         $is_required = "true";
+            //     }
+
+            //     $str .= "".$field->name.": {";
+            //     $str .= "label:'" .ucfirst($field->name). "',";
+            //     $str .= "required:" . $is_required;
+            //     $str .= "},";
+            // }
+
+            if (!empty($field->validations)) {
+                $is_required = "false";
+                if ($field->isNotNull && empty($field->validations)) {
+                    $field->validations = 'required';
+                    $is_required = "true";
+                }
+                $str .= "" . $field->name . ": {";
+                $str .= "label:'" . ucfirst($field->name) . "',";
+                $str .= "required:" . $is_required;
+                $str .= "},\n";
+            }
+        }
+
+        return $str;
+    }
+
+    protected function generateHeadersFrontend(): array
+    {
+        $casts = [];
+
+        $timestamps = TableFieldsGenerator::getTimestampFieldNames();
+
+        foreach ($this->config->fields as $field) {
+            if (in_array($field->name, $timestamps)) {
+                continue;
+            }
+            $colescape = $this->escapeColumnName($field->name);
+            if ($colescape) {
+                continue;
+            }
+            if (empty($field->validations)) {
+                continue;
+            }
+
+            $rule = "{";
+            $rule .= "name: '" . $field->name . "',";
+            $rule .= "label: '" . ucfirst($field->name) . "',";
+            $rule .= "width: 'auto',";
+            $rule .= "type: ";
+
+            switch (strtolower($field->dbType)) {
+                case 'integer':
+                case 'increments':
+                case 'smallinteger':
+                case 'long':
+                case 'biginteger':
+                    $rule .= "'integer'";
+                    break;
+                case 'double':
+                    $rule .= "'double'";
+                    break;
+                case 'decimal':
+                    $rule .= sprintf("'decimal:%d'", $field->numberDecimalPoints);
+                    break;
+                case 'float':
+                    $rule .= "'float'";
+                    break;
+                case 'boolean':
+                    $rule .= "'boolean'";
+                    break;
+                case 'datetime':
+                case 'datetimetz':
+                    $rule .= "'datetime'";
+                    break;
+                case 'date':
+                    $rule .= "'date'";
+                    break;
+                case 'enum':
+                case 'string':
+                case 'char':
+                case 'text':
+                    $rule .= "'string'";
+                    break;
+                default:
+                    $rule = '';
+                    break;
+            }
+
+            if (!empty($rule)) {
+                $casts[] = $rule;
+            }
+            $rule .= "},";
+        }
+
+        return $casts;
     }
 
     public function generateUniqueRules(): string
@@ -318,6 +459,190 @@ class ViewGenerator extends ModelGeneratorInfy
 
             if (!empty($rule)) {
                 $casts[] = $rule;
+            }
+        }
+
+        return $casts;
+    }
+
+    public function generateTbodyFrontend(): string
+    {
+        $casts = "";
+
+        $timestamps = TableFieldsGenerator::getTimestampFieldNames();
+
+        foreach ($this->config->fields as $field) {
+            if (in_array($field->name, $timestamps)) {
+                continue;
+            }
+            $colescape = $this->escapeColumnName($field->name);
+            if ($colescape) {
+                continue;
+            }
+            if (empty($field->validations)) {
+                continue;
+            }
+
+            $casts .= "<td className='border'>{m." . $field->name . "}</td>\n";
+        }
+
+        return $casts;
+    }
+
+    public function generateRecordsFrontend(): string
+    {
+        $casts = "";
+
+        $timestamps = TableFieldsGenerator::getTimestampFieldNames();
+
+        foreach ($this->config->fields as $field) {
+            if (in_array($field->name, $timestamps)) {
+                continue;
+            }
+            $colescape = $this->escapeColumnName($field->name);
+            if ($colescape) {
+                continue;
+            }
+            if (empty($field->validations)) {
+                continue;
+            }
+
+            $casts .= "const [" . $field->name . ", set" . $field->name . "] = useState('');\n";
+        }
+
+        return $casts;
+    }
+
+    public function generateBodyInsertFrontend(): string
+    {
+        $casts = "";
+
+        $timestamps = TableFieldsGenerator::getTimestampFieldNames();
+
+        foreach ($this->config->fields as $field) {
+            if (in_array($field->name, $timestamps)) {
+                continue;
+            }
+            $colescape = $this->escapeColumnName($field->name);
+            if ($colescape) {
+                continue;
+            }
+            if (empty($field->validations)) {
+                continue;
+            }
+
+            $casts .= $field->name . ",\n";
+        }
+
+        return $casts;
+    }
+
+    public function generateSetRecordsFrontend(): string
+    {
+        $casts = "";
+
+        $timestamps = TableFieldsGenerator::getTimestampFieldNames();
+
+        foreach ($this->config->fields as $field) {
+            if (in_array($field->name, $timestamps)) {
+                continue;
+            }
+            $colescape = $this->escapeColumnName($field->name);
+            if ($colescape) {
+                continue;
+            }
+            if (empty($field->validations)) {
+                continue;
+            }
+
+            $casts .= "set" . $field->name . "(response." . $field->name . ");\n";
+        }
+
+        return $casts;
+    }
+
+    public function generateInputsFrontend($align = null): string
+    {
+        // dd($this->config->fields);
+        $casts = "";
+
+        $timestamps = TableFieldsGenerator::getTimestampFieldNames();
+
+        $is_genap = false;
+        $count_input = 0;
+        $fields = array();
+        foreach ($this->config->fields as $field) {
+            if (in_array($field->name, $timestamps)) {
+                continue;
+            }
+            $colescape = $this->escapeColumnName($field->name);
+            if ($colescape) {
+                continue;
+            }
+            if (empty($field->validations)) {
+                continue;
+            }
+            $fields[] = $field;
+            $count_input += 1;
+        }
+        if ($count_input % 2 === 0) {
+            $is_genap = true;
+        }
+        if ($is_genap) {
+            $count_left = $count_input / 2;
+        } else {
+            $count_left = round($count_input / 2);
+        }
+
+        foreach ($fields as $i => $field) {
+            if (in_array($field->name, $timestamps)) {
+                continue;
+            }
+            $colescape = $this->escapeColumnName($field->name);
+            if ($colescape) {
+                continue;
+            }
+            if (empty($field->validations)) {
+                continue;
+            }
+
+            if ($align == "left" && $i < $count_left) {
+                $casts .= "
+                <Input
+                ref={null}
+                id='" . $field->name . "'
+                type='" . $field->htmlType . "'
+                label={rules." . $field->name . ".label}
+                placeholder={rules." . $field->name . ".label}
+                value={" . $field->name . "}
+                className='block mt-1 w-full'
+                onChange={event => set" . $field->name . "(event.target.value)}
+                required={rules." . $field->name . ".required}
+                autoFocus
+                message_error={errors." . $field->name . "}
+                onError={handleErrors}
+                disabled={is_disabled}
+            />
+                \n";
+            }
+            if ($align == "right" && $i >= $count_left) {
+                $casts .= "
+                <Input
+                ref={null}
+                id='" . $field->name . "'
+                type='" . $field->htmlType . "'
+                label={rules." . $field->name . ".label}
+                placeholder={rules." . $field->name . ".label}
+                value={" . $field->name . "}
+                className='block mt-1 w-full'
+                onChange={event => set" . $field->name . "(event.target.value)}
+                required={rules." . $field->name . ".required}
+                autoFocus
+                message_error={errors." . $field->name . "}
+                onError={handleErrors}
+                disabled={is_disabled}
+            />
+                \n";
             }
         }
 

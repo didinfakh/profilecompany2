@@ -11,17 +11,12 @@ import InputRadio from '@/components/InputRadio';
 import { api_services } from '@/hooks/api_services';
 
 const rules = {
-    @foreach($this->config->fields as $fields)
-    name: {
-        label: '{{ucfirst($fields->name)}}',
-        required: @if($fields->isNotNull && empty($fields->validations) {{true}} @else {{false}} @endif ,
-    },
-    @endforeach
+  {!!$rulesFrontend!!}
 
 }
 
-const {{ucfirst($this->config->tableName)}}edit = (props) => {
-    const page_url = "{{$this->config->tableName}}"
+const {{ucfirst($config->tableName)}}edit = (props) => {
+    const page_url = "{{$config->tableName}}"
 
     const router = useRouter();
     const [errors, setErrors] = useState({})
@@ -36,9 +31,7 @@ const {{ucfirst($this->config->tableName)}}edit = (props) => {
         api_path: `/${page_url}`
     })
 
-    @foreach($this->config->fields as $fields)
-    const [{{$fields->name}}, set{{$fields->name}}] = useState("")
-    @endforeach
+    {!!$recordsFrontend!!}
 
 
     useEffect(() => {
@@ -47,7 +40,7 @@ const {{ucfirst($this->config->tableName)}}edit = (props) => {
 
     const handleFirstLoad = () => {
         handleInitAccessMethod()
-        handleget{{$this->config->tableName}}id()
+        handleget{{$config->tableName}}id()
     }
 
     const handleInitAccessMethod = async () => {
@@ -66,12 +59,12 @@ const {{ucfirst($this->config->tableName)}}edit = (props) => {
         })
     }
 
-    const handleget{{$this->config->tableName}}id = async () => {
+    const handleget{{$config->tableName}}id = async () => {
         if (!id) return
 
         setis_loading(true)
         const response = await getapi_servicesid({ setErrors, id })
-        console.log('get{{$this->config->tableName}}id')
+        console.log('get{{$config->tableName}}id')
         console.log(response)
         setis_loading(false)
 
@@ -79,22 +72,18 @@ const {{ucfirst($this->config->tableName)}}edit = (props) => {
 
         if (response.error) return
 
-        @foreach($this->config->fields as $fields)
-        set{{$fields->name}}(response.{{$fields->name}})
-        @endforeach
+        {!!$setRecordsFrontend!!}
 
     }
 
-    const handlepost{{$this->config->tableName}} = async () => {
+    const handlepost{{$config->tableName}} = async () => {
 
         const body = {
-            @foreach($this->config->fields as $fields)
-            {{$fields->name}},
-            @endforeach
+            {!!$bodyInsertFrontend!!}
         }
         setbtn_loading(true)
         const response = await postapi_services({ setErrors, ...body })
-        console.log('post{{$this->config->tableName}}')
+        console.log('post{{$config->tableName}}')
         console.log(response)
         setbtn_loading(false)
 
@@ -105,17 +94,15 @@ const {{ucfirst($this->config->tableName)}}edit = (props) => {
         router.push(`/${page_url}`)
     }
 
-    const handleput{{$this->config->tableName}} = async () => {
+    const handleput{{$config->tableName}} = async () => {
 
         const body = {
-            @foreach($this->config->fields as $fields)
-            {{$fields->name}},
-            @endforeach
+            {!!$bodyInsertFrontend!!}
         }
 
         setbtn_loading(true)
         const response = await putapi_services({ setErrors, ...body, id })
-        console.log('put{{$this->config->tableName}}')
+        console.log('put{{$config->tableName}}')
         console.log(response)
         setbtn_loading(false)
 
@@ -128,80 +115,21 @@ const {{ucfirst($this->config->tableName)}}edit = (props) => {
 
     return (
         <>
-            <HeaderApp title={`${path === "add" ? "Tambah" : path === "edit" ? "Edit" : "Detail"} {{ucfirst( $this->config->tableName)}}`} is_loading={is_loading} data_btn={Object.keys(access_method).length > 0 ? access_method.btn_top : []} />
+            <HeaderApp title={`${path === "add" ? "Tambah" : path === "edit" ? "Edit" : "Detail"} {{ucfirst($config->tableName)}}`} is_loading={is_loading} data_btn={Object.keys(access_method).length > 0 ? access_method.btn_top : []} />
             <div className='container pl-4 pr-4'>
                 <div className='flex'>
                     <div className='flex-1'>
-                        <Input
-                            ref={null}
-                            id="name"
-                            type="text"
-                            label={rules.name.label}
-                            placeholder={rules.name.label}
-                            value={name}
-                            className="block mt-1 w-full"
-                            onChange={event => setname(event.target.value)}
-                            required={rules.name.required}
-                            autoFocus
-                            message_error={errors.name}
-                            onError={handleErrors}
-                            disabled={is_disabled}
-                        />
-                        <Input
-                            ref={null}
-                            id="email"
-                            type="email"
-                            label={rules.email.label}
-                            placeholder={rules.email.label}
-                            value={email}
-                            className="block mt-1 w-full"
-                            onChange={event => setemail(event.target.value)}
-                            required={rules.email.required}
-                            autoFocus
-                            message_error={errors.email}
-                            onError={handleErrors}
-                            disabled={is_disabled}
-                        />
+                        {!!$inputsFrontendL!!}
                     </div>
                     <div className='flex-1'>
-                        <Input
-                            ref={null}
-                            id="password"
-                            type="password"
-                            label={rules.password.label}
-                            placeholder={`${rules.password.label} ${path === 'edit' ? '(kosongkan jika tidak diubah)' : ''}`}
-                            value={sort}
-                            className="block mt-1 w-full"
-                            onChange={event => setpassword(event.target.value)}
-                            required={path === 'add' ? rules.password.required : false}
-                            autoFocus
-                            message_error={errors.password}
-                            onError={handleErrors}
-                            disabled={is_disabled}
-                        />
-                        <Input
-                            ref={null}
-                            id="confirm_password"
-                            type="password"
-                            label={rules.confirm_password.label}
-                            placeholder={`${rules.confirm_password.label} ${path === 'edit' ? '(kosongkan jika tidak diubah)' : ''}`}
-                            value={confirm_password}
-                            className="block mt-1 w-full"
-                            onChange={event => setconfirm_password(event.target.value)}
-                            required={path === 'add' ? rules.confirm_password.required : false}
-                            autoFocus
-                            message_error={errors.confirm_password}
-                            onError={handleErrors}
-                            disabled={is_disabled}
-                        />
-
-
+                        {!!$inputsFrontendR!!}
                     </div>
+                 
                 </div>
 
                 {path !== 'detail' ? (
                     <div className='flex justify-end'>
-                        <Button className="btn-default-app" disabled={btn_loading} onClick={!id ? handlepostsys_user : handleputsys_user}>
+                        <Button className="btn-default-app" disabled={btn_loading} onClick={!id ? handlepost{{$config->tableName}} : handleput{{$config->tableName}}}>
                             {btn_loading ? 'Loading...' : (
                                 <>
                                     <span className='material-icons icon-btn-left mr-1'>save</span>
@@ -214,6 +142,7 @@ const {{ucfirst($this->config->tableName)}}edit = (props) => {
             </div>
         </>
     )
+   
 }
 
-export default {{ucfirst($this->config->tableName)}}edit
+export default {{ucfirst($config->tableName)}}edit

@@ -78,3 +78,52 @@ Route::resource('mt_sdm_unit', App\Http\Controllers\API\MtSdmUnitAPIController::
 
 Route::resource('mt_risk_tingkat_perlakuan', App\Http\Controllers\API\MtRiskTingkatPerlakuanAPIController::class)
     ->except(['create', 'edit']);
+
+
+Route::resource('mt_sdm_unit', App\Http\Controllers\API\MtSdmUnitAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('mt_risk_dampak', App\Http\Controllers\API\MtSdmUnitAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('mt_risk_kemungkinan', App\Http\Controllers\API\MtSdmUnitAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('mt_risk_kriteria_dampak', App\Http\Controllers\API\MtSdmUnitAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('mt_risk_kriteria_dampak_detail', App\Http\Controllers\API\MtSdmUnitAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('mt_risk_matrix', App\Http\Controllers\API\MtSdmUnitAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('mt_risk_perlakuan', App\Http\Controllers\API\MtSdmUnitAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('mt_risk_sikap_terhadap_risiko', App\Http\Controllers\API\MtSdmUnitAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('mt_risk_taksonomi', App\Http\Controllers\API\MtSdmUnitAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('mt_risk_taksonomi_area', App\Http\Controllers\API\MtSdmUnitAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('mt_risk_taksonomi_objective', App\Http\Controllers\API\MtSdmUnitAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('mt_risk_tingkat', App\Http\Controllers\API\MtSdmUnitAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('mt_risk_tingkat_perlakuan', App\Http\Controllers\API\MtSdmUnitAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('mt_sdm_jabatan', App\Http\Controllers\API\MtSdmUnitAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('mt_sdm_pegawai', App\Http\Controllers\API\MtSdmUnitAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('risk_metrik_strategi_risiko', App\Http\Controllers\API\MtSdmUnitAPIController::class)
+    ->except(['create', 'edit']);
