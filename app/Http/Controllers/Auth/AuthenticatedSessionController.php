@@ -103,8 +103,10 @@ class AuthenticatedSessionController extends AppBaseController
         ))");
 
         foreach ($rows as $r) {
-            $access[] = ["page" => $menuarr[$r->id_menu]->url . '_' . $r->nama];
-            $accessmethod[$menuarr1[$r->id_menu]->url][$r->nama] = true;
+            if (!empty($menuarr[$r->id_menu]) && !empty($r->nama)) {
+                $access[] = ["page" => $menuarr[$r->id_menu]->url . '_' . $r->nama];
+                $accessmethod[$menuarr1[$r->id_menu]->url][$r->nama] = true;
+            }
         }
 
         return array($access, $menu, $accessmethod);

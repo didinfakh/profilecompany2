@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\URL;
 
 class BaseModel extends Model
 {
+    public $orderDefault;
     use SoftDeletes;
     public function search($search)
     {
