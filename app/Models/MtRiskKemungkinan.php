@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class MtRiskKemungkinan extends BaseModel
+class MtRiskKemungkinan extends Model
 {
     public $table = 'mt_risk_kemungkinan';
 
@@ -57,9 +57,9 @@ class MtRiskKemungkinan extends BaseModel
         'frekuensi_kejadian_transaksi' => 'nullable|numeric',
         'persentase_mulai' => 'nullable|numeric',
         'persentase_sampai' => 'nullable|numeric',
-        'deleted_at' => 'nullable',
         'created_by_desc' => 'nullable|string|max:200',
-        'modified_by_desc' => 'nullable|string|max:200'
+        'modified_by_desc' => 'nullable|string|max:200',
+        'deleted_at' => 'nullable'
     ];
 
     public function mtRiskMatrices(): \Illuminate\Database\Eloquent\Relations\HasMany

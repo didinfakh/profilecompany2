@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class MtSdmPegawai extends BaseModel
+class MtSdmPegawai extends Model
 {
     public $table = 'mt_sdm_pegawai';
 
@@ -37,9 +37,9 @@ class MtSdmPegawai extends BaseModel
         'updated_at' => 'nullable',
         'created_by' => 'nullable',
         'modified_by' => 'nullable',
-        'deleted_at' => 'nullable',
         'created_by_desc' => 'nullable|string|max:200',
-        'modified_by_desc' => 'nullable|string|max:200'
+        'modified_by_desc' => 'nullable|string|max:200',
+        'deleted_at' => 'nullable'
     ];
 
     

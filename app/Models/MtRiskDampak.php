@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class MtRiskDampak extends BaseModel
+class MtRiskDampak extends Model
 {
     public $table = 'mt_risk_dampak';
 
@@ -51,18 +51,18 @@ class MtRiskDampak extends BaseModel
         'updated_at' => 'nullable',
         'created_by' => 'nullable',
         'modified_by' => 'nullable',
-        'deleted_at' => 'nullable',
         'created_by_desc' => 'nullable|string|max:200',
-        'modified_by_desc' => 'nullable|string|max:200'
+        'modified_by_desc' => 'nullable|string|max:200',
+        'deleted_at' => 'nullable'
     ];
-
-    public function mtRiskMatrix(): \Illuminate\Database\Eloquent\Relations\HasOne
-    {
-        return $this->hasOne(\App\Models\MtRiskMatrix::class);
-    }
 
     public function mtRiskKriteriaDampakDetails(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(\App\Models\MtRiskKriteriaDampakDetail::class, 'id_dampak');
+    }
+
+    public function mtRiskMatrix(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(\App\Models\MtRiskMatrix::class);
     }
 }

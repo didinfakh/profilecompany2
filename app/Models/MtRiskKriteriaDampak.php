@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class MtRiskKriteriaDampak extends BaseModel
+class MtRiskKriteriaDampak extends Model
 {
     public $table = 'mt_risk_kriteria_dampak';
 
@@ -37,9 +37,9 @@ class MtRiskKriteriaDampak extends BaseModel
         'updated_at' => 'nullable',
         'created_by' => 'nullable',
         'modified_by' => 'nullable',
-        'deleted_at' => 'nullable',
         'created_by_desc' => 'nullable|string|max:200',
-        'modified_by_desc' => 'nullable|string|max:200'
+        'modified_by_desc' => 'nullable|string|max:200',
+        'deleted_at' => 'nullable'
     ];
 
     public function mtRiskKriteriaDampakDetail(): \Illuminate\Database\Eloquent\Relations\HasOne

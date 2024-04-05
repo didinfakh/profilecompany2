@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class MtSdmJabatan extends BaseModel
+class MtSdmJabatan extends Model
 {
     public $table = 'mt_sdm_jabatan';
 
@@ -56,9 +56,9 @@ class MtSdmJabatan extends BaseModel
         'updated_at' => 'nullable',
         'created_by' => 'nullable',
         'modified_by' => 'nullable',
-        'deleted_at' => 'nullable',
         'created_by_desc' => 'nullable|string|max:200',
-        'modified_by_desc' => 'nullable|string|max:200'
+        'modified_by_desc' => 'nullable|string|max:200',
+        'deleted_at' => 'nullable'
     ];
 
     public function idUnit(): \Illuminate\Database\Eloquent\Relations\BelongsTo

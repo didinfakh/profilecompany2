@@ -4,15 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class MtRiskPerlakuan extends Model
+class MtRiskTaksonomiObjective extends Model
 {
-    public $table = 'mt_risk_perlakuan';
+    public $table = 'mt_risk_taksonomi_objective';
 
-    protected $primaryKey = 'id_perluakuan';
+    protected $primaryKey = 'id_taksonomi_objective';
 
     public $fillable = [
+        'kode',
         'nama',
-        'keterangan',
         'jenis',
         'created_by',
         'modified_by',
@@ -21,16 +21,17 @@ class MtRiskPerlakuan extends Model
     ];
 
     protected $casts = [
+        'kode' => 'string',
         'nama' => 'string',
-        'keterangan' => 'string',
+        'jenis' => 'string',
         'created_by_desc' => 'string',
         'modified_by_desc' => 'string'
     ];
 
     public array $rules = [
-        'nama' => 'nullable|string|max:200',
-        'keterangan' => 'nullable|string|max:4000',
-        'jenis' => 'nullable',
+        'kode' => 'required|string|max:5',
+        'nama' => 'required|string|max:200',
+        'jenis' => 'nullable|string|max:50',
         'created_at' => 'nullable',
         'updated_at' => 'nullable',
         'created_by' => 'nullable',
@@ -40,8 +41,8 @@ class MtRiskPerlakuan extends Model
         'deleted_at' => 'nullable'
     ];
 
-    public function mtRiskTingkatPerlakuans(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function mtRiskTaksonomiAreas(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->hasMany(\App\Models\MtRiskTingkatPerlakuan::class, 'id_perlakuan');
+        return $this->hasMany(\App\Models\MtRiskTaksonomiArea::class, 'id_taksonomi_objective');
     }
 }

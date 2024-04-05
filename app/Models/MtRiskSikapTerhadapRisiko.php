@@ -4,16 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class MtRiskPerlakuan extends Model
+class MtRiskSikapTerhadapRisiko extends Model
 {
-    public $table = 'mt_risk_perlakuan';
+    public $table = 'mt_risk_sikap_terhadap_risiko';
 
-    protected $primaryKey = 'id_perluakuan';
+    protected $primaryKey = 'id_sikap_terhadap_risiko';
 
     public $fillable = [
         'nama',
-        'keterangan',
-        'jenis',
         'created_by',
         'modified_by',
         'created_by_desc',
@@ -22,15 +20,12 @@ class MtRiskPerlakuan extends Model
 
     protected $casts = [
         'nama' => 'string',
-        'keterangan' => 'string',
         'created_by_desc' => 'string',
         'modified_by_desc' => 'string'
     ];
 
     public array $rules = [
-        'nama' => 'nullable|string|max:200',
-        'keterangan' => 'nullable|string|max:4000',
-        'jenis' => 'nullable',
+        'nama' => 'nullable|string|max:50',
         'created_at' => 'nullable',
         'updated_at' => 'nullable',
         'created_by' => 'nullable',
@@ -40,8 +35,5 @@ class MtRiskPerlakuan extends Model
         'deleted_at' => 'nullable'
     ];
 
-    public function mtRiskTingkatPerlakuans(): \Illuminate\Database\Eloquent\Relations\HasMany
-    {
-        return $this->hasMany(\App\Models\MtRiskTingkatPerlakuan::class, 'id_perlakuan');
-    }
+    
 }
