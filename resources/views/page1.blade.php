@@ -91,6 +91,8 @@ const {{ucfirst($config->tableName)}} = (props) => {
             <HeaderApp title="{{ucfirst($config->tableName)}}" is_loading={is_loading} data_btn={Object.keys(access_method).length > 0 ? access_method.btn_top : []} />
             <div className='container pl-4 pr-4'>
 
+            <div className="table-responsive">
+
                 <table class="w-full table table-auto border-collapse border">
                     <thead>
                         <TableHead data={headers} access_role={[]} />
@@ -121,6 +123,7 @@ const {{ucfirst($config->tableName)}} = (props) => {
 
                     </tbody>
                 </table>
+            </div>
 
                 <Pagination 
                 paginate={datafilter.paginate}

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import HeaderApp from '@/components/HeaderApp';
 import { checkNotAuthorized, initAccessMethod } from '@/app/Utils';
 import InputSelect from '@/components/InputSelect';
+import InputCheckbox from '@/components/InputCheckbox';
 import Input from '@/components/Input';
 import Button from '@/components/Button';
 import InputRadio from '@/components/InputRadio';
@@ -41,6 +42,8 @@ const {{ucfirst($config->tableName)}}edit = (props) => {
     const handleFirstLoad = () => {
         handleInitAccessMethod()
         handleget{{$config->tableName}}id()
+
+        {!!$getDataRelationFrontend!!}
     }
 
     const handleInitAccessMethod = async () => {
@@ -112,6 +115,8 @@ const {{ucfirst($config->tableName)}}edit = (props) => {
 
         router.push(`/${page_url}`)
     }
+
+    {!!$fncDataRelationFrontend!!}
 
     return (
         <>

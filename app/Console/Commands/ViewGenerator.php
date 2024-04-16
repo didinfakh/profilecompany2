@@ -62,7 +62,7 @@ class ViewGenerator extends ModelGeneratorInfy
             'customSoftDelete' => $this->customSoftDelete(),
             'relations'        => $this->generateRelations(),
             'timestamps'       => config('laravel_generator.timestamps.enabled', true),
-            'headersFrontend'  => implode('},' . infy_nl_tab(1, 2), $this->generateHeadersFrontend()) . implode('},' . infy_nl_tab(1, 2), $this->generateHeadersFrontend()) ? "}" : "",
+            'headersFrontend'  => $this->generateHeadersFrontend(),
             'rulesFrontend'  => $this->generateRulesFrontend(),
             'tbodyFrontend'  => $this->generateTbodyFrontend(),
             'recordsFrontend'  => $this->generateRecordsFrontend(),
@@ -70,6 +70,8 @@ class ViewGenerator extends ModelGeneratorInfy
             'setRecordsFrontend'  => $this->generateSetRecordsFrontend(),
             'inputsFrontendL'  => $this->generateInputsFrontend('left'),
             'inputsFrontendR'  => $this->generateInputsFrontend('right'),
+            'getDataRelationFrontend'  => $this->generateGetDataRelationFrontend('get'),
+            'fncDataRelationFrontend'  => $this->generateGetDataRelationFrontend(),
         ];
     }
 
@@ -268,6 +270,7 @@ class ViewGenerator extends ModelGeneratorInfy
         $column["modified_by"] = 1;
         $column["created_by_desc"] = 1;
         $column["modified_by_desc"] = 1;
+        $column["deleted_at"] = 1;
 
         if (empty($column[$col])) {
             return false;
@@ -319,9 +322,9 @@ class ViewGenerator extends ModelGeneratorInfy
         return $str;
     }
 
-    protected function generateHeadersFrontend(): array
+    protected function generateHeadersFrontend(): string
     {
-        $casts = [];
+        $casts = "";
 
         $timestamps = TableFieldsGenerator::getTimestampFieldNames();
 
@@ -337,54 +340,58 @@ class ViewGenerator extends ModelGeneratorInfy
                 continue;
             }
 
+
             $rule = "{";
             $rule .= "name: '" . $field->name . "',";
             $rule .= "label: '" . ucfirst($field->name) . "',";
             $rule .= "width: 'auto',";
             $rule .= "type: ";
 
-            switch (strtolower($field->dbType)) {
-                case 'integer':
-                case 'increments':
-                case 'smallinteger':
-                case 'long':
-                case 'biginteger':
-                    $rule .= "'integer'";
-                    break;
-                case 'double':
-                    $rule .= "'double'";
-                    break;
-                case 'decimal':
-                    $rule .= sprintf("'decimal:%d'", $field->numberDecimalPoints);
-                    break;
-                case 'float':
-                    $rule .= "'float'";
-                    break;
-                case 'boolean':
-                    $rule .= "'boolean'";
-                    break;
-                case 'datetime':
-                case 'datetimetz':
-                    $rule .= "'datetime'";
-                    break;
-                case 'date':
-                    $rule .= "'date'";
-                    break;
-                case 'enum':
-                case 'string':
-                case 'char':
-                case 'text':
-                    $rule .= "'string'";
-                    break;
-                default:
-                    $rule = '';
-                    break;
-            }
+            $rule .= "'" . $field->dbType . "'";
+            // switch (strtolower($field->dbType)) {
+            //     case 'integer':
+            //     case 'increments':
+            //     case 'smallinteger':
+            //     case 'long':
+            //     case 'biginteger':
+            //         $rule .= "'integer'";
+            //         break;
+            //     case 'double':
+            //         $rule .= "'double'";
+            //         break;
+            //     case 'decimal':
+            //         $rule .= sprintf("'decimal:%d'", $field->numberDecimalPoints);
+            //         break;
+            //     case 'float':
+            //         $rule .= "'float'";
+            //         break;
+            //     case 'boolean':
+            //         $rule .= "'boolean'";
+            //         break;
+            //     case 'datetime':
+            //     case 'datetimetz':
+            //         $rule .= "'datetime'";
+            //         break;
+            //     case 'date':
+            //         $rule .= "'date'";
+            //         break;
+            //     case 'enum':
+            //     case 'string':
+            //     case 'char':
+            //     case 'text':
+            //         $rule .= "'string'";
+            //         break;
+            //     default:
+            //         $rule = '';
+            //         break;
+            // }
 
-            if (!empty($rule)) {
-                $casts[] = $rule;
-            }
-            $rule .= "},";
+            // if (!empty($rule)) {
+            //     $casts[] = $rule;
+            // }
+            $rule .= "},\n";
+
+            $casts .= $rule;
         }
 
         return $casts;
@@ -564,6 +571,7 @@ class ViewGenerator extends ModelGeneratorInfy
     public function generateInputsFrontend($align = null): string
     {
         // dd($this->config->fields);
+        // dd($this->config->relations);
         $casts = "";
 
         $timestamps = TableFieldsGenerator::getTimestampFieldNames();
@@ -606,46 +614,159 @@ class ViewGenerator extends ModelGeneratorInfy
                 continue;
             }
 
+
+            $rescasts = "";
             if ($align == "left" && $i < $count_left) {
-                $casts .= "
-                <Input
-                ref={null}
-                id='" . $field->name . "'
-                type='" . $field->htmlType . "'
-                label={rules." . $field->name . ".label}
-                placeholder={rules." . $field->name . ".label}
-                value={" . $field->name . "}
-                className='block mt-1 w-full'
-                onChange={event => set" . $field->name . "(event.target.value)}
-                required={rules." . $field->name . ".required}
-                autoFocus
-                message_error={errors." . $field->name . "}
-                onError={handleErrors}
-                disabled={is_disabled}
-            />
-                \n";
+                $rescasts = $this->InputsFrontend($field);
             }
             if ($align == "right" && $i >= $count_left) {
-                $casts .= "
-                <Input
-                ref={null}
-                id='" . $field->name . "'
-                type='" . $field->htmlType . "'
-                label={rules." . $field->name . ".label}
-                placeholder={rules." . $field->name . ".label}
-                value={" . $field->name . "}
-                className='block mt-1 w-full'
-                onChange={event => set" . $field->name . "(event.target.value)}
-                required={rules." . $field->name . ".required}
-                autoFocus
-                message_error={errors." . $field->name . "}
-                onError={handleErrors}
-                disabled={is_disabled}
-            />
-                \n";
+                $rescasts = $this->InputsFrontend($field);
+            }
+
+            $casts .= $rescasts;
+        }
+
+        return $casts;
+    }
+
+    function InputsFrontend($field): string
+    {
+        $ischeckbox = true;
+        $pos = strrpos($field->name, "is_");
+        if ($pos === false) { 
+            $ischeckbox = false;
+        }
+        $casts = "";
+
+        $isrelation = false;
+        $type_select = "";
+        if (isset($this->config->relations) && !empty($this->config->relations)) {
+            foreach ($this->config->relations as $relation) {
+                if($relation->inputs[1] == $field->name) {
+                    $type_select = $relation->type;
+                    $isrelation = true;
+                    break;
+                }
             }
         }
 
+        if($ischeckbox) {
+            $label_this = "";
+            $label_this = ucfirst(substr($field->name, 3));
+            $casts .= "
+            <InputCheckbox
+            ref={null}
+            id='" . $field->name . "'
+            type='checkbox'
+            label={'".$label_this."'}
+            placeholder={'".$label_this."'}
+            data={[{label: 'Ya', value: 1}]}
+            value={" . $field->name . "}
+            className='block mt-1 w-full'
+            onChange={set" . $field->name . "}
+            required={rules." . $field->name . ".required}
+            autoFocus
+            message_error={errors." . $field->name . "}
+            onError={handleErrors}
+            disabled={is_disabled}
+        />
+            \n";
+        }elseif($isrelation) {
+            $isMulti = false;
+            if($type_select == "mt1") {
+                $isMulti = true;
+            } 
+            $casts .= "
+            <InputSelect
+            ref={null}
+            id='".$field->name."'
+            type='select'
+            label={rules.".$field->name.".label}
+            placeholder={rules.".$field->name.".label}
+            value={".$field->name."}
+            className='block mt-1 w-full'
+            data={data".$field->name."}
+            onChange={set".$field->name."}
+            required={rules.".$field->name.".required}
+            autoFocus
+            isMulti={".$isMulti."}
+            message_error={errors." . $field->name . "}
+            onError={handleErrors}
+            disabled={is_disabled}
+        />
+            \n";
+
+        } else {
+            $casts .= "
+            <Input
+            ref={null}
+            id='" . $field->name . "'
+            type='" . $field->htmlType . "'
+            label={rules." . $field->name . ".label}
+            placeholder={rules." . $field->name . ".label}
+            value={" . $field->name . "}
+            className='block mt-1 w-full'
+            onChange={event => set" . $field->name . "(event.target.value)}
+            required={rules." . $field->name . ".required}
+            autoFocus
+            message_error={errors." . $field->name . "}
+            onError={handleErrors}
+            disabled={is_disabled}
+        />
+            \n";
+
+        }
+        return $casts;
+    }
+
+    
+    public function generateGetDataRelationFrontend($get = null): string
+    {
+        $get_str = "";
+        $casts = "";
+
+        if (isset($this->config->relations) && !empty($this->config->relations)) {
+            foreach ($this->config->relations as $relation) {
+                $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
+                if($relation->type == "mt1" || $relation->type == "1t1") {
+                    $table_name = "";
+                    $table_name = $relation->inputs[0];
+                    $table_name = preg_replace('/(?<!\ )[A-Z]/', '_$0', $table_name);
+                    $table_name = strtolower(ltrim($table_name, '_'));
+
+                    $casts .= "const [data".$relation->inputs[1].", setdata".$relation->inputs[1]."] = useState([])\n";
+                    $casts .= "
+                    const handleget".$relation->inputs[1]." = async () => {
+                        setis_loading(true)
+                        const response = await getapi_services({ setErrors, customUrl: '/".$table_name."', filter: {
+                            paginate: {
+                                page: 1,
+                                pagesize: 10
+                            }
+                        } })
+                        console.log('get".$table_name."')
+                        console.log(response)
+                
+                        checkNotAuthorized(response)
+                        let dataarr = []
+                        response.data.map(m => {
+                            dataarr.push({
+                                label: m.nama,
+                                value: m.".$relation->inputs[1]."
+                            })
+                        })
+                        setdata".$relation->inputs[1]."(dataarr)
+                    }
+                    \n";
+                    $get_str .= "handleget".$relation->inputs[1]."()\n";
+                }
+                
+            }
+        }
+
+        if($get) {
+            return $get_str;
+        }
         return $casts;
     }
 
