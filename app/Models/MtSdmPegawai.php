@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class MtSdmPegawai extends Model
+class MtSdmPegawai extends BaseModel
 {
     public $table = 'mt_sdm_pegawai';
 

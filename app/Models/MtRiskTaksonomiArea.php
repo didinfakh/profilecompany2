@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class MtRiskTaksonomiArea extends Model
+class MtRiskTaksonomiArea extends BaseModel
 {
     public $table = 'mt_risk_taksonomi_area';
 

@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class MtSdmJabatan extends Model
+class MtSdmJabatan extends BaseModel
 {
     public $table = 'mt_sdm_jabatan';
 

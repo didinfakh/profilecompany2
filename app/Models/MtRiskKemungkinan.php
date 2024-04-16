@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class MtRiskKemungkinan extends Model
+class MtRiskKemungkinan extends BaseModel
 {
     public $table = 'mt_risk_kemungkinan';
 

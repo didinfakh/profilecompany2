@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class MtSdmUnit extends Model
+class MtSdmUnit extends BaseModel
 {
     public $table = 'mt_sdm_unit';
 
@@ -52,5 +52,20 @@ class MtSdmUnit extends Model
     public function mtSdmJabatans(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(\App\Models\MtSdmJabatan::class, 'id_unit');
+    }
+
+    public function riskMetrikStrategiRisikos(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(\App\Models\RiskMetrikStrategiRisiko::class, 'id_unit');
+    }
+
+    public function riskSasarans(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(\App\Models\RiskSasaran::class, 'id_unit');
+    }
+
+    public function riskCapacityLimits(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(\App\Models\RiskCapacityLimit::class, 'id_unit');
     }
 }

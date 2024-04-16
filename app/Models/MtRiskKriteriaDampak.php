@@ -4,12 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class MtRiskKriteriaDampak extends Model
+class MtRiskKriteriaDampak1 extends BaseModel
 {
     public $table = 'mt_risk_kriteria_dampak';
 
     protected $primaryKey = 'id_kriteria_dampak';
-
+kdj
     public $fillable = [
         'nama',
         'id_induk',

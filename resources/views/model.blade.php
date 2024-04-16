@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 @if($config->options->tests or $config->options->factory) {{ 'use Illuminate\Database\Eloquent\Factories\HasFactory;' }}@endif
 
 @if(isset($swaggerDocs)){!! $swaggerDocs  !!}@endif
-class {{ $config->modelNames->name }} extends Model
+class {{ $config->modelNames->name }} extends BaseModel
 {
 @if($config->options->softDelete) {{ infy_tab().'use SoftDeletes;' }}@endif
 @if($config->options->tests or $config->options->factory){{ infy_tab().'use HasFactory;' }}@endif

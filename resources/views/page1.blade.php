@@ -104,12 +104,16 @@ const {{ucfirst($config->tableName)}} = (props) => {
                          
                                 <td className='border'>
                                     <div className='flex align-center justify-end td-action'>
+                                    {Object.keys(access_method).length > 0 && Object.keys( access_method.btn_edit_delete).length > 0 && access_method.btn_edit_delete.edit === true ? (
                                         <BtnIconAct className="btn-warning" icon="edit" href={`/${page_url}/edit/${m.{{$customPrimaryKey}} }`} />
+                                        ) : null}
+                                        {Object.keys(access_method).length > 0 && Object.keys( access_method.btn_edit_delete).length > 0 && access_method.btn_edit_delete.delete === true ? (
                                         <BtnIconAct className="btn-danger" icon="delete" onTap={() => {
                                                 if (confirm('Yakin menghapus data ini?')) {
                                                     handledelete{{$config->tableName}}(m.{{$customPrimaryKey}})
                                                 }
                                             }} />
+                                            ) : null}
                                     </div>
                                 </td>
                             </tr>
@@ -119,7 +123,7 @@ const {{ucfirst($config->tableName)}} = (props) => {
                 </table>
 
                 <Pagination 
-                paginate={dataFilter.paginate}
+                paginate={datafilter.paginate}
                 onPageClick={(page) => {
                     setdatafilter({
                         ...datafilter,

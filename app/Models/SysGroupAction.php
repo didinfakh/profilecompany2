@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 
-class SysGroupAction extends Model
+class SysGroupAction extends BaseModel
 {
     public $table = 'sys_group_action';
 

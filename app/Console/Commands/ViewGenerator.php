@@ -62,7 +62,7 @@ class ViewGenerator extends ModelGeneratorInfy
             'customSoftDelete' => $this->customSoftDelete(),
             'relations'        => $this->generateRelations(),
             'timestamps'       => config('laravel_generator.timestamps.enabled', true),
-            'headersFrontend'  => implode('},' . infy_nl_tab(1, 2), $this->generateHeadersFrontend()) . "}",
+            'headersFrontend'  => implode('},' . infy_nl_tab(1, 2), $this->generateHeadersFrontend()) . implode('},' . infy_nl_tab(1, 2), $this->generateHeadersFrontend()) ? "}" : "",
             'rulesFrontend'  => $this->generateRulesFrontend(),
             'tbodyFrontend'  => $this->generateTbodyFrontend(),
             'recordsFrontend'  => $this->generateRecordsFrontend(),
