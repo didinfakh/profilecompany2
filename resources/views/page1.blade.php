@@ -7,6 +7,7 @@ import HeaderApp from '@/components/HeaderApp';
 import { checkNotAuthorized, initAccessMethod } from '@/app/Utils';
 
 import BtnIconAct from '@/components/BtnIconAct';
+import Pagination from '@/components/Pagination';
 import { api_services } from '@/hooks/api_services';
 import TableHead from '@/components/TableHead';
 
@@ -29,7 +30,7 @@ const {{ucfirst($config->tableName)}} = (props) => {
     const [datafilter, setdatafilter] = useState({
         paginate: {
             page: 1,
-            pagesize: 1000
+            pagesize: 1000,
         },
         nama: "",
     })
@@ -42,7 +43,7 @@ const {{ucfirst($config->tableName)}} = (props) => {
         if (first_load) {
             handleget{{$config->tableName}}()
         }
-    }, [datafilter.nama])
+    }, [datafilter.paginate.page, datafilter.nama])
 
     const handleFirstLoad = () => {
         handleInitAccessMethod()
@@ -62,8 +63,15 @@ const {{ucfirst($config->tableName)}} = (props) => {
         setis_loading(false)
 
         checkNotAuthorized(response)
-        setfirst_load(true)
         set{{$config->tableName}}(response.data)
+        setdatafilter({
+            ...datafilter,
+            paginate: {
+                ...datafilter.paginate,
+                total_records: response.total_records
+            }
+        })
+        setfirst_load(true)
     }
 
 
@@ -109,6 +117,19 @@ const {{ucfirst($config->tableName)}} = (props) => {
 
                     </tbody>
                 </table>
+
+                <Pagination 
+                paginate={dataFilter.paginate}
+                onPageClick={(page) => {
+                    setdatafilter({
+                        ...datafilter,
+                        paginate: {
+                            ...datafilter.paginate,
+                            page: page.selected + 1
+                        }
+                    })
+                }}
+                />
 
             </div>
         </>
