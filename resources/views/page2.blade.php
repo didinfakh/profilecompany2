@@ -116,6 +116,7 @@ const {{ucfirst($config->tableName)}}edit = (props) => {
         router.push(`/${page_url}`)
     }
 
+    {!!$getVarRelationFrontend!!}
     {!!$fncDataRelationFrontend!!}
 
     return (
