@@ -11,6 +11,8 @@ import Pagination from '@/components/Pagination';
 import { api_services } from '@/hooks/api_services';
 import TableHead from '@/components/TableHead';
 
+const titlePage = "{!!$titlePageFrontend!!}"
+
 const headers = [
     {!!$headersFrontend!!}
 ]
@@ -88,7 +90,7 @@ const {{ucfirst($config->tableName)}} = (props) => {
 
     return (
         <>
-            <HeaderApp title="{{ucfirst($config->tableName)}}" is_loading={is_loading} data_btn={Object.keys(access_method).length > 0 ? access_method.btn_top : []} />
+            <HeaderApp title={titlePage} is_loading={is_loading} data_btn={Object.keys(access_method).length > 0 ? access_method.btn_top : []} />
             <div className='container pl-4 pr-4'>
 
             <div className="table-responsive">

@@ -62,6 +62,7 @@ class ViewGenerator extends ModelGeneratorInfy
             'customSoftDelete' => $this->customSoftDelete(),
             'relations'        => $this->generateRelations(),
             'timestamps'       => config('laravel_generator.timestamps.enabled', true),
+            'titlePageFrontend' => $this->generateTitlePageFrontend(),
             'headersFrontend'  => $this->generateHeadersFrontend(),
             'rulesFrontend'  => $this->generateRulesFrontend(),
             'tbodyFrontend'  => $this->generateTbodyFrontend(),
@@ -272,6 +273,8 @@ class ViewGenerator extends ModelGeneratorInfy
         $column["created_by_desc"] = 1;
         $column["modified_by_desc"] = 1;
         $column["deleted_at"] = 1;
+        $column["deleted_by"] = 1;
+        $column["deleted_by_desc"] = 1;
 
         if (empty($column[$col])) {
             return false;
@@ -324,6 +327,25 @@ class ViewGenerator extends ModelGeneratorInfy
         return $str;
     }
 
+    protected function generateTitlePageFrontend(): string
+    {
+        $casts = "";
+
+        $pos = strrpos($this->config->tableName, "mt_");
+        if ($pos === false) {
+            return ucfirst($this->config->tableName);
+        }
+        // dd($this->config->tableName);
+        $table_name_arr = explode('_', $this->config->tableName);
+        foreach ($table_name_arr as $t) {
+            if ($t != "mt") {
+                $casts .= "" . ucfirst($t) . " ";
+            }
+        }
+
+        return $casts;
+    }
+
     protected function generateHeadersFrontend(): string
     {
         $casts = "";
@@ -341,56 +363,16 @@ class ViewGenerator extends ModelGeneratorInfy
             if (empty($field->validations)) {
                 continue;
             }
-
+            $label_this = $this->LabelName($field->name);
 
             $rule = "{";
             $rule .= "name: '" . $field->name . "',";
-            $rule .= "label: '" . ucfirst($field->name) . "',";
+            $rule .= "label: '" . $label_this . "',";
             $rule .= "width: 'auto',";
             $rule .= "type: ";
 
             $rule .= "'" . $field->dbType . "'";
-            // switch (strtolower($field->dbType)) {
-            //     case 'integer':
-            //     case 'increments':
-            //     case 'smallinteger':
-            //     case 'long':
-            //     case 'biginteger':
-            //         $rule .= "'integer'";
-            //         break;
-            //     case 'double':
-            //         $rule .= "'double'";
-            //         break;
-            //     case 'decimal':
-            //         $rule .= sprintf("'decimal:%d'", $field->numberDecimalPoints);
-            //         break;
-            //     case 'float':
-            //         $rule .= "'float'";
-            //         break;
-            //     case 'boolean':
-            //         $rule .= "'boolean'";
-            //         break;
-            //     case 'datetime':
-            //     case 'datetimetz':
-            //         $rule .= "'datetime'";
-            //         break;
-            //     case 'date':
-            //         $rule .= "'date'";
-            //         break;
-            //     case 'enum':
-            //     case 'string':
-            //     case 'char':
-            //     case 'text':
-            //         $rule .= "'string'";
-            //         break;
-            //     default:
-            //         $rule = '';
-            //         break;
-            // }
-
-            // if (!empty($rule)) {
-            //     $casts[] = $rule;
-            // }
+         
             $rule .= "},\n";
 
             $casts .= $rule;
