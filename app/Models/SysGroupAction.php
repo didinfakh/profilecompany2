@@ -9,7 +9,7 @@ class SysGroupAction extends BaseModel
 {
     public $table = 'sys_group_action';
 
-    public $primaryKey = "id_group_menu,id_action";
+    public $primaryKey = 'id_group_menu';
 
     public $fillable = [
         'id_group_menu',
