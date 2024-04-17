@@ -52,4 +52,9 @@ class MtRiskTaksonomi extends BaseModel
     {
         return $this->belongsTo(\App\Models\MtRiskTaksonomiArea::class, 'id_taksonomi_area');
     }
+
+    public function riskMetrikStrategiRisikos(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(\App\Models\RiskMetrikStrategiRisiko::class, 'id_taksonomi');
+    }
 }
