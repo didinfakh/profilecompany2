@@ -172,3 +172,6 @@ Route::resource('mt_sdm_pegawai', App\Http\Controllers\API\MtSdmPegawaiAPIContro
 
 Route::resource('risk_metrik_strategi_risiko', App\Http\Controllers\API\RiskMetrikStrategiRisikoAPIController::class)
     ->except(['create', 'edit']);
+
+Route::resource('risk_register', App\Http\Controllers\API\RiskRegisterAPIController::class)
+    ->except(['create', 'edit']);

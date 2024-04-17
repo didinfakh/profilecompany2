@@ -11,6 +11,8 @@ import Pagination from '@/components/Pagination';
 import { api_services } from '@/hooks/api_services';
 import TableHead from '@/components/TableHead';
 
+const titlePage = "{!!$titlePageFrontend!!}"
+
 const headers = [
     {!!$headersFrontend!!}
 ]
@@ -88,21 +90,23 @@ const {{ucfirst($config->tableName)}} = (props) => {
 
     return (
         <>
-            <HeaderApp title="{{ucfirst($config->tableName)}}" is_loading={is_loading} data_btn={Object.keys(access_method).length > 0 ? access_method.btn_top : []} />
+            <HeaderApp title={titlePage} is_loading={is_loading} data_btn={Object.keys(access_method).length > 0 ? access_method.btn_top : []} />
             <div className='container pl-4 pr-4'>
 
             <div className="table-responsive">
 
-                <table class="w-full table table-auto border-collapse border">
+                <table className="w-full table table-auto border-collapse border">
                     <thead>
                         <TableHead data={headers} access_role={[]} />
                     </thead>
                     <tbody>
                         { {{$config->tableName}} .map((m, i) => (
-                            <tr>
+                            <tr key={i}>
                                 <td className='border text-center'>{i + 1}</td>
                             
-                                {!!$tbodyFrontend!!}
+                                {Object.keys(m).map(a => {
+                                            return headers.map(x => x.name === a ? (<td key={i} className='border'>{m[a]}</td>) : null)
+                                        })}
                          
                                 <td className='border'>
                                     <div className='flex align-center justify-end td-action'>

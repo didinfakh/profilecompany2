@@ -62,6 +62,7 @@ class ViewGenerator extends ModelGeneratorInfy
             'customSoftDelete' => $this->customSoftDelete(),
             'relations'        => $this->generateRelations(),
             'timestamps'       => config('laravel_generator.timestamps.enabled', true),
+            'titlePageFrontend' => $this->generateTitlePageFrontend(),
             'headersFrontend'  => $this->generateHeadersFrontend(),
             'rulesFrontend'  => $this->generateRulesFrontend(),
             'tbodyFrontend'  => $this->generateTbodyFrontend(),
@@ -70,6 +71,7 @@ class ViewGenerator extends ModelGeneratorInfy
             'setRecordsFrontend'  => $this->generateSetRecordsFrontend(),
             'inputsFrontendL'  => $this->generateInputsFrontend('left'),
             'inputsFrontendR'  => $this->generateInputsFrontend('right'),
+            'getVarRelationFrontend'  => $this->generateGetDataRelationFrontend('var'),
             'getDataRelationFrontend'  => $this->generateGetDataRelationFrontend('get'),
             'fncDataRelationFrontend'  => $this->generateGetDataRelationFrontend(),
         ];
@@ -271,6 +273,8 @@ class ViewGenerator extends ModelGeneratorInfy
         $column["created_by_desc"] = 1;
         $column["modified_by_desc"] = 1;
         $column["deleted_at"] = 1;
+        $column["deleted_by"] = 1;
+        $column["deleted_by_desc"] = 1;
 
         if (empty($column[$col])) {
             return false;
@@ -307,19 +311,39 @@ class ViewGenerator extends ModelGeneratorInfy
             // }
 
             if (!empty($field->validations)) {
+                $label_this = $this->LabelName($field->name);
                 $is_required = "false";
                 if ($field->isNotNull && empty($field->validations)) {
                     $field->validations = 'required';
                     $is_required = "true";
                 }
                 $str .= "" . $field->name . ": {";
-                $str .= "label:'" . ucfirst($field->name) . "',";
+                $str .= "label:'" . $label_this . "',";
                 $str .= "required:" . $is_required;
                 $str .= "},\n";
             }
         }
 
         return $str;
+    }
+
+    protected function generateTitlePageFrontend(): string
+    {
+        $casts = "";
+
+        $pos = strrpos($this->config->tableName, "mt_");
+        if ($pos === false) {
+            return ucfirst($this->config->tableName);
+        }
+        // dd($this->config->tableName);
+        $table_name_arr = explode('_', $this->config->tableName);
+        foreach ($table_name_arr as $t) {
+            if ($t != "mt") {
+                $casts .= "" . ucfirst($t) . " ";
+            }
+        }
+
+        return $casts;
     }
 
     protected function generateHeadersFrontend(): string
@@ -339,56 +363,16 @@ class ViewGenerator extends ModelGeneratorInfy
             if (empty($field->validations)) {
                 continue;
             }
-
+            $label_this = $this->LabelName($field->name);
 
             $rule = "{";
             $rule .= "name: '" . $field->name . "',";
-            $rule .= "label: '" . ucfirst($field->name) . "',";
+            $rule .= "label: '" . $label_this . "',";
             $rule .= "width: 'auto',";
             $rule .= "type: ";
 
             $rule .= "'" . $field->dbType . "'";
-            // switch (strtolower($field->dbType)) {
-            //     case 'integer':
-            //     case 'increments':
-            //     case 'smallinteger':
-            //     case 'long':
-            //     case 'biginteger':
-            //         $rule .= "'integer'";
-            //         break;
-            //     case 'double':
-            //         $rule .= "'double'";
-            //         break;
-            //     case 'decimal':
-            //         $rule .= sprintf("'decimal:%d'", $field->numberDecimalPoints);
-            //         break;
-            //     case 'float':
-            //         $rule .= "'float'";
-            //         break;
-            //     case 'boolean':
-            //         $rule .= "'boolean'";
-            //         break;
-            //     case 'datetime':
-            //     case 'datetimetz':
-            //         $rule .= "'datetime'";
-            //         break;
-            //     case 'date':
-            //         $rule .= "'date'";
-            //         break;
-            //     case 'enum':
-            //     case 'string':
-            //     case 'char':
-            //     case 'text':
-            //         $rule .= "'string'";
-            //         break;
-            //     default:
-            //         $rule = '';
-            //         break;
-            // }
-
-            // if (!empty($rule)) {
-            //     $casts[] = $rule;
-            // }
+         
             $rule .= "},\n";
 
             $casts .= $rule;
@@ -601,6 +585,7 @@ class ViewGenerator extends ModelGeneratorInfy
         } else {
             $count_left = round($count_input / 2);
         }
+        // dd($fields);
 
         foreach ($fields as $i => $field) {
             if (in_array($field->name, $timestamps)) {
@@ -631,9 +616,11 @@ class ViewGenerator extends ModelGeneratorInfy
 
     function InputsFrontend($field): string
     {
+        // dd($this->config->relations);
+
         $ischeckbox = true;
         $pos = strrpos($field->name, "is_");
-        if ($pos === false) { 
+        if ($pos === false) {
             $ischeckbox = false;
         }
         $casts = "";
@@ -642,7 +629,7 @@ class ViewGenerator extends ModelGeneratorInfy
         $type_select = "";
         if (isset($this->config->relations) && !empty($this->config->relations)) {
             foreach ($this->config->relations as $relation) {
-                if($relation->inputs[1] == $field->name) {
+                if (isset($relation->inputs[1]) && $relation->inputs[1] == $field->name) {
                     $type_select = $relation->type;
                     $isrelation = true;
                     break;
@@ -650,7 +637,22 @@ class ViewGenerator extends ModelGeneratorInfy
             }
         }
 
-        if($ischeckbox) {
+        $istextarea = false;
+        if ($field->htmlType == "text") {
+            $validations_arr = explode('|', $field->validations);
+            foreach ($validations_arr as $v) {
+                $pos = strrpos($v, "max:");
+                if ($pos !== false) {
+                    $length = explode(":", $v)[1];
+                    if ($length == "4000") {
+                        $istextarea = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if ($ischeckbox) {
             $label_this = "";
             $label_this = ucfirst(substr($field->name, 3));
             $casts .= "
@@ -658,8 +660,8 @@ class ViewGenerator extends ModelGeneratorInfy
             ref={null}
             id='" . $field->name . "'
             type='checkbox'
-            label={'".$label_this."'}
-            placeholder={'".$label_this."'}
+            label={'" . $label_this . "'}
+            placeholder={'" . $label_this . "'}
             data={[{label: 'Ya', value: 1}]}
             value={" . $field->name . "}
             className='block mt-1 w-full'
@@ -671,37 +673,48 @@ class ViewGenerator extends ModelGeneratorInfy
             disabled={is_disabled}
         />
             \n";
-        }elseif($isrelation) {
+        } elseif ($isrelation) {
+            $label_this = "";
+            $label_this_arr = explode('_', $field->name);
+            foreach ($label_this_arr as $i => $l) {
+                if ($i > 0) {
+                    $label_this .= ucfirst($l) . ' ';
+                }
+            }
+
             $isMulti = false;
-            if($type_select == "mt1") {
+            if ($type_select == "mt1") {
                 $isMulti = true;
-            } 
+            }
             $casts .= "
             <InputSelect
             ref={null}
-            id='".$field->name."'
+            id='" . $field->name . "'
             type='select'
-            label={rules.".$field->name.".label}
-            placeholder={rules.".$field->name.".label}
-            value={".$field->name."}
+            label={'" . $label_this . "'}
+            placeholder={'Pilih...'}
+            value={" . $field->name . "_arr}
             className='block mt-1 w-full'
-            data={data".$field->name."}
-            onChange={set".$field->name."}
-            required={rules.".$field->name.".required}
+            data={data" . $field->name . "}
+            onChange={set" . $field->name . "_arr}
+            required={rules." . $field->name . ".required}
             autoFocus
-            isMulti={".$isMulti."}
+            isMulti={" . $isMulti . "}
             message_error={errors." . $field->name . "}
             onError={handleErrors}
             disabled={is_disabled}
         />
             \n";
-
         } else {
+            $htmlType = $field->htmlType;
+            if ($istextarea) {
+                $htmlType = "textarea";
+            }
             $casts .= "
             <Input
             ref={null}
             id='" . $field->name . "'
-            type='" . $field->htmlType . "'
+            type='" . $htmlType . "'
             label={rules." . $field->name . ".label}
             placeholder={rules." . $field->name . ".label}
             value={" . $field->name . "}
@@ -714,60 +727,86 @@ class ViewGenerator extends ModelGeneratorInfy
             disabled={is_disabled}
         />
             \n";
-
         }
         return $casts;
     }
 
-    
+
     public function generateGetDataRelationFrontend($get = null): string
     {
+        $var_str = "";
         $get_str = "";
         $casts = "";
 
         if (isset($this->config->relations) && !empty($this->config->relations)) {
             foreach ($this->config->relations as $relation) {
                 $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
-                if($relation->type == "mt1" || $relation->type == "1t1") {
-                    $table_name = "";
-                    $table_name = $relation->inputs[0];
-                    $table_name = preg_replace('/(?<!\ )[A-Z]/', '_$0', $table_name);
-                    $table_name = strtolower(ltrim($table_name, '_'));
+                if (isset($relation->inputs[1])) {
 
-                    $casts .= "const [data".$relation->inputs[1].", setdata".$relation->inputs[1]."] = useState([])\n";
-                    $casts .= "
-                    const handleget".$relation->inputs[1]." = async () => {
-                        setis_loading(true)
-                        const response = await getapi_services({ setErrors, customUrl: '/".$table_name."', filter: {
-                            paginate: {
-                                page: 1,
-                                pagesize: 10
-                            }
-                        } })
-                        console.log('get".$table_name."')
-                        console.log(response)
-                
-                        checkNotAuthorized(response)
-                        let dataarr = []
-                        response.data.map(m => {
-                            dataarr.push({
-                                label: m.nama,
-                                value: m.".$relation->inputs[1]."
+                    if ($relation->type == "mt1" || $relation->type == "1t1") {
+                        $table_name = "";
+                        $table_name = $relation->inputs[0];
+                        $table_name = preg_replace('/(?<!\ )[A-Z]/', '_$0', $table_name);
+                        $table_name = strtolower(ltrim($table_name, '_'));
+
+                        $casts .= "const [data" . $relation->inputs[1] . ", setdata" . $relation->inputs[1] . "] = useState([])\n";
+                        $casts .= "
+                        const handleget" . $relation->inputs[1] . " = async () => {
+                            const response = await getapi_services({ setErrors, customUrl: '/" . $table_name . "', filter: {
+                                paginate: {
+                                    page: 1,
+                                    pagesize: 10
+                                }
+                            } })
+                            console.log('get" . $table_name . "')
+                            console.log(response)
+                    
+                            checkNotAuthorized(response)
+                            let dataarr = []
+                            response.data.map(m => {
+                                dataarr.push({
+                                    label: m.nama,
+                                    value: m." . $relation->inputs[1] . "
+                                })
                             })
-                        })
-                        setdata".$relation->inputs[1]."(dataarr)
+                            setdata" . $relation->inputs[1] . "(dataarr)
+                        }
+                        \n";
+                        $get_str .= "handleget" . $relation->inputs[1] . "()\n";
+                        $default_var = "{}";
+                        if ($relation->type == "mt1") {
+                            $default_var = "[]";
+                        }
+                        $var_str .= "const [" . $relation->inputs[1] . "_arr, set" . $relation->inputs[1] . "_arr] = useState(" . $default_var . ")\n";
                     }
-                    \n";
-                    $get_str .= "handleget".$relation->inputs[1]."()\n";
                 }
-                
             }
         }
 
-        if($get) {
+        if ($get && $get == "get") {
             return $get_str;
         }
+        if ($get && $get == "var") {
+            return $var_str;
+        }
         return $casts;
+    }
+
+    function LabelName($name): string
+    {
+        $label_this = "";
+        $pos = strrpos($name, "_");
+        if ($pos === false) {
+            return $name;
+        }
+
+        $label_this_arr = explode('_', $name);
+        foreach ($label_this_arr as $i => $l) {
+            if ($i > 0) {
+                $label_this .= ucfirst($l) . ' ';
+            }
+        }
+        return $label_this;
     }
 
     protected function generateRelations(): string

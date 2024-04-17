@@ -11,6 +11,8 @@ import Button from '@/components/Button';
 import InputRadio from '@/components/InputRadio';
 import { api_services } from '@/hooks/api_services';
 
+const titlePage = "{!!$titlePageFrontend!!}"
+
 const rules = {
   {!!$rulesFrontend!!}
 
@@ -116,11 +118,12 @@ const {{ucfirst($config->tableName)}}edit = (props) => {
         router.push(`/${page_url}`)
     }
 
+    {!!$getVarRelationFrontend!!}
     {!!$fncDataRelationFrontend!!}
 
     return (
         <>
-            <HeaderApp title={`${path === "add" ? "Tambah" : path === "edit" ? "Edit" : "Detail"} {{ucfirst($config->tableName)}}`} is_loading={is_loading} data_btn={Object.keys(access_method).length > 0 ? access_method.btn_top : []} />
+            <HeaderApp title={`${path === "add" ? "Tambah" : path === "edit" ? "Edit" : "Detail"} ${titlePage}`} is_loading={is_loading} data_btn={Object.keys(access_method).length > 0 ? access_method.btn_top : []} />
             <div className='container pl-4 pr-4'>
                 <div className='flex'>
                     <div className='flex-1'>
