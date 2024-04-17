@@ -286,6 +286,7 @@ class ViewGenerator extends ModelGeneratorInfy
 
     protected function generateRulesFrontend(): string
     {
+        // dd($this->config->fields);
         $dont_require_fields = config('laravel_generator.options.hidden_fields', [])
             + config('laravel_generator.options.excluded_fields', $this->excluded_fields);
 
@@ -314,10 +315,14 @@ class ViewGenerator extends ModelGeneratorInfy
 
             if (!empty($field->validations)) {
                 $label_this = $this->LabelName($field->name);
-                $is_required = "false";
-                if ($field->isNotNull && empty($field->validations)) {
-                    $field->validations = 'required';
-                    $is_required = "true";
+                $is_required = "true";
+                // if ($field->isNotNull && empty($field->validations)) {
+                //     $field->validations = 'required';
+                //     $is_required = "true";
+                // }
+                $pos = strrpos($field->validations, "required");
+                if ($pos === false) {
+                    $is_required = "false";
                 }
                 $str .= "" . $field->name . ": {";
                 $str .= "label:'" . $label_this . "',";
@@ -343,14 +348,13 @@ class ViewGenerator extends ModelGeneratorInfy
         // dd($this->config->tableName);
         $table_name_arr = explode('_', $this->config->tableName);
         foreach ($table_name_arr as $t) {
-            if($mt) {
+            if ($mt) {
 
                 if ($t != "mt") {
                     $casts .= "" . ucfirst($t) . " ";
                 }
             } else {
                 $casts .= "" . ucfirst($t) . " ";
-
             }
         }
 
@@ -383,7 +387,7 @@ class ViewGenerator extends ModelGeneratorInfy
             $rule .= "type: ";
 
             $rule .= "'" . $field->dbType . "'";
-         
+
             $rule .= "},\n";
 
             $casts .= $rule;
@@ -673,11 +677,12 @@ class ViewGenerator extends ModelGeneratorInfy
             type='checkbox'
             label={'" . $label_this . "'}
             placeholder={'" . $label_this . "'}
-            data={[{label: 'Ya', value: 1}]}
+            data={[{label: 'Ya', value: '1'}]}
             value={" . $field->name . "}
             className='block mt-1 w-full'
             onChange={set" . $field->name . "}
             required={rules." . $field->name . ".required}
+            isMulti={false}
             autoFocus
             message_error={errors." . $field->name . "}
             onError={handleErrors}
@@ -813,7 +818,11 @@ class ViewGenerator extends ModelGeneratorInfy
 
         $label_this_arr = explode('_', $name);
         foreach ($label_this_arr as $i => $l) {
-            if ($i > 0) {
+            if ($l == "is" || $l == "id") {
+                if ($i > 0) {
+                    $label_this .= ucfirst($l) . ' ';
+                }
+            } else {
                 $label_this .= ucfirst($l) . ' ';
             }
         }

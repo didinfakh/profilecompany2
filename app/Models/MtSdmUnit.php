@@ -49,23 +49,28 @@ class MtSdmUnit extends BaseModel
         'deleted_at' => 'nullable'
     ];
 
-    public function mtSdmJabatans(): \Illuminate\Database\Eloquent\Relations\HasMany
-    {
-        return $this->hasMany(\App\Models\MtSdmJabatan::class, 'id_unit');
-    }
-
     public function riskMetrikStrategiRisikos(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(\App\Models\RiskMetrikStrategiRisiko::class, 'id_unit');
     }
 
-    public function riskSasarans(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function riskRegisters(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
-        return $this->hasMany(\App\Models\RiskSasaran::class, 'id_unit');
+        return $this->belongsToMany(\App\Models\RiskRegister::class, 'risk_sasaran');
     }
 
-    public function riskCapacityLimits(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function riskRegister1s(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
-        return $this->hasMany(\App\Models\RiskCapacityLimit::class, 'id_unit');
+        return $this->belongsToMany(\App\Models\RiskRegister::class, 'risk_capacity_limit');
+    }
+
+    public function mtSdmJabatans(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(\App\Models\MtSdmJabatan::class, 'id_unit');
+    }
+
+    public function riskRegister2s(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(\App\Models\RiskRegister::class, 'id_unit');
     }
 }

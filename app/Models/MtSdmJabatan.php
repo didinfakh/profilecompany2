@@ -65,4 +65,9 @@ class MtSdmJabatan extends BaseModel
     {
         return $this->belongsTo(\App\Models\MtSdmUnit::class, 'id_unit');
     }
+
+    public function riskRegisters(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(\App\Models\RiskRegister::class, 'id_owner');
+    }
 }
