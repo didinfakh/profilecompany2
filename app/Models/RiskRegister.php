@@ -88,14 +88,14 @@ class RiskRegister extends BaseModel
         return $this->belongsTo(\App\Models\MtRiskTingkatAgregasiRisiko::class, 'id_tingkat_agregasi_risiko');
     }
 
-    public function riskProfiles(): \Illuminate\Database\Eloquent\Relations\HasMany
-    {
-        return $this->hasMany(\App\Models\RiskProfile::class, 'id_register');
-    }
-
     public function mtSdmUnit1s(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(\App\Models\MtSdmUnit::class, 'risk_capacity_limit');
+    }
+
+    public function riskProfiles(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(\App\Models\RiskProfile::class, 'id_register');
     }
 
     public function riskMetrikStrategiRisikos(): \Illuminate\Database\Eloquent\Relations\HasMany

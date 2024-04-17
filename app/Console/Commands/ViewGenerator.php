@@ -275,6 +275,8 @@ class ViewGenerator extends ModelGeneratorInfy
         $column["deleted_at"] = 1;
         $column["deleted_by"] = 1;
         $column["deleted_by_desc"] = 1;
+        $column["updated_by"] = 1;
+        $column["updated_by_desc"] = 1;
 
         if (empty($column[$col])) {
             return false;
@@ -331,15 +333,24 @@ class ViewGenerator extends ModelGeneratorInfy
     {
         $casts = "";
 
+        $mt = true;
         $pos = strrpos($this->config->tableName, "mt_");
         if ($pos === false) {
-            return ucfirst($this->config->tableName);
+            // return ucfirst($this->config->tableName);
+            $mt = false;
         }
+
         // dd($this->config->tableName);
         $table_name_arr = explode('_', $this->config->tableName);
         foreach ($table_name_arr as $t) {
-            if ($t != "mt") {
+            if($mt) {
+
+                if ($t != "mt") {
+                    $casts .= "" . ucfirst($t) . " ";
+                }
+            } else {
                 $casts .= "" . ucfirst($t) . " ";
+
             }
         }
 
