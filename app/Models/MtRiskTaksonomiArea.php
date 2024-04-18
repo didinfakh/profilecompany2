@@ -61,11 +61,6 @@ class MtRiskTaksonomiArea extends BaseModel
         return $this->belongsTo(\App\Models\MtJenisDatum::class, 'jenis');
     }
 
-    public function mtJenisDatum1s(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
-    {
-        return $this->belongsToMany(\App\Models\MtJenisDatum::class, 'mt_risk_taksonomi');
-    }
-
     public function riskProfiles(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(\App\Models\RiskProfile::class, 'id_taksonomi_area');
@@ -79,5 +74,10 @@ class MtRiskTaksonomiArea extends BaseModel
     public function riskMetrikStrategiRisikos(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(\App\Models\RiskMetrikStrategiRisiko::class, 'id_taksonomi_area');
+    }
+
+    public function mtJenisDatum1s(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(\App\Models\MtJenisDatum::class, 'mt_risk_taksonomi');
     }
 }
