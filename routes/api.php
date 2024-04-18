@@ -191,6 +191,7 @@ Route::resource('risk_penyebab', App\Http\Controllers\API\RiskPenyebabAPIControl
 Route::resource('risk_dampak', App\Http\Controllers\API\RiskDampakAPIController::class)
     ->except(['create', 'edit']);
 
+<<<<<<< HEAD
 Route::resource('risk_metrik_strategi_risiko', App\Http\Controllers\API\RiskMetrikStrategiRisikoAPIController::class)
     ->except(['create', 'edit']);
 
@@ -198,4 +199,16 @@ Route::resource('risk_sasaran', App\Http\Controllers\API\RiskSasaranAPIControlle
     ->except(['create', 'edit']);
 
 Route::resource('risk_capacity_limit', App\Http\Controllers\API\RiskCapacityLimitAPIController::class)
+=======
+Route::resource('mt_risk_taksonomi_area', App\Http\Controllers\API\MtRiskTaksonomiAreaAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('mt_risk_taksonomi_objective', App\Http\Controllers\API\MtRiskTaksonomiObjectiveAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('mt_risk_taksonomi', App\Http\Controllers\API\MtRiskTaksonomiAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('mt_jenis_data', App\Http\Controllers\API\MtJenisDataAPIController::class)
+>>>>>>> 5c0266490ac1bc47fe8cbbc80dd8d388688f34d2
     ->except(['create', 'edit']);

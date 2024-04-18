@@ -699,9 +699,9 @@ class ViewGenerator extends ModelGenerator
             $label_this = "";
             $label_this_arr = explode('_', $field->name);
             foreach ($label_this_arr as $i => $l) {
-                if ($i > 0) {
-                    $label_this .= ucfirst($l) . ' ';
-                }
+                // if ($i > 0) {
+                $label_this .= ucfirst($l) . ' ';
+                // }
             }
 
             $isMulti = false;
