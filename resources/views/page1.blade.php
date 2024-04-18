@@ -65,6 +65,7 @@ const {{ucfirst($config->tableName)}} = (props) => {
         setis_loading(false)
 
         checkNotAuthorized(response)
+        if(response.error) return
         set{{$config->tableName}}(response.data)
         setdatafilter({
             ...datafilter,
@@ -84,7 +85,7 @@ const {{ucfirst($config->tableName)}} = (props) => {
         console.log(response)
 
         checkNotAuthorized(response)
-
+        if(response.error) return
         handleget{{$config->tableName}}()
     }
 

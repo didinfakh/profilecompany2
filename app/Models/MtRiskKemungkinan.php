@@ -24,9 +24,7 @@ class MtRiskKemungkinan extends BaseModel
         'persentase_mulai',
         'persentase_sampai',
         'created_by_desc',
-        'modified_by_desc',
-        'deleted_by',
-        'deleted_by_desc'
+        'modified_by_desc'
     ];
 
     protected $casts = [
@@ -41,8 +39,7 @@ class MtRiskKemungkinan extends BaseModel
         'persentase_mulai' => 'decimal:2',
         'persentase_sampai' => 'decimal:2',
         'created_by_desc' => 'string',
-        'modified_by_desc' => 'string',
-        'deleted_by_desc' => 'string'
+        'modified_by_desc' => 'string'
     ];
 
     public array $rules = [
@@ -62,9 +59,7 @@ class MtRiskKemungkinan extends BaseModel
         'persentase_sampai' => 'nullable|numeric',
         'created_by_desc' => 'nullable|string|max:200',
         'modified_by_desc' => 'nullable|string|max:200',
-        'deleted_at' => 'nullable',
-        'deleted_by' => 'nullable',
-        'deleted_by_desc' => 'nullable|string|max:200'
+        'deleted_at' => 'nullable'
     ];
 
     public function mtRiskMatrices(): \Illuminate\Database\Eloquent\Relations\HasMany
