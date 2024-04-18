@@ -20,7 +20,9 @@ class MtRiskTaksonomi extends BaseModel
         'created_by',
         'modified_by',
         'created_by_desc',
-        'modified_by_desc'
+        'modified_by_desc',
+        'deleted_by',
+        'deleted_by_desc'
     ];
 
     protected $casts = [
@@ -29,7 +31,8 @@ class MtRiskTaksonomi extends BaseModel
         'penjelasan' => 'string',
         'jenis' => 'string',
         'created_by_desc' => 'string',
-        'modified_by_desc' => 'string'
+        'modified_by_desc' => 'string',
+        'deleted_by_desc' => 'string'
     ];
 
     public array $rules = [
@@ -45,12 +48,29 @@ class MtRiskTaksonomi extends BaseModel
         'modified_by' => 'nullable',
         'created_by_desc' => 'nullable|string|max:200',
         'modified_by_desc' => 'nullable|string|max:200',
-        'deleted_at' => 'nullable'
+        'deleted_at' => 'nullable',
+        'deleted_by' => 'nullable',
+        'deleted_by_desc' => 'nullable|string|max:200'
     ];
 
     public function idTaksonomiArea(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(\App\Models\MtRiskTaksonomiArea::class, 'id_taksonomi_area');
+    }
+
+    public function jenis(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(\App\Models\MtJenisDatum::class, 'jenis');
+    }
+
+    public function riskProfiles(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(\App\Models\RiskProfile::class, 'id_taksonomi');
+    }
+
+    public function mtRiskTaksonomiArea1s(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(\App\Models\MtRiskTaksonomiArea::class, 'risk_risiko');
     }
 
     public function riskMetrikStrategiRisikos(): \Illuminate\Database\Eloquent\Relations\HasMany
