@@ -774,7 +774,7 @@ class ViewGenerator extends ModelGenerator
                         $casts .= "const [data" . $relation->inputs[1] . ", setdata" . $relation->inputs[1] . "] = useState([])\n";
                         $casts .= "
                         const handleget" . $relation->inputs[1] . " = async () => {
-                            const response = await getapi_services({ setErrors, customUrl: '/" . $table_name . "', filter: {
+                            const response = await getapi_services({ setErrors, api_path: '/" . $table_name . "', filter: {
                                 paginate: {
                                     page: 1,
                                     pagesize: 10
