@@ -287,6 +287,7 @@ class ViewGenerator extends ModelGeneratorInfy
     protected function generateRulesFrontend(): string
     {
         // dd($this->config->fields);
+        // dd($this->config->relations);
         $dont_require_fields = config('laravel_generator.options.hidden_fields', [])
             + config('laravel_generator.options.excluded_fields', $this->excluded_fields);
 

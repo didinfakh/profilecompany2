@@ -175,3 +175,9 @@ Route::resource('risk_metrik_strategi_risiko', App\Http\Controllers\API\RiskMetr
 
 Route::resource('risk_register', App\Http\Controllers\API\RiskRegisterAPIController::class)
     ->except(['create', 'edit']);
+
+Route::resource('mt_risk_tingkat_agregasi_risiko', App\Http\Controllers\API\MtRiskTingkatAgregasiRisikoAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('mt_status_pengajuan', App\Http\Controllers\API\MtStatusPengajuanAPIController::class)
+    ->except(['create', 'edit']);
