@@ -31,8 +31,8 @@ class MtStatusPengajuan extends BaseModel
         'deleted_at' => 'nullable',
         'created_by' => 'nullable',
         'updated_by' => 'nullable',
-        'created_by_desc' => 'required|string|max:50',
-        'updated_by_desc' => 'required|string|max:50'
+        'created_by_desc' => 'nullable',
+        'updated_by_desc' => 'nullable'
     ];
 
     public function riskRegisters(): \Illuminate\Database\Eloquent\Relations\HasMany
