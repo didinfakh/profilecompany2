@@ -11,6 +11,7 @@ class MtSdmUnit extends BaseModel
     protected $primaryKey = 'table_code';
 
     public $fillable = [
+        'table_code',
         'table_desc',
         'is_aktif',
         'kode_distrik',
