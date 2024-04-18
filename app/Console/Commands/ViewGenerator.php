@@ -4,11 +4,10 @@ namespace App\Console\Commands;
 
 use Illuminate\Support\Str;
 use InfyOm\Generator\Utils\TableFieldsGenerator;
-use InfyOm\Generator\Generators\ModelGenerator as ModelGeneratorInfy;
 use InfyOm\Generator\Generators\SwaggerGenerator;
 use Mockery\Undefined;
 
-class ViewGenerator extends ModelGeneratorInfy
+class ViewGenerator extends ModelGenerator
 {
     /**
      * Fields not included in the generator by default.
@@ -26,7 +25,8 @@ class ViewGenerator extends ModelGeneratorInfy
         parent::__construct();
 
         // $this->path = $this->config->paths->model;
-        $this->path = 'D:/CLOUD/BITBUCKET/hk_rms_frontend';
+        // $this->path = 'D:/CLOUD/BITBUCKET/hk_rms_frontend';
+        $this->path = 'D:/Dev/web/hk_rms_frontend';
         $this->fileName = $this->config->modelNames->name . '.php';
     }
 
@@ -39,8 +39,10 @@ class ViewGenerator extends ModelGeneratorInfy
         $templateData1 = view($viewName1, $this->variables())->render();
         $templateData2 = view($viewName2, $this->variables())->render();
 
-        mkdir($this->path . '/src/app/(app)/' . $this->config->tableName);
-        mkdir($this->path . "/src/app/(app)/" . $this->config->tableName . '/[...slug]');
+        if (!file_exists($this->path . '/src/app/(app)/' . $this->config->tableName))
+            mkdir($this->path . '/src/app/(app)/' . $this->config->tableName);
+        if (!file_exists($this->path . "/src/app/(app)/" . $this->config->tableName . '/[...slug]'))
+            mkdir($this->path . "/src/app/(app)/" . $this->config->tableName . '/[...slug]');
 
         g_filesystem()->createFile($this->path . '/src/app/(app)/' . $this->config->tableName . '/page.js', $templateData1);
         g_filesystem()->createFile($this->path . "/src/app/(app)/" . $this->config->tableName . '/[...slug]' . '/page.js', $templateData2);
@@ -337,6 +339,9 @@ class ViewGenerator extends ModelGeneratorInfy
 
     protected function generateTitlePageFrontend(): string
     {
+        if ($this->titleName)
+            return $this->titleName;
+
         $casts = "";
 
         $mt = true;
@@ -814,7 +819,7 @@ class ViewGenerator extends ModelGeneratorInfy
         $label_this = "";
         $pos = strrpos($name, "_");
         if ($pos === false) {
-            return $name;
+            return ucfirst($name);
         }
 
         $label_this_arr = explode('_', $name);

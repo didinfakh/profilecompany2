@@ -19,6 +19,7 @@ class ModelGenerator extends ModelGeneratorInfy
     ];
 
     private string $fileName;
+    protected string $titleName;
 
     public function __construct()
     {
@@ -26,6 +27,7 @@ class ModelGenerator extends ModelGeneratorInfy
 
         $this->path = $this->config->paths->model;
         $this->fileName = $this->config->modelNames->name . '.php';
+        $this->titleName = $this->config->command->argument("model");
     }
 
     public function generate()
@@ -69,8 +71,8 @@ class ModelGenerator extends ModelGeneratorInfy
         // if ($primary === 'id') {
         //     return null;
         // }
-        
-        
+
+
         $primary = 'id';
         foreach ($this->config->fields as $field) {
             if ($field->isPrimary)
