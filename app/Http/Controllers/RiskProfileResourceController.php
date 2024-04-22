@@ -6,7 +6,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 
-class BaseResourceController extends ResourceController
+class RiskProfileResourceController extends ResourceController
 {
     /**
      *
@@ -19,8 +19,8 @@ class BaseResourceController extends ResourceController
      *
      * @return array	an array
      */
-    
-    public function index(Request $request): JsonResponse
+
+    public function index($id_register = null, Request $request): JsonResponse
     {
         $search = $request->get('q');
         if ($search) {
@@ -33,7 +33,7 @@ class BaseResourceController extends ResourceController
         $page = $request->get('page') ?? 1;
         $limit = $request->get('pagesize') ?? $this->limit;
         $db = $this->model->search($search);
-
+        $db = $db->where("id_register", $id_register);
         $orderby = $request->get('order');
         if ($orderby) {
             $orderby = explode(",", $orderby);
@@ -83,9 +83,9 @@ class BaseResourceController extends ResourceController
      *
      * @return array	an array
      */
-    public function show($id = null): JsonResponse
+    public function show($id_register = null, $id = null): JsonResponse
     {
-        $record = $this->model->find($id);
+        $record = $this->model->where("id_register", $id_register)->find($id);
         if (!$record) {
             return $this->failNotFound(sprintf(
                 'item with id %d not found',
@@ -101,11 +101,12 @@ class BaseResourceController extends ResourceController
      *
      * @return array	an array
      */
-    public function store(Request $request): JsonResponse
+    public function store($id_register = null, Request $request): JsonResponse
     {
         $request->validate($this->model->rules);
 
         $data = $request->all();
+        $data["id_register"] = $id_register;
         $id = $this->model->insert($data);
         // if (!$id) {
         //     return $this->fail($this->model->errors());
@@ -120,10 +121,10 @@ class BaseResourceController extends ResourceController
      *
      * @return array	an array
      */
-    public function create(Request $request): JsonResponse
+    public function create($id_register = null, Request $request): JsonResponse
     {
         $data = $request->getJSON();
-
+        $data["id_register"] = $id_register;
         $id = $this->model->insert($data);
         if (!$id) {
             return $this->fail($this->model->errors());
@@ -138,11 +139,11 @@ class BaseResourceController extends ResourceController
      *
      * @return array	an array
      */
-    public function update($id = null, Request $request): JsonResponse
+    public function update($id_register = null, $id = null, Request $request): JsonResponse
     {
         $request->validate($this->model->rules);
 
-        if (!$this->model->find($id)) {
+        if (!$this->model->where("id_register", $id_register)->find($id)) {
             return $this->failNotFound(sprintf(
                 'item with id %d not found',
                 $id
@@ -152,6 +153,7 @@ class BaseResourceController extends ResourceController
         // $data       = $request->getRawInput();		
         // $updateData = array_filter($data);
         $updateData = $request->all();
+        $updateData["id_register"] = $id_register;
         $ret = $this->model->update($id, $updateData);
         // if (!$ret) {
         //     return $this->fail($this->model->errors());
@@ -164,9 +166,9 @@ class BaseResourceController extends ResourceController
      *
      * @return array	an array
      */
-    public function destroy($id = null): JsonResponse
+    public function destroy($id_register = null, $id = null): JsonResponse
     {
-        if (!$model = $this->model->find($id)) {
+        if (!$model = $this->model->where("id_register", $id_register)->find($id)) {
             return $this->failNotFound(sprintf(
                 'item with id %d not found',
                 $id

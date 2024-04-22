@@ -214,7 +214,7 @@ Route::resource('mt_jenis_data', App\Http\Controllers\API\MtJenisDataAPIControll
 Route::resource('risk_capacity_limit', App\Http\Controllers\API\RiskCapacityLimitAPIController::class)
     ->except(['create', 'edit']);
 
-Route::resource('risk_profile', App\Http\Controllers\API\RiskProfileAPIController::class)
+Route::resource('risk_profile/{id_register}', App\Http\Controllers\API\RiskProfileAPIController::class)
     ->except(['create', 'edit']);
 
 Route::resource('risk_sasaran', App\Http\Controllers\API\RiskSasaranAPIController::class)

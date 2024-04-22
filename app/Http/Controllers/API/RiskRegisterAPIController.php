@@ -1,6 +1,10 @@
 <?php
 
 namespace App\Http\Controllers\API;
+
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+
 use App\Http\Controllers\BaseResourceController;
 
 /**
