@@ -221,3 +221,7 @@ Route::resource('risk_sasaran', App\Http\Controllers\API\RiskSasaranAPIControlle
     ->except(['create', 'edit']);
 
 Route::resource('risk_metrik_strategi_risiko', App\Http\Controllers\API\RiskMetrikStrategiRisikoAPIController::class)->except(['create', 'edit']);
+
+
+Route::resource('mt_risk_taksonomi', App\Http\Controllers\API\MtRiskTaksonomiAPIController::class)
+    ->except(['create', 'edit']);
