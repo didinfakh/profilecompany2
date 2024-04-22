@@ -680,6 +680,19 @@ class ViewGenerator extends ModelGenerator
             }
         }
 
+        $isnumeric = false;
+        if ($field->htmlType == "number") {
+            $validations_arr = explode('|', $field->validations);
+            foreach ($validations_arr as $v) {
+                $pos = strrpos($v, "numeric");
+                if ($pos !== false) {
+                    $isnumeric = true;
+                    break;
+                }
+            }
+        }
+
+
         if ($ischeckbox) {
             $label_this = "";
             $label_this = ucfirst(substr($field->name, 3));
@@ -731,6 +744,24 @@ class ViewGenerator extends ModelGenerator
             autoFocus
             isClearable
             isMulti={" . $isMulti . "}
+            message_error={errors." . $field->name . "}
+            onError={handleErrors}
+            disabled={is_disabled}
+        />
+            \n";
+        }elseif($isnumeric) {
+            $casts .= "
+            <InputNumeric
+            ref={null}
+            id='" . $field->name . "'
+            type='text'
+            label={rules." . $field->name . ".label}
+            placeholder={rules." . $field->name . ".label}
+            value={" . $field->name . "}
+            className='block mt-1 w-full'
+            onChange={value => set" . $field->name . "(value)}
+            required={rules." . $field->name . ".required}
+            autoFocus
             message_error={errors." . $field->name . "}
             onError={handleErrors}
             disabled={is_disabled}
