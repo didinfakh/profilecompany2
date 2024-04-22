@@ -15,7 +15,6 @@ class MtRiskTaksonomiArea extends BaseModel
         'nama',
         'id_taksonomi_objective',
         'keterangan',
-        'jenis',
         'created_by',
         'modified_by',
         'created_by_desc',
@@ -28,7 +27,6 @@ class MtRiskTaksonomiArea extends BaseModel
         'kode' => 'string',
         'nama' => 'string',
         'keterangan' => 'string',
-        'jenis' => 'string',
         'created_by_desc' => 'string',
         'modified_by_desc' => 'string',
         'deleted_by_desc' => 'string'
@@ -39,7 +37,6 @@ class MtRiskTaksonomiArea extends BaseModel
         'nama' => 'required|string|max:200',
         'id_taksonomi_objective' => 'nullable',
         'keterangan' => 'nullable|string',
-        'jenis' => 'nullable|string|max:50',
         'created_at' => 'nullable',
         'updated_at' => 'nullable',
         'created_by' => 'nullable',
@@ -56,17 +53,17 @@ class MtRiskTaksonomiArea extends BaseModel
         return $this->belongsTo(\App\Models\MtRiskTaksonomiObjective::class, 'id_taksonomi_objective');
     }
 
-    public function jenis(): \Illuminate\Database\Eloquent\Relations\BelongsTo
-    {
-        return $this->belongsTo(\App\Models\MtJenisDatum::class, 'jenis');
-    }
-
     public function riskProfiles(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(\App\Models\RiskProfile::class, 'id_taksonomi_area');
     }
 
-    public function mtRiskTaksonomis(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    public function mtRiskTaksonomis(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(\App\Models\MtRiskTaksonomi::class, 'id_taksonomi_area');
+    }
+
+    public function mtRiskTaksonomi1s(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(\App\Models\MtRiskTaksonomi::class, 'risk_risiko');
     }
@@ -74,10 +71,5 @@ class MtRiskTaksonomiArea extends BaseModel
     public function riskMetrikStrategiRisikos(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(\App\Models\RiskMetrikStrategiRisiko::class, 'id_taksonomi_area');
-    }
-
-    public function mtJenisDatum1s(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
-    {
-        return $this->belongsToMany(\App\Models\MtJenisDatum::class, 'mt_risk_taksonomi');
     }
 }

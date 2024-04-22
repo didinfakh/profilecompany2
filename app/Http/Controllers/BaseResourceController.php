@@ -40,7 +40,10 @@ class BaseResourceController extends ResourceController
                 $orderby = array($orderby);
 
             foreach ($orderby as $v) {
-                list($column, $sc) = explode(" ", $v);
+                $exp = explode(" ", $v);
+                $column = $exp[0];
+                if ($exp[1])
+                    $sc = $exp[1];
 
                 $db = $db->orderBy($column, $sc);
             }

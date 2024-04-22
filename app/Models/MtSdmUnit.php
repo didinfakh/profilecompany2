@@ -8,11 +8,11 @@ class MtSdmUnit extends BaseModel
 {
     public $table = 'mt_sdm_unit';
 
-    protected $primaryKey = 'table_code';
+    protected $primaryKey = 'id_unit';
 
     public $fillable = [
-        'table_code',
-        'table_desc',
+        'id_unit',
+        'nama',
         'is_aktif',
         'kode_distrik',
         'id_mig_dep',
@@ -25,8 +25,8 @@ class MtSdmUnit extends BaseModel
     ];
 
     protected $casts = [
-        'table_code' => 'string',
-        'table_desc' => 'string',
+        'id_unit' => 'string',
+        'nama' => 'string',
         'is_aktif' => 'string',
         'kode_distrik' => 'string',
         'kode_lama' => 'string',
@@ -35,7 +35,7 @@ class MtSdmUnit extends BaseModel
     ];
 
     public array $rules = [
-        'table_desc' => 'required|string|max:100',
+        'nama' => 'required|string|max:100',
         'is_aktif' => 'required|string|max:1',
         'kode_distrik' => 'nullable|string|max:2',
         'id_mig_dep' => 'nullable',

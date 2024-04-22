@@ -66,14 +66,14 @@ class AppServiceProvider extends ServiceProvider
         });
 
         // Log sql to artisan
-        // DB::listen(function ($query) {
-        //     $sql = $this->getSqlWithBindings($query);
-        //     if (strstr($sql, 'sys_session') === false) {
-        //         $time = $query->time;
-        //         file_put_contents('php://stdout', "[SQL]" . date("Y-m-d H:i:s") . " {$sql} \n" .
-        //             // "      bindings:\t" . json_encode($bindings) . "\n" .
-        //             "      Time:\t{$time} milliseconds\n");
-        //     }
-        // });
+        DB::listen(function ($query) {
+            $sql = $this->getSqlWithBindings($query);
+            if (strstr($sql, 'sys_session') === false) {
+                $time = $query->time;
+                file_put_contents('php://stdout', "[SQL]" . date("Y-m-d H:i:s") . " {$sql} \n" .
+                    // "      bindings:\t" . json_encode($bindings) . "\n" .
+                    "      Time:\t{$time} milliseconds\n");
+            }
+        });
     }
 }

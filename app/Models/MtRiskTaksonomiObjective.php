@@ -13,7 +13,6 @@ class MtRiskTaksonomiObjective extends BaseModel
     public $fillable = [
         'kode',
         'nama',
-        'jenis',
         'created_by',
         'modified_by',
         'created_by_desc',
@@ -25,7 +24,6 @@ class MtRiskTaksonomiObjective extends BaseModel
     protected $casts = [
         'kode' => 'string',
         'nama' => 'string',
-        'jenis' => 'string',
         'created_by_desc' => 'string',
         'modified_by_desc' => 'string',
         'deleted_by_desc' => 'string'
@@ -34,7 +32,6 @@ class MtRiskTaksonomiObjective extends BaseModel
     public array $rules = [
         'kode' => 'required|string|max:5',
         'nama' => 'required|string|max:200',
-        'jenis' => 'nullable|string|max:50',
         'created_at' => 'nullable',
         'updated_at' => 'nullable',
         'created_by' => 'nullable',
@@ -46,13 +43,8 @@ class MtRiskTaksonomiObjective extends BaseModel
         'deleted_by_desc' => 'nullable|string|max:200'
     ];
 
-    public function jenis(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function mtRiskTaksonomiAreas(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->belongsTo(\App\Models\MtJenisDatum::class, 'jenis');
-    }
-
-    public function mtJenisDatum1s(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
-    {
-        return $this->belongsToMany(\App\Models\MtJenisDatum::class, 'mt_risk_taksonomi_area');
+        return $this->hasMany(\App\Models\MtRiskTaksonomiArea::class, 'id_taksonomi_objective');
     }
 }

@@ -2,7 +2,7 @@
 
 "use client"
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import HeaderApp from '@/components/HeaderApp';
 import { checkNotAuthorized, initAccessMethod } from '@/app/Utils';
 
@@ -20,15 +20,15 @@ const headers = [
 const {{ucfirst($config->tableName)}} = (props) => {
     const page_url = "{{$config->tableName}}"
 
-    const [first_load, setfirst_load] = useState(false)
     const [errors, setErrors] = useState({})
     const [access_method, setaccess_method] = useState({})
     const [is_loading, setis_loading] = useState(false)
-
     const [{{$config->tableName}}, set{{$config->tableName}}] = useState([])
+
     const { getapi_services, deleteapi_services } = api_services({
         api_path: `/${page_url}`
     })
+
     const [datafilter, setdatafilter] = useState({
         paginate: {
             page: 1,
@@ -37,20 +37,18 @@ const {{ucfirst($config->tableName)}} = (props) => {
         nama: "",
     })
 
-    useEffect(() => {
-        handleFirstLoad()
-    }, [])
+    const initialized = useRef(false)
 
     useEffect(() => {
-        if (first_load) {
+        //first load
+        if (!initialized.current) {
+            handleInitAccessMethod()
+            initialized.current = true
+        } else {
             handleget{{$config->tableName}}()
         }
     }, [datafilter.paginate.page, datafilter.nama])
 
-    const handleFirstLoad = () => {
-        handleInitAccessMethod()
-        handleget{{$config->tableName}}()
-    }
 
     const handleInitAccessMethod = async () => {
         const { access_method } = await initAccessMethod(page_url)
@@ -74,7 +72,6 @@ const {{ucfirst($config->tableName)}} = (props) => {
                 total_records: response.total_records
             }
         })
-        setfirst_load(true)
     }
 
 

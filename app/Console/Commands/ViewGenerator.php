@@ -639,10 +639,10 @@ class ViewGenerator extends ModelGenerator
     {
         // dd($this->config->relations);
 
-        $ischeckbox = true;
-        $pos = strrpos($field->name, "is_");
-        if ($pos === false) {
-            $ischeckbox = false;
+        $ischeckbox = false;
+        list($pos) = explode("_",$field->name);
+        if ($pos == "is") {
+            $ischeckbox = true;
         }
         $casts = "";
 
@@ -665,7 +665,7 @@ class ViewGenerator extends ModelGenerator
                 $pos = strrpos($v, "max:");
                 if ($pos !== false) {
                     $length = explode(":", $v)[1];
-                    if ($length == "4000") {
+                    if ($length > "150") {
                         $istextarea = true;
                         break;
                     }
@@ -699,15 +699,17 @@ class ViewGenerator extends ModelGenerator
             $label_this = "";
             $label_this_arr = explode('_', $field->name);
             foreach ($label_this_arr as $i => $l) {
-                // if ($i > 0) {
+                if ($i == 0 && $l == 'id')
+                    continue;
+
                 $label_this .= ucfirst($l) . ' ';
                 // }
             }
-
-            $isMulti = false;
-            if ($type_select == "mt1") {
-                $isMulti = true;
-            }
+            // dd($this->config->relations);
+            $isMulti = 'false';
+            // if ($type_select == "mt1") {
+            //     $isMulti = 'true';
+            // }
             $casts .= "
             <InputSelect
             ref={null}
@@ -715,12 +717,13 @@ class ViewGenerator extends ModelGenerator
             type='select'
             label={'" . $label_this . "'}
             placeholder={'Pilih...'}
-            value={" . $field->name . "_arr}
+            value={" . $field->name . "}
             className='block mt-1 w-full'
             data={data" . $field->name . "}
-            onChange={set" . $field->name . "_arr}
+            onChange={set" . $field->name . "}
             required={rules." . $field->name . ".required}
             autoFocus
+            isClearable
             isMulti={" . $isMulti . "}
             message_error={errors." . $field->name . "}
             onError={handleErrors}
@@ -760,9 +763,9 @@ class ViewGenerator extends ModelGenerator
         $get_str = "";
         $casts = "";
 
+        // dd($this->config->relations);
         if (isset($this->config->relations) && !empty($this->config->relations)) {
             foreach ($this->config->relations as $relation) {
-                $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
                 if (isset($relation->inputs[1])) {
 
                     if ($relation->type == "mt1" || $relation->type == "1t1") {

@@ -202,3 +202,15 @@ Route::resource('mt_risk_taksonomi', App\Http\Controllers\API\MtRiskTaksonomiAPI
 
 Route::resource('mt_jenis_data', App\Http\Controllers\API\MtJenisDataAPIController::class)
     ->except(['create', 'edit']);
+
+Route::resource('risk_capacity_limit', App\Http\Controllers\API\RiskCapacityLimitAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('risk_profile', App\Http\Controllers\API\RiskProfileAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('risk_sasaran', App\Http\Controllers\API\RiskSasaranAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('risk_metrik_strategi_risiko', App\Http\Controllers\API\RiskMetrikStrategiRisikoAPIController::class)
+    ->except(['create', 'edit']);

@@ -36,17 +36,18 @@ const {{ucfirst($config->tableName)}}edit = (props) => {
 
     {!!$recordsFrontend!!}
 
+    const initialized = useRef(false)
 
     useEffect(() => {
-        handleFirstLoad()
+        //first load
+        if (!initialized.current) {
+            initialized.current = true
+            handleInitAccessMethod()
+            handleget{{$config->tableName}}id()
+
+            {!!$getDataRelationFrontend!!}
+        }
     }, [])
-
-    const handleFirstLoad = () => {
-        handleInitAccessMethod()
-        handleget{{$config->tableName}}id()
-
-        {!!$getDataRelationFrontend!!}
-    }
 
     const handleInitAccessMethod = async () => {
         const { access_method, path, id } = await initAccessMethod(page_url, props.params)
@@ -118,7 +119,6 @@ const {{ucfirst($config->tableName)}}edit = (props) => {
         router.push(`/${page_url}`)
     }
 
-    {!!$getVarRelationFrontend!!}
     {!!$fncDataRelationFrontend!!}
 
     return (

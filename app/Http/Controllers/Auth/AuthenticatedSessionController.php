@@ -68,7 +68,6 @@ class AuthenticatedSessionController extends AppBaseController
         $rows = DB::select("select * from sys_menu where exists (select 1 
         from sys_group_menu 
         where sys_menu.id_menu = sys_group_menu.id_menu 
-        and is_show =1 
         and id_group = " . DB::escape($id_group) . ") 
         and coalesce(sys_menu.deleted_at, now()) >= now()
         order by sort, id_menu");
@@ -116,6 +115,9 @@ class AuthenticatedSessionController extends AppBaseController
     {
         $menu = array();
         foreach ($menuarr as $idmenu => $r) {
+            if (!$r->is_show)
+                continue;
+
             if ($r->id_parent_menu == $idparent) {
                 unset($menuarr[$idmenu]);
                 $submenu = $this->_getChild($menuarr, $idmenu);
@@ -132,6 +134,9 @@ class AuthenticatedSessionController extends AppBaseController
 
         if (!$idparent) {
             foreach ($menuarr as $idmenu => $r) {
+                if (!$r->is_show)
+                    continue;
+
                 $menu[] = [
                     "id_menu" => $idmenu,
                     "id_prent_menu" => $r->id_parent_menu,
