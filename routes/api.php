@@ -235,3 +235,7 @@ Route::resource('mt_risk_kategori_risiko', App\Http\Controllers\API\MtRiskKatego
 Route::resource('mt_risk_jenis_risiko', App\Http\Controllers\API\MtRiskJenisRisikoAPIController::class)->except(['create', 'edit']);
 Route::resource('mt_risk_kemungkinan', App\Http\Controllers\API\MtRiskKemungkinanAPIController::class)
     ->except(['create', 'edit']);
+
+
+Route::resource('risk_metrik_strategi_risiko', App\Http\Controllers\API\RiskMetrikStrategiRisikoAPIController::class)
+    ->except(['create', 'edit']);
