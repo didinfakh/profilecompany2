@@ -108,7 +108,11 @@
         "inView": true
     },
     {
+<<<<<<< HEAD
         "name": "updated_by",
+=======
+        "name": "modified_by",
+>>>>>>> e2d4303b4da9c029b4bd5dfac776659f6250daca
         "dbType": "bigInteger,false",
         "htmlType": "number",
         "validations": "nullable|nullable|nullable",
@@ -180,6 +184,7 @@
         "inView": true
     },
     {
+<<<<<<< HEAD
         "name": "deleted_by",
         "dbType": "bigInteger,false",
         "htmlType": "number",
@@ -204,6 +209,8 @@
         "inView": true
     },
     {
+=======
+>>>>>>> e2d4303b4da9c029b4bd5dfac776659f6250daca
         "type": "relation",
         "relation": "mt1,MtSdmUnit,id_unit"
     },

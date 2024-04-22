@@ -191,6 +191,15 @@ Route::resource('risk_penyebab', App\Http\Controllers\API\RiskPenyebabAPIControl
 Route::resource('risk_dampak', App\Http\Controllers\API\RiskDampakAPIController::class)
     ->except(['create', 'edit']);
 
+
+Route::resource('risk_metrik_strategi_risiko', App\Http\Controllers\API\RiskMetrikStrategiRisikoAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('risk_sasaran', App\Http\Controllers\API\RiskSasaranAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('risk_capacity_limit', App\Http\Controllers\API\RiskCapacityLimitAPIController::class)
+
 Route::resource('mt_risk_taksonomi_area', App\Http\Controllers\API\MtRiskTaksonomiAreaAPIController::class)
     ->except(['create', 'edit']);
 
@@ -212,5 +221,4 @@ Route::resource('risk_profile', App\Http\Controllers\API\RiskProfileAPIControlle
 Route::resource('risk_sasaran', App\Http\Controllers\API\RiskSasaranAPIController::class)
     ->except(['create', 'edit']);
 
-Route::resource('risk_metrik_strategi_risiko', App\Http\Controllers\API\RiskMetrikStrategiRisikoAPIController::class)
-    ->except(['create', 'edit']);
+Route::resource('risk_metrik_strategi_risiko', App\Http\Controllers\API\RiskMetrikStrategiRisikoAPIController::class)->except(['create', 'edit']);
