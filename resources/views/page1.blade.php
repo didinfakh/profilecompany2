@@ -34,8 +34,11 @@ const {{ucfirst($config->tableName)}} = (props) => {
             page: 1,
             pagesize: 1000,
         },
-        nama: "",
     })
+
+    const [listreferensi, setreferensi] = useState([])
+    const [filter, setfilter] = useState({})
+    const [order, setOrder] = useState('')
 
     const initialized = useRef(false)
 
@@ -43,11 +46,12 @@ const {{ucfirst($config->tableName)}} = (props) => {
         //first load
         if (!initialized.current) {
             handleInitAccessMethod()
+            {!!$getDataReferensiFrontend!!}
             initialized.current = true
         } else {
             handleget{{$config->tableName}}()
         }
-    }, [datafilter.paginate.page, datafilter.nama])
+    }, [filter, datafilter.paginate.pagesize, datafilter.paginate.page, order])
 
 
     const handleInitAccessMethod = async () => {
@@ -57,7 +61,26 @@ const {{ucfirst($config->tableName)}} = (props) => {
 
     const handleget{{$config->tableName}} = async () => {
         setis_loading(true)
-        const response = await getapi_services({ setErrors, filter: datafilter })
+
+        var filterarr = {}
+        headers.map((v, k) => {
+            if (filter[v.name]) {
+                if (v.type == 'list') {
+                    filterarr[v.name] = filter[v.name]
+                } else {
+                    filterarr[v.name] = '%' + filter[v.name] + '%'
+                }
+            }
+        })
+
+        const response = await getapi_services({
+            setErrors,
+            filter: {
+                ...datafilter,
+                filter: filterarr,
+                order: order,
+            },
+        })
         console.log('get{{$config->tableName}}')
         console.log(response)
         setis_loading(false)
@@ -86,6 +109,8 @@ const {{ucfirst($config->tableName)}} = (props) => {
         handleget{{$config->tableName}}()
     }
 
+    {!!$fncDataReferensiFrontend!!}
+
     return (
         <>
             <HeaderApp title={titlePage} is_loading={is_loading} data_btn={Object.keys(access_method).length > 0 ? access_method.btn_top : []} />
@@ -95,16 +120,37 @@ const {{ucfirst($config->tableName)}} = (props) => {
 
                 <table className="w-full table table-auto border-collapse border">
                     <thead>
-                        <TableHead data={headers} access_role={[]} />
+                            <TableHead
+                                data={headers}
+                                access_role={[]}
+                                referensi={listreferensi}
+                                onChange={(key, value) => {
+                                    setfilter({
+                                        ...filter,
+                                        [key]: value,
+                                    })
+                                }}
+                                setOrder={v => {
+                                    setOrder(v)
+                                }}
+                            />
                     </thead>
                     <tbody>
                         { {{$config->tableName}} .map((m, i) => (
                             <tr key={i}>
                                 <td className='border text-center'>{i + 1}</td>
                             
-                                {Object.keys(m).map(a => {
-                                            return headers.map(x => x.name === a ? (<td key={i} className='border'>{m[a]}</td>) : null)
-                                        })}
+                                {headers.map((x, k) => (
+                                        <td key={k} className="border">
+                                            {x.type == 'list'
+                                                ? listreferensi[x.name]
+                                                    ? listreferensi[x.name][
+                                                    m[x.name]
+                                                    ]
+                                                    : null
+                                                : m[x.name]}
+                                        </td>
+                                    ))}
                          
                                 <td className='border'>
                                     <div className='flex align-center justify-end td-action'>

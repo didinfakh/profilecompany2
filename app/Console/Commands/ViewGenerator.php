@@ -76,6 +76,8 @@ class ViewGenerator extends ModelGenerator
             'getVarRelationFrontend'  => $this->generateGetDataRelationFrontend('var'),
             'getDataRelationFrontend'  => $this->generateGetDataRelationFrontend('get'),
             'fncDataRelationFrontend'  => $this->generateGetDataRelationFrontend(),
+            'getDataReferensiFrontend'  => $this->generateGetDataReferensiFrontend('get'),
+            'fncDataReferensiFrontend'  => $this->generateGetDataReferensiFrontend(),
         ];
     }
 
@@ -392,7 +394,12 @@ class ViewGenerator extends ModelGenerator
             $rule .= "width: 'auto',";
             $rule .= "type: ";
 
-            $rule .= "'" . $field->dbType . "'";
+            $pos = strrpos($field->name, "id_");
+            if ($pos !== false) {
+                $rule .= "'list'";
+            } else {
+                $rule .= "'" . $field->dbType . "'";
+            }
 
             $rule .= "},\n";
 
@@ -688,7 +695,6 @@ class ViewGenerator extends ModelGenerator
             className='block mt-1 w-full'
             onChange={set" . $field->name . "}
             required={rules." . $field->name . ".required}
-            isMulti={false}
             autoFocus
             message_error={errors." . $field->name . "}
             onError={handleErrors}
@@ -787,6 +793,7 @@ class ViewGenerator extends ModelGenerator
                             console.log(response)
                     
                             checkNotAuthorized(response)
+                            if(response.error) return
                             let dataarr = []
                             response.data.map(m => {
                                 dataarr.push({
@@ -815,6 +822,59 @@ class ViewGenerator extends ModelGenerator
             return $var_str;
         }
         return $casts;
+    }
+
+    public function generateGetDataReferensiFrontend($event = null): string
+    {
+        // dd($this->customPrimaryKey());
+        // dd($this->config->relations);
+        $str = "";
+        $primary_key = $this->customPrimaryKey();
+        foreach($this->config->relations as $r) {
+            if(isset( $r->inputs[1]) && $r->inputs[1] != $primary_key && $r->type == "mt1") {
+                $pos = strrpos($r->inputs[1], "id_");
+                if ($pos !== false) {
+                    $str .= $this->ReferensiData($r, $event); 
+                }
+            }
+        }
+        return $str;
+    }
+
+    function ReferensiData($r, $event)
+    {
+        $table_name = "";
+        $table_name = $r->inputs[0];
+        $table_name = preg_replace('/(?<!\ )[A-Z]/', '_$0', $table_name);
+        $table_name = strtolower(ltrim($table_name, '_'));
+
+        $str = "";
+
+        if($event == 'get') {
+            $str = "handleget" . $r->inputs[1] . "()\n";
+            return $str;
+        }
+
+        $str .= "const handleget" . $r->inputs[1] . " = async () => {
+            const response = await getapi_services({ setErrors, api_path: '/" . $table_name . "', filter: {
+                paginate: {
+                    page: 1,
+                    pagesize: 10000
+                }
+            } })
+            console.log('get" . $table_name . "')
+            console.log(response)
+    
+            checkNotAuthorized(response)
+            if(response.error) return
+            let dataarr = []
+            response.data.map(m => {
+                dataarr[m.".$r->inputs[1]."] = m.nama
+            })
+            setreferensi({ ".$r->inputs[1].": dataarr })
+        }\n";
+        return $str;
+
     }
 
     function LabelName($name): string
