@@ -236,3 +236,10 @@ function routeRiskRegister($name, $controller)
 
 routeRiskRegister('risk_metrik_strategi_risiko', App\Http\Controllers\API\RiskMetrikStrategiRisikoAPIController::class);
 routeRiskRegister('risk_profile', App\Http\Controllers\API\RiskProfileAPIController::class);
+
+
+Route::resource('risk_profile', App\Http\Controllers\API\RiskProfileAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('mt_risk_sasaran', App\Http\Controllers\API\MtRiskSasaranAPIController::class)
+    ->except(['create', 'edit']);
