@@ -71,4 +71,9 @@ class RiskMetrikStrategiRisiko extends BaseModel
     {
         return $this->belongsTo(\App\Models\MtRiskJenisRisiko::class, 'id_jenis_risiko');
     }
+
+    public function idSikapTerhadapRisiko(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(\App\Models\MtRiskSikapTerhadapRisiko::class, 'id_sikap_terhadap_risiko');
+    }
 }

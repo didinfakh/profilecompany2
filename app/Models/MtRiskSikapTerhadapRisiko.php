@@ -15,13 +15,16 @@ class MtRiskSikapTerhadapRisiko extends BaseModel
         'created_by',
         'modified_by',
         'created_by_desc',
-        'modified_by_desc'
+        'modified_by_desc',
+        'deleted_by',
+        'deleted_by_desc'
     ];
 
     protected $casts = [
         'nama' => 'string',
         'created_by_desc' => 'string',
-        'modified_by_desc' => 'string'
+        'modified_by_desc' => 'string',
+        'deleted_by_desc' => 'string'
     ];
 
     public array $rules = [
@@ -32,8 +35,13 @@ class MtRiskSikapTerhadapRisiko extends BaseModel
         'modified_by' => 'nullable',
         'created_by_desc' => 'nullable|string|max:200',
         'modified_by_desc' => 'nullable|string|max:200',
-        'deleted_at' => 'nullable'
+        'deleted_at' => 'nullable',
+        'deleted_by' => 'nullable',
+        'deleted_by_desc' => 'nullable|string|max:200'
     ];
 
-    
+    public function riskMetrikStrategiRisikos(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(\App\Models\RiskMetrikStrategiRisiko::class, 'id_sikap_terhadap_risiko');
+    }
 }
