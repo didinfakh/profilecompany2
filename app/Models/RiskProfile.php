@@ -76,6 +76,11 @@ class RiskProfile extends BaseModel
         return $this->belongsTo(\App\Models\MtRiskSasaran::class, 'id_sasaran');
     }
 
+    public function idJenisRisiko(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(\App\Models\MtRiskJenisRisiko::class, 'id_jenis_risiko');
+    }
+
     public function idTaksonomi(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(\App\Models\MtRiskTaksonomi::class, 'id_taksonomi');
@@ -86,24 +91,19 @@ class RiskProfile extends BaseModel
         return $this->belongsTo(\App\Models\RiskRegister::class, 'id_register');
     }
 
-    public function idJenisRisiko(): \Illuminate\Database\Eloquent\Relations\BelongsTo
-    {
-        return $this->belongsTo(\App\Models\MtRiskJenisRisiko::class, 'id_jenis_risiko');
-    }
-
     public function idRisiko(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(\App\Models\RiskRisiko::class, 'id_risiko');
     }
 
-    public function riskDampaks(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
-    {
-        return $this->belongsToMany(\App\Models\RiskDampak::class, 'risk_profile_dampak');
-    }
-
     public function riskProfileKris(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(\App\Models\RiskProfileKri::class, 'id_risk_profile');
+    }
+
+    public function riskDampaks(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(\App\Models\RiskDampak::class, 'risk_profile_dampak');
     }
 
     public function riskPenyebabs(): \Illuminate\Database\Eloquent\Relations\BelongsToMany

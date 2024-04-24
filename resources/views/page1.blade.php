@@ -36,7 +36,7 @@ const {{ucfirst($config->tableName)}} = (props) => {
         },
     })
 
-    const [listreferensi, setreferensi] = useState([])
+    const [listreferensi, setreferensi] = useState({})
     const [filter, setfilter] = useState({})
     const [order, setOrder] = useState('')
 

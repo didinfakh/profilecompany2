@@ -1,12 +1,12 @@
 <?php
 
 namespace App\Http\Controllers\API;
-use App\Http\Controllers\BaseResourceController;
+use App\Http\Controllers\RiskProfileResourceController;
 
 /**
  * Class RiskProfileAPIController
  */
-class RiskProfileAPIController extends BaseResourceController
+class RiskProfileAPIController extends RiskProfileResourceController
 {
     public function __construct()
     {

@@ -12,7 +12,7 @@ class RiskRisiko extends BaseModel
 
     public $fillable = [
         'id_taksonomi',
-        'id_taksonomi_area',
+        'id_jenis_risiko',
         'nama',
         'created_by',
         'updated_by',
@@ -31,7 +31,7 @@ class RiskRisiko extends BaseModel
 
     public array $rules = [
         'id_taksonomi' => 'nullable',
-        'id_taksonomi_area' => 'nullable',
+        'id_jenis_risiko' => 'nullable',
         'nama' => 'nullable|string|max:1000',
         'created_at' => 'nullable',
         'updated_at' => 'nullable',
@@ -49,9 +49,14 @@ class RiskRisiko extends BaseModel
         return $this->belongsTo(\App\Models\MtRiskTaksonomi::class, 'id_taksonomi');
     }
 
-    public function idTaksonomiArea(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function idJenisRisiko(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(\App\Models\MtRiskTaksonomiArea::class, 'id_taksonomi_area');
+        return $this->belongsTo(\App\Models\MtRiskJenisRisiko::class, 'id_jenis_risiko');
+    }
+
+    public function riskPenyebabs(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(\App\Models\RiskPenyebab::class, 'id_risiko');
     }
 
     public function riskDampaks(): \Illuminate\Database\Eloquent\Relations\HasMany
@@ -59,8 +64,8 @@ class RiskRisiko extends BaseModel
         return $this->hasMany(\App\Models\RiskDampak::class, 'id_risiko');
     }
 
-    public function riskPenyebabs(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function riskProfiles(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->hasMany(\App\Models\RiskPenyebab::class, 'id_risiko');
+        return $this->hasMany(\App\Models\RiskProfile::class, 'id_risiko');
     }
 }
