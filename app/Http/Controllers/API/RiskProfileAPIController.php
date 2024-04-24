@@ -1,16 +1,12 @@
 <?php
 
 namespace App\Http\Controllers\API;
-
-use App\Http\Controllers\RiskProfileResourceController;
-
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
+use App\Http\Controllers\BaseResourceController;
 
 /**
  * Class RiskProfileAPIController
  */
-class RiskProfileAPIController extends RiskProfileResourceController
+class RiskProfileAPIController extends BaseResourceController
 {
     public function __construct()
     {
