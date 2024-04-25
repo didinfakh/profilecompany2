@@ -18,14 +18,18 @@ class RiskPenyebab extends BaseModel
         'deleted_by',
         'created_by_desc',
         'updated_by_desc',
-        'deleted_by_desc'
+        'deleted_by_desc',
+        'catatan',
+        'status'
     ];
 
     protected $casts = [
         'nama' => 'string',
         'created_by_desc' => 'string',
         'updated_by_desc' => 'string',
-        'deleted_by_desc' => 'string'
+        'deleted_by_desc' => 'string',
+        'catatan' => 'string',
+        'status' => 'string'
     ];
 
     public array $rules = [
@@ -39,7 +43,9 @@ class RiskPenyebab extends BaseModel
         'deleted_at' => 'nullable',
         'created_by_desc' => 'nullable|string|max:200',
         'updated_by_desc' => 'nullable|string|max:200',
-        'deleted_by_desc' => 'nullable|string|max:200'
+        'deleted_by_desc' => 'nullable|string|max:200',
+        'catatan' => 'nullable|string',
+        'status' => 'nullable|string|max:50'
     ];
 
     public function idRisiko(): \Illuminate\Database\Eloquent\Relations\BelongsTo

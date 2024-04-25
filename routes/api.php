@@ -176,9 +176,6 @@ Route::resource('mt_risk_tingkat_agregasi_risiko', App\Http\Controllers\API\MtRi
 Route::resource('mt_status_pengajuan', App\Http\Controllers\API\MtStatusPengajuanAPIController::class)
     ->except(['create', 'edit']);
 
-Route::resource('risk_risiko', App\Http\Controllers\API\RiskRisikoAPIController::class)
-    ->except(['create', 'edit']);
-
 Route::resource('risk_penyebab', App\Http\Controllers\API\RiskPenyebabAPIController::class)
     ->except(['create', 'edit']);
 
@@ -241,6 +238,12 @@ routeRiskRegister('risk_profile', App\Http\Controllers\API\RiskProfileAPIControl
 Route::resource('mt_risk_sasaran', App\Http\Controllers\API\MtRiskSasaranAPIController::class)
     ->except(['create', 'edit']);
 
+Route::resource('risk_penyebab', App\Http\Controllers\API\RiskPenyebabAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('risk_dampak', App\Http\Controllers\API\RiskDampakAPIController::class)
+    ->except(['create', 'edit']);
+
 Route::resource('risk_risiko', App\Http\Controllers\API\RiskRisikoAPIController::class)
     ->except(['create', 'edit']);
 
@@ -250,8 +253,18 @@ Route::resource('risk_penyebab', App\Http\Controllers\API\RiskPenyebabAPIControl
 Route::resource('risk_dampak', App\Http\Controllers\API\RiskDampakAPIController::class)
     ->except(['create', 'edit']);
 
+<<<<<<< HEAD
 Route::resource('mt_risk_jenis_control', App\Http\Controllers\API\MtRiskJenisControlAPIController::class)
     ->except(['create', 'edit']);
 
 Route::resource('mt_risk_efektifitas_control', App\Http\Controllers\API\MtRiskEfektifitasControlAPIController::class)
+=======
+Route::resource('risk_risiko', App\Http\Controllers\API\RiskRisikoAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('mt_risk_matrix', App\Http\Controllers\API\MtRiskMatrixAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('mt_risk_dampak', App\Http\Controllers\API\MtRiskDampakAPIController::class)
+>>>>>>> e02939f28fc4085e2f0239ae041d3d4c184f7a22
     ->except(['create', 'edit']);
