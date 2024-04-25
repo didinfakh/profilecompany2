@@ -176,9 +176,6 @@ Route::resource('mt_risk_tingkat_agregasi_risiko', App\Http\Controllers\API\MtRi
 Route::resource('mt_status_pengajuan', App\Http\Controllers\API\MtStatusPengajuanAPIController::class)
     ->except(['create', 'edit']);
 
-Route::resource('risk_risiko', App\Http\Controllers\API\RiskRisikoAPIController::class)
-    ->except(['create', 'edit']);
-
 Route::resource('risk_penyebab', App\Http\Controllers\API\RiskPenyebabAPIController::class)
     ->except(['create', 'edit']);
 
@@ -241,6 +238,12 @@ routeRiskRegister('risk_profile', App\Http\Controllers\API\RiskProfileAPIControl
 Route::resource('mt_risk_sasaran', App\Http\Controllers\API\MtRiskSasaranAPIController::class)
     ->except(['create', 'edit']);
 
+Route::resource('risk_penyebab', App\Http\Controllers\API\RiskPenyebabAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('risk_dampak', App\Http\Controllers\API\RiskDampakAPIController::class)
+    ->except(['create', 'edit']);
+
 Route::resource('risk_risiko', App\Http\Controllers\API\RiskRisikoAPIController::class)
     ->except(['create', 'edit']);
 
@@ -248,4 +251,13 @@ Route::resource('risk_penyebab', App\Http\Controllers\API\RiskPenyebabAPIControl
     ->except(['create', 'edit']);
 
 Route::resource('risk_dampak', App\Http\Controllers\API\RiskDampakAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('risk_risiko', App\Http\Controllers\API\RiskRisikoAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('mt_risk_matrix', App\Http\Controllers\API\MtRiskMatrixAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('mt_risk_dampak', App\Http\Controllers\API\MtRiskDampakAPIController::class)
     ->except(['create', 'edit']);

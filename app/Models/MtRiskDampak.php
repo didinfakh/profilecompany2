@@ -22,7 +22,9 @@ class MtRiskDampak extends BaseModel
         'created_by',
         'modified_by',
         'created_by_desc',
-        'modified_by_desc'
+        'modified_by_desc',
+        'deleted_by',
+        'deleted_by_desc'
     ];
 
     protected $casts = [
@@ -35,7 +37,8 @@ class MtRiskDampak extends BaseModel
         'mulai' => 'float',
         'sampai' => 'float',
         'created_by_desc' => 'string',
-        'modified_by_desc' => 'string'
+        'modified_by_desc' => 'string',
+        'deleted_by_desc' => 'string'
     ];
 
     public array $rules = [
@@ -53,16 +56,18 @@ class MtRiskDampak extends BaseModel
         'modified_by' => 'nullable',
         'created_by_desc' => 'nullable|string|max:200',
         'modified_by_desc' => 'nullable|string|max:200',
-        'deleted_at' => 'nullable'
+        'deleted_at' => 'nullable',
+        'deleted_by' => 'nullable',
+        'deleted_by_desc' => 'nullable|string|max:200'
     ];
-
-    public function mtRiskMatrix(): \Illuminate\Database\Eloquent\Relations\HasOne
-    {
-        return $this->hasOne(\App\Models\MtRiskMatrix::class);
-    }
 
     public function mtRiskKriteriaDampakDetails(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(\App\Models\MtRiskKriteriaDampakDetail::class, 'id_dampak');
+    }
+
+    public function mtRiskMatrix(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(\App\Models\MtRiskMatrix::class);
     }
 }
