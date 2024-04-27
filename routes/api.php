@@ -235,6 +235,12 @@ routeRiskRegister('risk_metrik_strategi_risiko', App\Http\Controllers\API\RiskMe
 routeRiskRegister('risk_profile', App\Http\Controllers\API\RiskProfileAPIController::class);
 
 
+Route::resource('mt_risk_jenis_control', App\Http\Controllers\API\MtRiskJenisControlAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('mt_risk_efektifitas_control', App\Http\Controllers\API\MtRiskEfektifitasControlAPIController::class)
+    ->except(['create', 'edit']);
+
 Route::resource('mt_risk_sasaran', App\Http\Controllers\API\MtRiskSasaranAPIController::class)
     ->except(['create', 'edit']);
 
