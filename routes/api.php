@@ -238,6 +238,12 @@ Route::put('risk_risiko/approve/{id}', [App\Http\Controllers\API\RiskRisikoAPICo
 Route::put('risk_penyebab/approve/{id}', [App\Http\Controllers\API\RiskPenyebabAPIController::class, 'approve']);
 Route::put('risk_dampak/approve/{id}', [App\Http\Controllers\API\RiskDampakAPIController::class, 'approve']);
 
+Route::resource('mt_risk_jenis_control', App\Http\Controllers\API\MtRiskJenisControlAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('mt_risk_efektifitas_control', App\Http\Controllers\API\MtRiskEfektifitasControlAPIController::class)
+    ->except(['create', 'edit']);
+
 Route::resource('mt_risk_sasaran', App\Http\Controllers\API\MtRiskSasaranAPIController::class)
     ->except(['create', 'edit']);
 
@@ -256,9 +262,6 @@ Route::resource('risk_penyebab', App\Http\Controllers\API\RiskPenyebabAPIControl
 Route::resource('risk_dampak', App\Http\Controllers\API\RiskDampakAPIController::class)
     ->except(['create', 'edit']);
 
-Route::resource('risk_risiko', App\Http\Controllers\API\RiskRisikoAPIController::class)
-    ->except(['create', 'edit']);
-
 Route::resource('mt_risk_matrix', App\Http\Controllers\API\MtRiskMatrixAPIController::class)
     ->except(['create', 'edit']);
 
@@ -272,5 +275,8 @@ Route::resource('mt_lost_event_kategori', App\Http\Controllers\API\MtLostEventKa
 Route::resource('lost_event', App\Http\Controllers\API\LostEventAPIController::class)
     ->except(['create', 'edit']);
 
-Route::resource('risk_sasaran', App\Http\Controllers\API\RiskSasaranAPIController::class)
+Route::resource('risk_sasaran', App\Http\Controllers\API\RiskSasaranAPIController::class)->except(['create', 'edit']);
+
+
+Route::resource('mt_risk_kriteria_dampak', App\Http\Controllers\API\MtRiskKriteriaDampakAPIController::class)
     ->except(['create', 'edit']);
