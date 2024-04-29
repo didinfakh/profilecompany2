@@ -270,3 +270,6 @@ Route::resource('mt_risk_dampak', App\Http\Controllers\API\MtRiskDampakAPIContro
 
 Route::resource('mt_risk_kriteria_dampak', App\Http\Controllers\API\MtRiskKriteriaDampakAPIController::class)
     ->except(['create', 'edit']);
+
+Route::resource('mt_risk_kriteria_dampak_detail', App\Http\Controllers\API\MtRiskKriteriaDampakDetailAPIController::class)
+    ->except(['create', 'edit']);
