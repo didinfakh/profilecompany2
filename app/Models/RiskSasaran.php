@@ -20,7 +20,6 @@ class RiskSasaran extends BaseModel
         'updated_by',
         'created_by_desc',
         'updated_by_desc',
-        'id_unit',
         'id_register',
         'deleted_by',
         'deleted_by_desc'
@@ -33,7 +32,6 @@ class RiskSasaran extends BaseModel
         'nilai_limit' => 'string',
         'created_by_desc' => 'string',
         'updated_by_desc' => 'string',
-        'id_unit' => 'string',
         'deleted_by_desc' => 'string'
     ];
 
@@ -50,16 +48,10 @@ class RiskSasaran extends BaseModel
         'deleted_at' => 'nullable',
         'created_by_desc' => 'nullable|string|max:200',
         'updated_by_desc' => 'nullable|string|max:200',
-        'id_unit' => 'nullable|string|max:18',
         'id_register' => 'nullable',
         'deleted_by' => 'nullable',
         'deleted_by_desc' => 'nullable|string|max:200'
     ];
-
-    public function idUnit(): \Illuminate\Database\Eloquent\Relations\BelongsTo
-    {
-        return $this->belongsTo(\App\Models\MtSdmUnit::class, 'id_unit');
-    }
 
     public function idRegister(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {

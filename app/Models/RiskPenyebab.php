@@ -20,7 +20,8 @@ class RiskPenyebab extends BaseModel
         'updated_by_desc',
         'deleted_by_desc',
         'catatan',
-        'status'
+        'status',
+        'id_unit'
     ];
 
     protected $casts = [
@@ -29,7 +30,8 @@ class RiskPenyebab extends BaseModel
         'updated_by_desc' => 'string',
         'deleted_by_desc' => 'string',
         'catatan' => 'string',
-        'status' => 'string'
+        'status' => 'string',
+        'id_unit' => 'string'
     ];
 
     public array $rules = [
@@ -45,12 +47,18 @@ class RiskPenyebab extends BaseModel
         'updated_by_desc' => 'nullable|string|max:200',
         'deleted_by_desc' => 'nullable|string|max:200',
         'catatan' => 'nullable|string',
-        'status' => 'nullable|string|max:50'
+        'status' => 'nullable|string|max:50',
+        'id_unit' => 'nullable|string|max:18'
     ];
 
     public function idRisiko(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(\App\Models\RiskRisiko::class, 'id_risiko');
+    }
+
+    public function idUnit(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(\App\Models\MtSdmUnit::class, 'id_unit');
     }
 
     public function riskProfiles(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
