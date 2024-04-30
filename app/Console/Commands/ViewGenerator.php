@@ -903,7 +903,7 @@ class ViewGenerator extends ModelGenerator
             response.data.map(m => {
                 dataarr[m.".$r->inputs[1]."] = m.nama
             })
-            setreferensi({...listreferensi, ".$r->inputs[1].": dataarr })
+            setreferensi(listreferensi => ({...listreferensi, ".$r->inputs[1].": dataarr }))
         }\n";
         return $str;
 
