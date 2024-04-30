@@ -11,6 +11,7 @@ class MtRiskKriteriaDampakDetail extends BaseModel
     protected $primaryKey = 'id_kriteria_dampak';
 
     public $fillable = [
+        'id_kriteria_dampak',
         'id_dampak',
         'keterangan',
         'created_by',
