@@ -8,7 +8,7 @@ class LostEvent extends BaseModel
 {
     public $table = 'lost_event';
 
-    protected $primaryKey = 'id_lost_event';
+    public $primaryKey = 'id_lost_event';
 
     public $fillable = [
         'nama_kejadian',

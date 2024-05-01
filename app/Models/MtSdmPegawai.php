@@ -8,7 +8,7 @@ class MtSdmPegawai extends BaseModel
 {
     public $table = 'mt_sdm_pegawai';
 
-    protected $primaryKey = 'nid';
+    public $primaryKey = 'nid';
 
     public $fillable = [
         'email',

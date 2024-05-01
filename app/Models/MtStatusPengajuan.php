@@ -8,7 +8,7 @@ class MtStatusPengajuan extends BaseModel
 {
     public $table = 'mt_status_pengajuan';
 
-    protected $primaryKey = 'id_status_pengajuan';
+    public $primaryKey = 'id_status_pengajuan';
 
     public $fillable = [
         'nama',

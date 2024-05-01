@@ -8,7 +8,7 @@ class RiskSasaran extends BaseModel
 {
     public $table = 'risk_sasaran';
 
-    protected $primaryKey = 'id_sasaran';
+    public $primaryKey = 'id_sasaran';
 
     public $fillable = [
         'nama',
@@ -39,6 +39,7 @@ class RiskSasaran extends BaseModel
         'nama' => 'required|string|max:1000',
         'hasil_yang_diharapkan' => 'required|string|max:1000',
         'nilai_risiko' => 'required|string|max:1000',
+        'strategi' => 'required',
         'nilai_limit' => 'nullable|string|max:1000',
         'is_accept' => 'nullable',
         'created_at' => 'nullable',

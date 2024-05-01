@@ -8,7 +8,7 @@ class MtRiskKriteriaDampak extends BaseModel
 {
     public $table = 'mt_risk_kriteria_dampak';
 
-    protected $primaryKey = 'id_kriteria_dampak';
+    public $primaryKey = 'id_kriteria_dampak';
 
     public $fillable = [
         'nama',

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 
 class RiskProfileResourceController extends ResourceController
@@ -13,6 +14,8 @@ class RiskProfileResourceController extends ResourceController
      * @var int limit data to show
      */
     protected $limit = 10;
+
+    protected $data = [];
 
     /**
      * Return an array of resource objects, themselves in array format
@@ -96,52 +99,39 @@ class RiskProfileResourceController extends ResourceController
         return $this->respond($record);
     }
 
+
+    protected function _beforeDetail($id_register = null)
+    {
+        $rrm = new \App\Models\RiskRegister();
+        $this->data['rowheader'] = $rrm->find($id_register);
+    }
+
     /**
      * Create a new resource object, from "posted" parameters
      *
      * @return array	an array
      */
+
+
     public function store($id_register = null, Request $request): JsonResponse
     {
         $request->validate($this->model->rules);
 
+        $this->_beforeDetail($id_register);
+
         $data = $request->all();
-        $data["id_register"] = $id_register;
-        $id = $this->model->insert($data);
-        // if (!$id) {
-        //     return $this->fail($this->model->errors());
-        // }
-        $data[$this->model->primaryKey] = $id;
-
-        return $this->respondCreated($data, 'data created');
+        $ret = $this->upsert(null, $data);
+        if ($ret)
+            return $this->respondCreated($data, 'data created');
+        else
+            return $this->fail("insert failed");
     }
 
-    /**
-     * Create a new resource object, from "posted" parameters
-     *
-     * @return array	an array
-     */
-    public function create($id_register = null, Request $request): JsonResponse
-    {
-        $data = $request->getJSON();
-        $data["id_register"] = $id_register;
-        $id = $this->model->insert($data);
-        if (!$id) {
-            return $this->fail($this->model->errors());
-        }
-        $data->{$this->model->primaryKey} = $id;
-
-        return $this->respondCreated($data, 'data created');
-    }
-
-    /**
-     * Add or update a model resource, from "posted" properties
-     *
-     * @return array	an array
-     */
     public function update($id_register = null, $id = null, Request $request): JsonResponse
     {
         $request->validate($this->model->rules);
+
+        $this->_beforeDetail($id_register);
 
         if (!$this->model->where("id_register", $id_register)->find($id)) {
             return $this->failNotFound(sprintf(
@@ -150,15 +140,38 @@ class RiskProfileResourceController extends ResourceController
             ));
         }
 
-        // $data       = $request->getRawInput();		
-        // $updateData = array_filter($data);
-        $updateData = $request->all();
-        $updateData["id_register"] = $id_register;
-        $ret = $this->model->update($id, $updateData);
-        // if (!$ret) {
-        //     return $this->fail($this->model->errors());
-        // }
-        return $this->respond($updateData, 200, 'data updated');
+        $data = $request->all();
+        $ret = $this->upsert($id, $data);
+        if ($ret)
+            return $this->respond($data, 200, 'data updated');
+        else
+            return $this->fail("update failed");
+    }
+
+    protected function upsert($id, &$data)
+    {
+        $data["id_register"] = $this->data['rowheader']['id_register'];
+
+        DB::beginTransaction();
+
+        $ret = true;
+
+        if ($ret) {
+            if ($id) {
+                $ret = $this->model->update($id, $data);
+                $data[$this->model->primaryKey] = $id;
+            } else {
+                $ret = $id = $this->model->insert($data);
+                $data[$this->model->primaryKey] = $id;
+            }
+        }
+
+        if ($ret)
+            DB::commit();
+        else
+            DB::rollBack();
+
+        return $ret;
     }
 
     /**

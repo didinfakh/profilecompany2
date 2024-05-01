@@ -12,7 +12,7 @@ class SysUser extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    protected $primaryKey = "id_user";
+    public $primaryKey = "id_user";
     protected $table = "sys_user";
     
     /**

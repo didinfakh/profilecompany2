@@ -8,7 +8,7 @@ class RiskProfile extends BaseModel
 {
     public $table = 'risk_profile';
 
-    protected $primaryKey = 'id_risk_profile';
+    public $primaryKey = 'id_risk_profile';
 
     public $fillable = [
         'sasaran',
@@ -48,10 +48,14 @@ class RiskProfile extends BaseModel
     public array $rules = [
         'sasaran' => 'nullable|string|max:1000',
         'id_sasaran' => 'nullable',
+        'nama' => 'required',
+        'penyebab' => 'required',
+        'penyebab.*.nama' => 'required',
+        'dampak' => 'required',
+        'dampak.*.nama' => 'required',
         'id_jenis_risiko' => 'nullable',
         'id_taksonomi' => 'nullable',
         'id_risiko' => 'nullable',
-        'nama' => 'nullable|string|max:1000',
         'deskripsi' => 'nullable|string',
         'id_register' => 'nullable',
         'is_kuantitatif' => 'nullable',

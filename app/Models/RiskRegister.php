@@ -8,7 +8,7 @@ class RiskRegister extends BaseModel
 {
     public $table = 'risk_register';
 
-    protected $primaryKey = 'id_register';
+    public $primaryKey = 'id_register';
 
     public $fillable = [
         'nama',

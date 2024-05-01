@@ -8,7 +8,7 @@ class MtRiskEfektifitasControl extends BaseModel
 {
     public $table = 'mt_risk_efektifitas_control';
 
-    protected $primaryKey = 'id_efektifitas_control';
+    public $primaryKey = 'id_efektifitas_control';
 
     public $fillable = [
         'nama'

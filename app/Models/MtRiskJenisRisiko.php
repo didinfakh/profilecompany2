@@ -8,7 +8,7 @@ class MtRiskJenisRisiko extends BaseModel
 {
     public $table = 'mt_risk_jenis_risiko';
 
-    protected $primaryKey = 'id_jenis_risiko';
+    public $primaryKey = 'id_jenis_risiko';
 
     public $fillable = [
         'id_kategori_risiko',
