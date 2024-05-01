@@ -294,5 +294,6 @@ Route::resource('risk_sasaran_strategi', App\Http\Controllers\API\RiskSasaranStr
     ->except(['create', 'edit']);
 
 
-Route::resource('risk_capacity_limit', App\Http\Controllers\API\RiskCapacityLimitAPIController::class)
+Route::resource('risk_capacity_limit', App\Http\Controllers\API\RiskCapacityLimitAPIController::class)->except(['create', 'edit']);
+Route::resource('mt_risk_kriteria_dampak_detail', App\Http\Controllers\API\MtRiskKriteriaDampakDetailAPIController::class)
     ->except(['create', 'edit']);

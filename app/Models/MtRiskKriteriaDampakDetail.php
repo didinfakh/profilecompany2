@@ -11,18 +11,22 @@ class MtRiskKriteriaDampakDetail extends BaseModel
     public $primaryKey = 'id_kriteria_dampak';
 
     public $fillable = [
+        'id_kriteria_dampak',
         'id_dampak',
         'keterangan',
         'created_by',
         'modified_by',
         'created_by_desc',
-        'modified_by_desc'
+        'modified_by_desc',
+        'deleted_by',
+        'deleted_by_desc'
     ];
 
     protected $casts = [
         'keterangan' => 'string',
         'created_by_desc' => 'string',
-        'modified_by_desc' => 'string'
+        'modified_by_desc' => 'string',
+        'deleted_by_desc' => 'string'
     ];
 
     public array $rules = [
@@ -34,7 +38,9 @@ class MtRiskKriteriaDampakDetail extends BaseModel
         'modified_by' => 'nullable',
         'created_by_desc' => 'nullable|string|max:200',
         'modified_by_desc' => 'nullable|string|max:200',
-        'deleted_at' => 'nullable'
+        'deleted_at' => 'nullable',
+        'deleted_by' => 'nullable',
+        'deleted_by_desc' => 'nullable|string|max:200'
     ];
 
     public function idKriteriaDampak(): \Illuminate\Database\Eloquent\Relations\BelongsTo
