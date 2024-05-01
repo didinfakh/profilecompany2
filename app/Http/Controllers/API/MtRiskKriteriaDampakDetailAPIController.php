@@ -36,4 +36,6 @@ class MtRiskKriteriaDampakDetailAPIController extends BaseResourceController
         // }
         return $this->respond($updateData, 200, 'data updated');
     }
+
+
 }
