@@ -8,7 +8,7 @@ class MtLostEventKategori extends BaseModel
 {
     public $table = 'mt_lost_event_kategori';
 
-    protected $primaryKey = 'id_lost_event_kategori';
+    public $primaryKey = 'id_lost_event_kategori';
 
     public $fillable = [
         'nama',

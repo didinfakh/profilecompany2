@@ -8,7 +8,7 @@ class RiskRisiko extends BaseModel
 {
     public $table = 'risk_risiko';
 
-    protected $primaryKey = 'id_risiko';
+    public $primaryKey = 'id_risiko';
 
     public $fillable = [
         'id_taksonomi',

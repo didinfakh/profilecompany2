@@ -8,7 +8,7 @@ class MtRiskTingkat extends BaseModel
 {
     public $table = 'mt_risk_tingkat';
 
-    protected $primaryKey = 'id_tingkat';
+    public $primaryKey = 'id_tingkat';
 
     public $fillable = [
         'nama',

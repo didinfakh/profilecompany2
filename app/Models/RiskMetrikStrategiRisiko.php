@@ -8,7 +8,7 @@ class RiskMetrikStrategiRisiko extends BaseModel
 {
     public $table = 'risk_metrik_strategi_risiko';
 
-    protected $primaryKey = 'id_metrik_strategi_risiko';
+    public $primaryKey = 'id_metrik_strategi_risiko';
 
     public $fillable = [
         'id_jenis_risiko',

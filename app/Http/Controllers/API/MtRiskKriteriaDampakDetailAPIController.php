@@ -20,16 +20,14 @@ class MtRiskKriteriaDampakDetailAPIController extends BaseResourceController
     {
         $request->validate($this->model->rules);
 
-        if (!$this->model->find($id_kriteria)) {
-            return $this->failNotFound(sprintf(
-                'item with id %d not found',
-                $id_kriteria
-            ));
+        $updateData = $request->all();
+
+        if (!$this->model->where([['id_kriteria_dampak','=', $id_kriteria],['id_dampak','=',$request->input('id_dampak')]])->get()) {
+            return $this->respond($updateData,200,'not found');
         }
 
         // $data       = $request->getRawInput();		
         // $updateData = array_filter($data);
-        $updateData = $request->all();
         $ret = $this->model->where([['id_kriteria_dampak','=', $id_kriteria],['id_dampak','=',$request->input('id_dampak')]])->update( $updateData);
         // if (!$ret) {
         //     return $this->fail($this->model->errors());

@@ -8,7 +8,7 @@ class SysLog extends BaseModel
 {
     public $table = 'sys_log';
 
-    protected $primaryKey = 'id_log';
+    public $primaryKey = 'id_log';
 
     public $fillable = [
         'page',

@@ -8,7 +8,7 @@ class MtRiskMatrix extends BaseModel
 {
     public $table = 'mt_risk_matrix';
 
-    protected $primaryKey = 'id_dampak';
+    public $primaryKey = 'id_dampak';
 
     public $fillable = [
         'id_kemungkinan',

@@ -8,7 +8,7 @@ class MtJenisData extends BaseModel
 {
     public $table = 'mt_jenis_data';
 
-    protected $primaryKey = 'jenis';
+    public $primaryKey = 'jenis';
 
     public $fillable = [
         'nama'

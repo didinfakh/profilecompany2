@@ -8,7 +8,7 @@ class MtRiskTaksonomiObjective extends BaseModel
 {
     public $table = 'mt_risk_taksonomi_objective';
 
-    protected $primaryKey = 'id_taksonomi_objective';
+    public $primaryKey = 'id_taksonomi_objective';
 
     public $fillable = [
         'kode',

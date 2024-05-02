@@ -4,14 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class MtRiskSasaran extends BaseModel
+class RiskSasaranStrategi extends BaseModel
 {
-    public $table = 'mt_risk_sasaran';
+    public $table = 'risk_sasaran_strategi';
 
-    public $primaryKey = 'id_sasaran';
+    protected $primaryKey = 'id_sasaran_strategi';
 
     public $fillable = [
-        'nama',
+        'id_sasaran',
+        'strategi',
         'created_by',
         'updated_by',
         'deleted_by',
@@ -21,14 +22,15 @@ class MtRiskSasaran extends BaseModel
     ];
 
     protected $casts = [
-        'nama' => 'string',
+        'strategi' => 'string',
         'created_by_desc' => 'string',
         'updated_by_desc' => 'string',
         'deleted_by_desc' => 'string'
     ];
 
     public array $rules = [
-        'nama' => 'nullable|string|max:200',
+        'id_sasaran' => 'required',
+        'strategi' => 'nullable|string|max:1000',
         'created_at' => 'nullable',
         'updated_at' => 'nullable',
         'created_by' => 'nullable',
@@ -40,8 +42,8 @@ class MtRiskSasaran extends BaseModel
         'deleted_by_desc' => 'nullable|string|max:200'
     ];
 
-    public function riskProfiles(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function idSasaran(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->hasMany(\App\Models\RiskProfile::class, 'id_sasaran');
+        return $this->belongsTo(\App\Models\RiskSasaran::class, 'id_sasaran');
     }
 }

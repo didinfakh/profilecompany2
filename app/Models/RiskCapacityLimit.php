@@ -12,10 +12,8 @@ class RiskCapacityLimit extends BaseModel
 
     public $fillable = [
         'tahun',
-        'id_unit',
         'kapasitas_risiko',
         'persentase_toleran',
-        'ebitda',
         'risk_limit',
         'created_by',
         'modified_by',
@@ -28,10 +26,8 @@ class RiskCapacityLimit extends BaseModel
     ];
 
     protected $casts = [
-        'id_unit' => 'string',
         'kapasitas_risiko' => 'decimal:2',
         'persentase_toleran' => 'decimal:2',
-        'ebitda' => 'decimal:2',
         'risk_limit' => 'decimal:2',
         'created_by_desc' => 'string',
         'modified_by_desc' => 'string',
@@ -41,10 +37,8 @@ class RiskCapacityLimit extends BaseModel
 
     public array $rules = [
         'tahun' => 'required',
-        'id_unit' => 'required|string|max:18',
         'kapasitas_risiko' => 'required|numeric',
         'persentase_toleran' => 'required|numeric',
-        'ebitda' => 'required|numeric',
         'risk_limit' => 'required|numeric',
         'created_at' => 'nullable',
         'updated_at' => 'nullable',
@@ -58,11 +52,6 @@ class RiskCapacityLimit extends BaseModel
         'deleted_by' => 'nullable',
         'deleted_by_desc' => 'nullable|string|max:200'
     ];
-
-    public function idUnit(): \Illuminate\Database\Eloquent\Relations\BelongsTo
-    {
-        return $this->belongsTo(\App\Models\MtSdmUnit::class, 'id_unit');
-    }
 
     public function idRegister(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
