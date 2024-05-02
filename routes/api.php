@@ -286,3 +286,12 @@ Route::resource('mt_risk_kriteria_dampak_detail', App\Http\Controllers\API\MtRis
 
 Route::resource('mt_risk_matrix', App\Http\Controllers\API\MtRiskMatrixAPIController::class)
     ->except(['create', 'edit']);
+
+Route::resource('mt_sdm_jabatan', App\Http\Controllers\API\MtSdmJabatanAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('mt_risk_tingkat_agregasi_risiko', App\Http\Controllers\API\MtRiskTingkatAgregasiRisikoAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('mt_status_pengajuan', App\Http\Controllers\API\MtStatusPengajuanAPIController::class)
+    ->except(['create', 'edit']);
