@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class RiskMetrikStrategiRisiko extends BaseModel
 {
@@ -75,5 +76,29 @@ class RiskMetrikStrategiRisiko extends BaseModel
     public function idSikapTerhadapRisiko(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(\App\Models\MtRiskSikapTerhadapRisiko::class, 'id_sikap_terhadap_risiko');
+    }
+    public static function laporan($params = [])
+    {
+        $paramarr = [];
+        $where = "";
+        if ($params["id_register"] && $params["id_register"] != 'null') {
+            $where .= " and rmss.id_register = ?";
+            $paramarr[] = $params['id_register'];
+        }
+        if ($params["tahun"]) {
+            $where .= " and tahun = ?";
+            $paramarr[] = $params['tahun'];
+        }
+
+        $sql = "select rmss.*, mrt.nama as namataksonomi, mrjr.nama as namajenis_risiko, mrst.nama as namasikap_terhadap_risiko
+        from risk_metrik_strategi_risiko rmss 
+        left join mt_risk_jenis_risiko mrjr on rmss.id_jenis_risiko = mrjr.id_jenis_risiko
+        left join mt_risk_taksonomi mrt on rmss.id_taksonomi = mrt.id_taksonomi
+        left join mt_risk_sikap_terhadap_risiko mrst on rmss.id_sikap_terhadap_risiko = mrst.id_sikap_terhadap_risiko
+        where rmss.deleted_at is null 
+        $where";
+
+        $rows = DB::select($sql, $paramarr);
+        return $rows;
     }
 }

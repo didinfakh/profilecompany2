@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class RiskSasaran extends BaseModel
 {
@@ -62,5 +63,36 @@ class RiskSasaran extends BaseModel
     public function riskSasaranStrategis(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(\App\Models\RiskSasaranStrategi::class, 'id_sasaran');
+    }
+    public static function laporan($params = [])
+    {
+        $paramarr = [];
+        $where = "";
+        if ($params["id_register"] && $params["id_register"] != 'null') {
+            $where .= " and rs.id_register = ?";
+            $paramarr[] = $params['id_register'];
+        }
+        if ($params["tahun"]) {
+            $where .= " and tahun = ?";
+            $paramarr[] = $params['tahun'];
+        }
+
+        $sql = "select rs.*
+        from risk_sasaran rs
+        where rs.deleted_at is null 
+        $where";
+
+        $rows = DB::select($sql, $paramarr);
+
+        $no = 0;
+        foreach ($rows as &$r) {
+            $rows1 = DB::select("select strategi from risk_sasaran_strategi where deleted_at is null and id_sasaran = ?", [$r->id_sasaran]);
+            $arr = [];
+            foreach ($rows1 as $r1) {
+                $arr[] = $r1->strategi;
+            }
+            $r->nama_strategi = implode(",", $arr);
+        }
+        return $rows;
     }
 }

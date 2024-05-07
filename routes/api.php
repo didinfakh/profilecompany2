@@ -167,8 +167,12 @@ Route::resource('mt_sdm_jabatan', App\Http\Controllers\API\MtSdmJabatanAPIContro
 Route::resource('mt_sdm_pegawai', App\Http\Controllers\API\MtSdmPegawaiAPIController::class)
     ->except(['create', 'edit']);
 
+
+Route::get('risk_register/tree', [App\Http\Controllers\API\RiskRegisterAPIController::class, 'tree']);
+
 Route::resource('risk_register', App\Http\Controllers\API\RiskRegisterAPIController::class)
     ->except(['create', 'edit']);
+
 
 Route::resource('mt_risk_tingkat_agregasi_risiko', App\Http\Controllers\API\MtRiskTingkatAgregasiRisikoAPIController::class)
     ->except(['create', 'edit']);
@@ -182,8 +186,6 @@ Route::resource('risk_penyebab', App\Http\Controllers\API\RiskPenyebabAPIControl
 Route::resource('risk_dampak', App\Http\Controllers\API\RiskDampakAPIController::class)
     ->except(['create', 'edit']);
 
-Route::resource('risk_capacity_limit', App\Http\Controllers\API\RiskCapacityLimitAPIController::class)->except(['create', 'edit']);
-
 Route::resource('mt_risk_taksonomi_area', App\Http\Controllers\API\MtRiskTaksonomiAreaAPIController::class)->except(['create', 'edit']);
 
 Route::resource('mt_risk_taksonomi_objective', App\Http\Controllers\API\MtRiskTaksonomiObjectiveAPIController::class)
@@ -193,9 +195,6 @@ Route::resource('mt_risk_taksonomi', App\Http\Controllers\API\MtRiskTaksonomiAPI
     ->except(['create', 'edit']);
 
 Route::resource('mt_jenis_data', App\Http\Controllers\API\MtJenisDataAPIController::class)
-    ->except(['create', 'edit']);
-
-Route::resource('risk_capacity_limit', App\Http\Controllers\API\RiskCapacityLimitAPIController::class)
     ->except(['create', 'edit']);
 
 Route::resource('mt_risk_taksonomi', App\Http\Controllers\API\MtRiskTaksonomiAPIController::class)
@@ -228,7 +227,9 @@ function routeRiskRegister($name, $controller)
 routeRiskRegister('risk_metrik_strategi_risiko', App\Http\Controllers\API\RiskMetrikStrategiRisikoAPIController::class);
 routeRiskRegister('risk_profile', App\Http\Controllers\API\RiskProfileAPIController::class);
 routeRiskRegister('risk_sasaran', App\Http\Controllers\API\RiskSasaranAPIController::class);
+routeRiskRegister('risk_capacity_limit', App\Http\Controllers\API\RiskCapacityLimitAPIController::class);
 Route::put('risk_sasaran/approve/{id_register}/{id}/{jenis}', [App\Http\Controllers\API\RiskSasaranAPIController::class, 'approve']);
+Route::get('risk_capacity_limit/eksposur/{id_register}/{tahun}', [App\Http\Controllers\API\RiskCapacityLimitAPIController::class, 'eksposur']);
 
 Route::put('risk_risiko/approve/{id}', [App\Http\Controllers\API\RiskRisikoAPIController::class, 'approve']);
 Route::put('risk_penyebab/approve/{id}', [App\Http\Controllers\API\RiskPenyebabAPIController::class, 'approve']);
@@ -294,6 +295,20 @@ Route::resource('risk_sasaran_strategi', App\Http\Controllers\API\RiskSasaranStr
     ->except(['create', 'edit']);
 
 
-Route::resource('risk_capacity_limit', App\Http\Controllers\API\RiskCapacityLimitAPIController::class)->except(['create', 'edit']);
 Route::resource('mt_risk_kriteria_dampak_detail', App\Http\Controllers\API\MtRiskKriteriaDampakDetailAPIController::class)
+    ->except(['create', 'edit']);
+
+
+Route::get('laporan_bk_risiko/print', [App\Http\Controllers\API\LaporanBkRisikoAPIController::class, 'print']);
+Route::get('laporan_matrik_strategi_risiko/print', [App\Http\Controllers\API\LaporanBkRisikoAPIController::class, 'printmatrik']);
+Route::get('laporan_sasaran_strategi_bisnis/print', [App\Http\Controllers\API\LaporanBkRisikoAPIController::class, 'printsasaran']);
+
+Route::resource('laporan_bk_risiko', App\Http\Controllers\API\LaporanBkRisikoAPIController::class)
+    ->except(['create', 'edit']);
+
+
+Route::resource('mt_tamplate_laporan', App\Http\Controllers\API\MtTamplateLaporanAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('mt_template_laporan', App\Http\Controllers\API\MtTemplateLaporanAPIController::class)
     ->except(['create', 'edit']);

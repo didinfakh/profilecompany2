@@ -16,4 +16,16 @@ class RiskRegisterAPIController extends BaseResourceController
     {
         $this->model = new \App\Models\RiskRegister;
     }
+
+    public function tree(): JsonResponse
+    {
+        $rows = $this->model->get();
+        $data = $this->GenerateTreeEasyUi(
+            $rows,
+            "id_parent_register",
+            "id_register",
+            "nama"
+        );
+        return $this->respond($data);
+    }
 }

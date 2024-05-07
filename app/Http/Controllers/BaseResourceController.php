@@ -14,12 +14,14 @@ class BaseResourceController extends ResourceController
      */
     protected $limit = 10;
 
+    protected $data = [];
+
     /**
      * Return an array of resource objects, themselves in array format
      *
      * @return array	an array
      */
-    
+
     public function index(Request $request): JsonResponse
     {
         $search = $request->get('q');
@@ -116,24 +118,6 @@ class BaseResourceController extends ResourceController
     }
 
     /**
-     * Create a new resource object, from "posted" parameters
-     *
-     * @return array	an array
-     */
-    public function create(Request $request): JsonResponse
-    {
-        $data = $request->getJSON();
-
-        $id = $this->model->insert($data);
-        if (!$id) {
-            return $this->fail($this->model->errors());
-        }
-        $data->{$this->model->primaryKey} = $id;
-
-        return $this->respondCreated($data, 'data created');
-    }
-
-    /**
      * Add or update a model resource, from "posted" properties
      *
      * @return array	an array
@@ -187,5 +171,55 @@ class BaseResourceController extends ResourceController
     protected function filterArray($array, $filter)
     {
         return array_values(array_filter($array, $filter))[0];
+    }
+
+
+
+    function GenerateTreeEasyUi(
+        &$row,
+        $colparent,
+        $colid,
+        $collabel,
+        $valparent = null,
+        $level = 0,
+        $idarr = array()
+    ) {
+
+        if (!empty($idarr[$valparent]))
+            return;
+
+        $idarr[$valparent] = 1;
+
+        $level++;
+        $return = [];
+        $i = 0;
+        foreach ($row as $idkey => $value) {
+            # code...
+            if (trim($value->{$colparent}) == trim($valparent) && ($value->{$colparent} or $valparent === null)) {
+
+                if (!empty($idarr[$value->{$colid}]))
+                    $value->{$colparent} = null;
+
+                unset($row[$idkey]);
+
+                $val = $value;
+                $val->id = $value->{$colid};
+                $val->text = $value->{$collabel};
+                $children = $this->GenerateTreeEasyUi($row, $colparent, $colid, $collabel, $value->{$colid}, $level, $idarr);
+                $val->children = $children;
+                $return[$i] = $val;
+                $i++;
+            }
+        }
+
+        // if (!$valparent && $row) {
+        //     foreach ($row as $k => $v) {
+        //         $row[$k]->{$colparent} = null;
+        //     }
+
+        //     $return = array_merge($return, $row);
+        // }
+
+        return $return;
     }
 }

@@ -1,0 +1,26 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class LaporanBkRisiko extends BaseModel
+{
+    public $table = 'laporan_bk_risiko';
+
+    protected $primaryKey = 'id';
+
+    public $fillable = [
+        'a'
+    ];
+
+    protected $casts = [
+        'a' => 'string'
+    ];
+
+    public array $rules = [
+        'a' => 'nullable|string'
+    ];
+
+    
+}
