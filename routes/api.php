@@ -186,6 +186,11 @@ Route::resource('risk_penyebab', App\Http\Controllers\API\RiskPenyebabAPIControl
 Route::resource('risk_dampak', App\Http\Controllers\API\RiskDampakAPIController::class)
     ->except(['create', 'edit']);
 
+Route::resource('risk_sasaran', App\Http\Controllers\API\RiskSasaranAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('risk_capacity_limit', App\Http\Controllers\API\RiskCapacityLimitAPIController::class)->except(['create', 'edit']);
+
 Route::resource('mt_risk_taksonomi_area', App\Http\Controllers\API\MtRiskTaksonomiAreaAPIController::class)->except(['create', 'edit']);
 
 Route::resource('mt_risk_taksonomi_objective', App\Http\Controllers\API\MtRiskTaksonomiObjectiveAPIController::class)
@@ -195,6 +200,12 @@ Route::resource('mt_risk_taksonomi', App\Http\Controllers\API\MtRiskTaksonomiAPI
     ->except(['create', 'edit']);
 
 Route::resource('mt_jenis_data', App\Http\Controllers\API\MtJenisDataAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('risk_capacity_limit', App\Http\Controllers\API\RiskCapacityLimitAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('risk_sasaran', App\Http\Controllers\API\RiskSasaranAPIController::class)
     ->except(['create', 'edit']);
 
 Route::resource('mt_risk_taksonomi', App\Http\Controllers\API\MtRiskTaksonomiAPIController::class)
@@ -272,6 +283,9 @@ Route::resource('mt_lost_event_kategori', App\Http\Controllers\API\MtLostEventKa
 Route::resource('lost_event', App\Http\Controllers\API\LostEventAPIController::class)
     ->except(['create', 'edit']);
 
+Route::resource('risk_sasaran', App\Http\Controllers\API\RiskSasaranAPIController::class)->except(['create', 'edit']);
+
+
 Route::resource('mt_risk_kriteria_dampak', App\Http\Controllers\API\MtRiskKriteriaDampakAPIController::class)
     ->except(['create', 'edit']);
 
@@ -311,4 +325,18 @@ Route::resource('mt_tamplate_laporan', App\Http\Controllers\API\MtTamplateLapora
     ->except(['create', 'edit']);
 
 Route::resource('mt_template_laporan', App\Http\Controllers\API\MtTemplateLaporanAPIController::class)
+    ->except(['create', 'edit']);
+Route::resource('mt_risk_kriteria_dampak_detail', App\Http\Controllers\API\MtRiskKriteriaDampakDetailAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('mt_risk_matrix', App\Http\Controllers\API\MtRiskMatrixAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('mt_sdm_jabatan', App\Http\Controllers\API\MtSdmJabatanAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('mt_risk_tingkat_agregasi_risiko', App\Http\Controllers\API\MtRiskTingkatAgregasiRisikoAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('mt_status_pengajuan', App\Http\Controllers\API\MtStatusPengajuanAPIController::class)
     ->except(['create', 'edit']);

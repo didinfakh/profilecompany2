@@ -8,7 +8,7 @@ class MtSdmJabatan extends BaseModel
 {
     public $table = 'mt_sdm_jabatan';
 
-    public $primaryKey = 'id_jabatan';
+    protected $primaryKey = 'id_jabatan';
 
     public $fillable = [
         'nama',
@@ -24,7 +24,9 @@ class MtSdmJabatan extends BaseModel
         'created_by',
         'modified_by',
         'created_by_desc',
-        'modified_by_desc'
+        'modified_by_desc',
+        'deleted_by',
+        'deleted_by_desc'
     ];
 
     protected $casts = [
@@ -38,7 +40,8 @@ class MtSdmJabatan extends BaseModel
         'superior_id' => 'string',
         'urutan' => 'float',
         'created_by_desc' => 'string',
-        'modified_by_desc' => 'string'
+        'modified_by_desc' => 'string',
+        'deleted_by_desc' => 'string'
     ];
 
     public array $rules = [
@@ -58,7 +61,9 @@ class MtSdmJabatan extends BaseModel
         'modified_by' => 'nullable',
         'created_by_desc' => 'nullable|string|max:200',
         'modified_by_desc' => 'nullable|string|max:200',
-        'deleted_at' => 'nullable'
+        'deleted_at' => 'nullable',
+        'deleted_by' => 'nullable',
+        'deleted_by_desc' => 'nullable|string|max:200'
     ];
 
     public function idUnit(): \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -69,5 +74,10 @@ class MtSdmJabatan extends BaseModel
     public function riskRegisters(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(\App\Models\RiskRegister::class, 'id_owner');
+    }
+
+    public function riskProfileMitigasis(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(\App\Models\RiskProfileMitigasi::class, 'id_pic');
     }
 }

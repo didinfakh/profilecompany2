@@ -10,6 +10,7 @@ import BtnIconAct from '@/components/BtnIconAct';
 import Pagination from '@/components/Pagination';
 import { api_services } from '@/hooks/api_services';
 import TableHead from '@/components/TableHead';
+import EditDelete from '@/components/EditDelete';
 
 const titlePage = "{!!$titlePageFrontend!!}"
 
@@ -154,16 +155,11 @@ const {{ucfirst($config->tableName)}} = (props) => {
                          
                                 <td className='border'>
                                     <div className='flex align-center justify-end td-action'>
-                                    {Object.keys(access_method).length > 0 && Object.keys( access_method.btn_edit_delete).length > 0 && access_method.btn_edit_delete.edit === true ? (
-                                        <BtnIconAct className="btn-warning" icon="edit" href={`/${page_url}/edit/${m.{{$customPrimaryKey}} }`} />
-                                        ) : null}
-                                        {Object.keys(access_method).length > 0 && Object.keys( access_method.btn_edit_delete).length > 0 && access_method.btn_edit_delete.delete === true ? (
-                                        <BtnIconAct className="btn-danger" icon="delete" onTap={() => {
-                                                if (confirm('Yakin menghapus data ini?')) {
-                                                    handledelete{{$config->tableName}}(m.{{$customPrimaryKey}})
-                                                }
-                                            }} />
-                                            ) : null}
+                                    <EditDelete
+                                                data={access_method.editdelete ? access_method.editdelete : []}
+                                                id={m['{{$customPrimaryKey}}']}
+                                                onLoad={handleget{{$config->tableName}}}
+                                            />
                                     </div>
                                 </td>
                             </tr>
