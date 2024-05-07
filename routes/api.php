@@ -239,6 +239,12 @@ routeRiskRegister('risk_metrik_strategi_risiko', App\Http\Controllers\API\RiskMe
 routeRiskRegister('risk_profile', App\Http\Controllers\API\RiskProfileAPIController::class);
 routeRiskRegister('risk_sasaran', App\Http\Controllers\API\RiskSasaranAPIController::class);
 routeRiskRegister('risk_capacity_limit', App\Http\Controllers\API\RiskCapacityLimitAPIController::class);
+routeRiskRegister('risk_profile_mitigasi', App\Http\Controllers\API\RiskProfileMitigasiAPIController::class);
+
+
+// Route::resource('risk_profile_mitigasi', App\Http\Controllers\API\RiskProfileMitigasiAPIController::class)
+//     ->except(['create', 'edit']);
+
 Route::put('risk_sasaran/approve/{id_register}/{id}/{jenis}', [App\Http\Controllers\API\RiskSasaranAPIController::class, 'approve']);
 Route::get('risk_capacity_limit/eksposur/{id_register}/{tahun}', [App\Http\Controllers\API\RiskCapacityLimitAPIController::class, 'eksposur']);
 
@@ -319,7 +325,6 @@ Route::get('laporan_sasaran_strategi_bisnis/print', [App\Http\Controllers\API\La
 
 Route::resource('laporan_bk_risiko', App\Http\Controllers\API\LaporanBkRisikoAPIController::class)
     ->except(['create', 'edit']);
-
 
 Route::resource('mt_tamplate_laporan', App\Http\Controllers\API\MtTamplateLaporanAPIController::class)
     ->except(['create', 'edit']);
