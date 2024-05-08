@@ -30,7 +30,7 @@ class RiskCapacityLimitAPIController extends RiskProfileResourceController
         from risk_profile_target_residual a 
         where exists(select 1 from risk_profile b where b.deleted_at is null and  a.id_risk_profile = b.id_risk_profile and b.id_register = ?) 
         and a.deleted_at is null 
-        and a.periode=?", [$id_register, ($tahun + 1) . 'Q4'])[0]->total;
+        and a.periode=?", [$id_register, ($tahun + 1) . 'q4'])[0]->total;
 
         $ret = $row[0];
         $ret->residual = $residual;
@@ -56,6 +56,7 @@ class RiskCapacityLimitAPIController extends RiskProfileResourceController
 
     public function index($id_register = null, Request $request): JsonResponse
     {
+        $this->_beforeDetail($id_register);
         $search = $request->get('q');
         if ($search) {
             if (!empty($search['nama']))
@@ -111,7 +112,82 @@ class RiskCapacityLimitAPIController extends RiskProfileResourceController
             from risk_profile_target_residual a 
             where exists(select 1 from risk_profile b where b.deleted_at is null 
             and a.id_risk_profile = b.id_risk_profile and b.id_register = ?) 
-            and a.deleted_at is null and a.periode=?", [$r->id_register, ($r->tahun + 1) . 'Q4'])[0]->total;
+            and a.deleted_at is null and a.periode=?", [$r->id_register, ($r->tahun + 1) . 'q4'])[0]->total;
+
+            if ($this->data['rowheader']->id_tingkat_agregasi_risiko == 1) {
+                $r['risk_limit_corporate'] = $r['risk_limit'];
+                $r['risk_limit_divisi'] = DB::select(
+                    "select sum(risk_limit) total from risk_capacity_limit rcl 
+                    where tahun = ? and 
+                    deteled_at is null and 
+                    exists(select 1 from risk_register rr 
+                    where rr.id_register = rcl.id_register 
+                    and rr.id_tingkat_agregasi_risiko = 2)",
+                    [$r->tahun]
+                )[0]->total;
+
+                $r['risk_limit_proyek'] = DB::select(
+                    "select sum(risk_limit) total from risk_capacity_limit rcl 
+                    where tahun = ? and 
+                    deteled_at is null and 
+                    exists(select 1 from risk_register rr 
+                    where rr.id_register = rcl.id_register 
+                    and rr.id_tingkat_agregasi_risiko = 3)",
+                    [$r->tahun]
+                )[0]->total;
+            }
+
+
+            if ($this->data['rowheader']->id_tingkat_agregasi_risiko == 2) {
+                $r['risk_limit_corporate'] = DB::select(
+                    "select sum(risk_limit) total from risk_capacity_limit rcl 
+                    where tahun = ? and 
+                    deteled_at is null and 
+                    exists(select 1 from risk_register rr 
+                    where rr.id_register = rcl.id_register 
+                    and rr.id_tingkat_agregasi_risiko = 1)",
+                    [$r->tahun]
+                )[0]->total;
+
+                $r['risk_limit_divisi'] = $r['risk_limit'];
+
+                $r['risk_limit_proyek'] = DB::select(
+                    "select sum(risk_limit) total from risk_capacity_limit rcl 
+                    where tahun = ? and 
+                    deteled_at is null and 
+                    exists(select 1 from risk_register rr 
+                    where rr.id_register = rcl.id_register 
+                    and rr.id_tingkat_agregasi_risiko = 3 
+                    and rr.id_unit = ?)",
+                    [$r->tahun, $this->data['rowheader']->id_unit]
+                )[0]->total;
+            }
+
+
+            if ($this->data['rowheader']->id_tingkat_agregasi_risiko == 3) {
+                $r['risk_limit_corporate'] = DB::select(
+                    "select sum(risk_limit) total from risk_capacity_limit rcl 
+                    where tahun = ? and 
+                    deteled_at is null and 
+                    exists(select 1 from risk_register rr 
+                    where rr.id_register = rcl.id_register 
+                    and rr.id_tingkat_agregasi_risiko = 1)",
+                    [$r->tahun]
+                )[0]->total;
+
+                $r['risk_limit_divisi'] = DB::select(
+                    "select sum(risk_limit) total from risk_capacity_limit rcl 
+                    where tahun = ? and 
+                    deteled_at is null and 
+                    exists(select 1 from risk_register rr 
+                    where rr.id_register = rcl.id_register 
+                    and rr.id_tingkat_agregasi_risiko = 2 
+                    and rr.id_unit = ?)",
+                    [$r->tahun, $this->data['rowheader']->id_unit]
+                )[0]->total;
+
+                $r['risk_limit_proyek'] = $r['risk_limit'];
+            }
 
             $r['risk_residual'] = $residual;
             $rows[] = $r;

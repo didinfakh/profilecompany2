@@ -343,4 +343,35 @@ class LaporanBkRisikoAPIController extends BaseResourceController
         $this->data['rows'] = \App\Models\RiskSasaran::laporan($data);
         return view('api/laporanbkrisikoprint', $this->data);
     }
+
+    public function printlossevent(Request $request)
+    {
+        $data = $request->all();
+
+        $this->data['header'] = [[
+            "nama_kejadian" => ["label" => "Nama Kejadian"],
+            "identifikasi_kejadian" => ["label" => "Identifikasi Kejadian"],
+            "namalost_event_kategori" => ["label" => "Kategori Kejadian"],
+            "namalost_event_sumber_penyebab_kejadian" => ["label" => "Sumber Penyebab Kejadian"],
+            "penyebab_kejadian" => ["label" => "Penyebab Kejadian"],
+            "penanganan_saat_kejadian" => ["label" => "Penanganan saat Kejadian"],
+            "deskripsi_kejadian" => ["label" => "Deskripsi Kejadian - Risk Event"],
+            "namajenis_risiko" => ["label" => "Kategori Risiko BUMN"],
+            "namataksonomi " => ["label" => "Kategori Risiko T2 & T3 KBUMN"],
+            "penjelasan_kerugian" => ["label" => "Penjelasan Kerugian"],
+            "nilai_kerugian" => ["label" => "Nilai Kerugian"],
+            "namakejadian_berulang" => ["label" => "Kejadian Berulang"],
+            "namalost_event_frakuensi_kejadian" => ["label" => "Frekuensi Kejadian"],
+            "mitigasi_yang_direncanakan" => ["label" => "Mitigasi yang Direncanakan"],
+            "realisasi_mitigasi" => ["label" => "Realisasi Mitigasi"],
+            "perbaikan_mendatang" => ["label" => "Perbaikan Mendatang"],
+            "pihak_terkait" => ["label" => "Pihak terkait"],
+            "namalost_event_status_asuransi" => ["label" => "Status Asuransi"],
+            "nilai_premi" => ["label" => "Nilai Premi"],
+            "nilai_klaim" => ["label" => "Nilai Klaim"],
+        ]];
+        $this->data['cols'] = array_keys($this->data['header'][0]);
+        $this->data['rows'] = \App\Models\LostEvent::laporan($data);
+        return view('api/laporanbkrisikoprint', $this->data);
+    }
 }

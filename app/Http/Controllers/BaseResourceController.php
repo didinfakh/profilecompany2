@@ -51,7 +51,12 @@ class BaseResourceController extends ResourceController
                 $db = $db->orderBy($column, $sc);
             }
         } else if ($this->model->orderDefault) {
-            $db = $db->orderBy($this->model->orderDefault);
+            $exp = explode(",", $this->model->orderDefault);
+            if (!is_array($exp))
+                $exp = array($exp);
+
+            foreach ($exp as $v)
+                $db = $db->orderBy(trim($v));
         } else if ($this->model->primaryKey) {
             $db = $db->orderBy($this->model->primaryKey);
         }

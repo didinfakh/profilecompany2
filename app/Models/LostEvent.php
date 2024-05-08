@@ -3,12 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class LostEvent extends BaseModel
 {
     public $table = 'lost_event';
 
-    public $primaryKey = 'id_lost_event';
+    protected $primaryKey = 'id_lost_event';
 
     public $fillable = [
         'nama_kejadian',
@@ -36,7 +37,10 @@ class LostEvent extends BaseModel
         'created_by_desc',
         'updated_by_desc',
         'deleted_by_desc',
-        'penyebab_kejadian'
+        'penyebab_kejadian',
+        'status',
+        'tgl_loss_event',
+        'id_unit'
     ];
 
     protected $casts = [
@@ -55,7 +59,10 @@ class LostEvent extends BaseModel
         'created_by_desc' => 'string',
         'updated_by_desc' => 'string',
         'deleted_by_desc' => 'string',
-        'penyebab_kejadian' => 'string'
+        'penyebab_kejadian' => 'string',
+        'status' => 'string',
+        'tgl_loss_event' => 'date',
+        'id_unit' => 'string'
     ];
 
     public array $rules = [
@@ -87,7 +94,10 @@ class LostEvent extends BaseModel
         'created_by_desc' => 'nullable|string|max:200',
         'updated_by_desc' => 'nullable|string|max:200',
         'deleted_by_desc' => 'nullable|string|max:200',
-        'penyebab_kejadian' => 'nullable|string|max:1000'
+        'penyebab_kejadian' => 'nullable|string|max:1000',
+        'status' => 'nullable|string|max:20',
+        'tgl_loss_event' => 'nullable',
+        'id_unit' => 'nullable|string|max:18'
     ];
 
     public function idLostEventKategori(): \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -118,5 +128,44 @@ class LostEvent extends BaseModel
     public function idLostEventStatusAsuransi(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(\App\Models\MtLostEventStatusAsuransi::class, 'id_lost_event_status_asuransi');
+    }
+
+    public function idUnit(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(\App\Models\MtSdmUnit::class, 'id_unit');
+    }
+
+    public static function laporan($params = [])
+    {
+        $paramarr = [];
+        $where = "";
+        if ($params["id_unit"] && $params["id_unit"] != 'null') {
+            $where .= " and rs.id_unit = ?";
+            $paramarr[] = $params['id_unit'];
+        }
+        if ($params["tahun"]) {
+            $where .= " and to_char(tgl_loss_event,'YYYY') = ?";
+            $paramarr[] = $params['tahun'];
+        }
+
+        $sql = "select rs.*, 
+        mlek.nama as namalost_event_kategori,
+        mlespk.nama as namalost_event_penyebab_kejadian,
+        mrjr.nama as namajenis_risiko,
+        mrt.nama as namataksonomi,
+        mlefk.nama as namalost_event_frakuensi_kejadian,
+        mlesa.nama as namalost_event_status_asuransi
+        from lost_event rs 
+        left join mt_lost_event_kategori mlek on rs.id_lost_event_kategori = mlek.id_lost_event_kategori
+        left join mt_lost_event_sumber_penyebab_kejadian mlespk on rs.id_lost_event_sumber_penyebab_kejadian = mlespk.id_lost_event_sumber_penyebab_kejadian
+        left join mt_risk_jenis_risiko mrjr on rs.id_jenis_risiko = mrjr.id_jenis_risiko
+        left join mt_risk_taksonomi mrt on rs.id_taksonomi = mrt.id_taksonomi
+        left join mt_lost_event_frakuensi_kejadian mlefk on rs.id_lost_event_frakuensi_kejadian = mlefk.id_lost_event_frakuensi_kejadian
+        left join mt_lost_event_status_asuransi mlesa on rs.id_lost_event_status_asuransi = mlesa.id_lost_event_status_asuransi
+        where rs.deleted_at is null 
+        $where";
+        
+        $rows = DB::select($sql, $paramarr);
+        return $rows;
     }
 }

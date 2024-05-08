@@ -186,11 +186,6 @@ Route::resource('risk_penyebab', App\Http\Controllers\API\RiskPenyebabAPIControl
 Route::resource('risk_dampak', App\Http\Controllers\API\RiskDampakAPIController::class)
     ->except(['create', 'edit']);
 
-Route::resource('risk_sasaran', App\Http\Controllers\API\RiskSasaranAPIController::class)
-    ->except(['create', 'edit']);
-
-Route::resource('risk_capacity_limit', App\Http\Controllers\API\RiskCapacityLimitAPIController::class)->except(['create', 'edit']);
-
 Route::resource('mt_risk_taksonomi_area', App\Http\Controllers\API\MtRiskTaksonomiAreaAPIController::class)->except(['create', 'edit']);
 
 Route::resource('mt_risk_taksonomi_objective', App\Http\Controllers\API\MtRiskTaksonomiObjectiveAPIController::class)
@@ -200,12 +195,6 @@ Route::resource('mt_risk_taksonomi', App\Http\Controllers\API\MtRiskTaksonomiAPI
     ->except(['create', 'edit']);
 
 Route::resource('mt_jenis_data', App\Http\Controllers\API\MtJenisDataAPIController::class)
-    ->except(['create', 'edit']);
-
-Route::resource('risk_capacity_limit', App\Http\Controllers\API\RiskCapacityLimitAPIController::class)
-    ->except(['create', 'edit']);
-
-Route::resource('risk_sasaran', App\Http\Controllers\API\RiskSasaranAPIController::class)
     ->except(['create', 'edit']);
 
 Route::resource('mt_risk_taksonomi', App\Http\Controllers\API\MtRiskTaksonomiAPIController::class)
@@ -241,6 +230,9 @@ routeRiskRegister('risk_sasaran', App\Http\Controllers\API\RiskSasaranAPIControl
 routeRiskRegister('risk_capacity_limit', App\Http\Controllers\API\RiskCapacityLimitAPIController::class);
 routeRiskRegister('risk_profile_mitigasi', App\Http\Controllers\API\RiskProfileMitigasiAPIController::class);
 
+
+Route::get('risk_profile_target_residual/{id_register}/{id_risk_profile}', [App\Http\Controllers\API\RiskProfileTargetResidualAPIController::class, 'show']);
+Route::put('risk_profile_target_residual/{id_register}/{id_risk_profile}', [App\Http\Controllers\API\RiskProfileTargetResidualAPIController::class, 'update']);
 
 // Route::resource('risk_profile_mitigasi', App\Http\Controllers\API\RiskProfileMitigasiAPIController::class)
 //     ->except(['create', 'edit']);
@@ -289,9 +281,6 @@ Route::resource('mt_lost_event_kategori', App\Http\Controllers\API\MtLostEventKa
 Route::resource('lost_event', App\Http\Controllers\API\LostEventAPIController::class)
     ->except(['create', 'edit']);
 
-Route::resource('risk_sasaran', App\Http\Controllers\API\RiskSasaranAPIController::class)->except(['create', 'edit']);
-
-
 Route::resource('mt_risk_kriteria_dampak', App\Http\Controllers\API\MtRiskKriteriaDampakAPIController::class)
     ->except(['create', 'edit']);
 
@@ -320,6 +309,7 @@ Route::resource('mt_risk_kriteria_dampak_detail', App\Http\Controllers\API\MtRis
 
 
 Route::get('laporan_bk_risiko/print', [App\Http\Controllers\API\LaporanBkRisikoAPIController::class, 'print']);
+Route::get('loss_event/print', [App\Http\Controllers\API\LaporanBkRisikoAPIController::class, 'printlossevent']);
 Route::get('laporan_matrik_strategi_risiko/print', [App\Http\Controllers\API\LaporanBkRisikoAPIController::class, 'printmatrik']);
 Route::get('laporan_sasaran_strategi_bisnis/print', [App\Http\Controllers\API\LaporanBkRisikoAPIController::class, 'printsasaran']);
 
@@ -344,4 +334,10 @@ Route::resource('mt_risk_tingkat_agregasi_risiko', App\Http\Controllers\API\MtRi
     ->except(['create', 'edit']);
 
 Route::resource('mt_status_pengajuan', App\Http\Controllers\API\MtStatusPengajuanAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('mt_sdm_kelompok_bisnis', App\Http\Controllers\API\MtSdmKelompokBisnisAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('mt_sdm_unit', App\Http\Controllers\API\MtSdmUnitAPIController::class)
     ->except(['create', 'edit']);
