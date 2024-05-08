@@ -341,3 +341,10 @@ Route::resource('mt_sdm_kelompok_bisnis', App\Http\Controllers\API\MtSdmKelompok
 
 Route::resource('mt_sdm_unit', App\Http\Controllers\API\MtSdmUnitAPIController::class)
     ->except(['create', 'edit']);
+
+
+Route::resource('mt_risk_jenis_program_rkap', App\Http\Controllers\API\MtRiskJenisProgramRkapAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('mt_risk_jenis_perlakuan', App\Http\Controllers\API\MtRiskJenisPerlakuanAPIController::class)
+    ->except(['create', 'edit']);
