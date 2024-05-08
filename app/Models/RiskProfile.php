@@ -262,7 +262,7 @@ class RiskProfile extends BaseModel
                                     $r3->realisasi_mitigasi_pic = $r4->realisasi_mitigasi_pic;
                                     $r3->realisasi_mitigasi_status_rencana_perlakuan = $r4->realisasi_mitigasi_status_rencana_perlakuan;
                                     $r3->realisasi_penjelasan_status_rencana_perlakuan = $r4->realisasi_penjelasan_status_rencana_perlakuan;
-                                    $periode = (int)str_replace(date("Y", strtotime($r->tgl_risiko))."q", "", $r4->periode);
+                                    $periode = (int)str_replace(date("Y", strtotime($r->tgl_risiko)) . "q", "", $r4->periode);
                                     $r3->{"progress_perlakuan" . $periode} = $r4->is_proses;
                                 }
                             }
@@ -378,5 +378,15 @@ class RiskProfile extends BaseModel
         }
 
         return $rows;
+    }
+
+    public function matriks($params = [])
+    {
+
+        $params['header'] = explode(",", $params['header']);
+        $paramarr = [];
+        $where = "";
+        if ($params['tahun'] && $params['tahun'] != 'null')
+            $paramarr[] = $params['tahun'];
     }
 }

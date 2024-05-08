@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Controllers\RiskProfileResourceController;
+use App\Http\Controllers\RisikoResourceController;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 /**
  * Class RiskProfileMitigasiAPIController
  */
-class RiskProfileMitigasiAPIController extends RiskProfileResourceController
+class RiskProfileMitigasiAPIController extends RisikoResourceController
 {
     public function __construct()
     {
@@ -124,5 +124,83 @@ class RiskProfileMitigasiAPIController extends RiskProfileResourceController
         //     'total_page' => $this->model->pager->getPageCount(),
         //     'total_records' => $this->model->pager->getDataCount()
         // ]);
+    }
+
+
+
+    protected function upsert($id, &$data)
+    {
+        $data["id_risk_profile"] = $this->data['rowheader']['id_risk_profile'];
+
+        DB::beginTransaction();
+
+        $ret = true;
+        $timeline = $data['timeline'];
+        unset($data['timeline']);
+        if ($ret) {
+            if ($id) {
+                $ret = $this->model->update($id, $data);
+                $data[$this->model->primaryKey] = $id;
+            } else {
+                $ret = $id = $this->model->insert($data);
+                $data[$this->model->primaryKey] = $id;
+            }
+
+            if ($ret) {
+                $id_mitigasi = $data[$this->model->primaryKey];
+                $timem = new \App\Models\RiskProfileMitigasiTimeline();
+                foreach ($timeline as $periode => $is_proses) {
+
+                    if (!$ret)
+                        break;
+
+                    if (!$periode)
+                        continue;
+
+                    $rt = $timem->where("id_mitigasi", $id_mitigasi)->where("periode", $periode)->get();
+
+                    if (isset($rt[0]))
+                        $id_mitigasi_timeline = $rt[0]->id_mitigasi_timeline;
+                    else
+                        $id_mitigasi_timeline = null;
+
+                    $rec = ["is_proses" => (int)$is_proses, "periode" => $periode, "id_mitigasi" => $id_mitigasi];
+                    if ($id_mitigasi_timeline) {
+                        $ret = $timem->update($id, $rec);
+                    } else {
+                        $ret = $id_mitigasi_timeline = $timem->insert($rec);
+                    }
+                    $data['timeline'][$periode] = $is_proses;
+                    $data['id_mitigasi_timeline'][$periode] = $id_mitigasi_timeline;
+                }
+            }
+        }
+
+        if ($ret)
+            DB::commit();
+        else
+            DB::rollBack();
+
+        return $ret;
+    }
+    public function show($id_risk_profile = null, $id = null): JsonResponse
+    {
+        $record = $this->model->where("id_risk_profile", $id_risk_profile)->find($id);
+        if (!$record) {
+            return $this->failNotFound(sprintf(
+                'item with id %d not found',
+                $id
+            ));
+        }
+
+        $timem = new \App\Models\RiskProfileMitigasiTimeline();
+        $rows = $timem->where("id_mitigasi", $record->id_mitigasi)->get();
+        $timeline = [];
+        foreach ($rows as $r) {
+            $timeline[$r->periode] = $r->is_proses;
+        }
+        $record->timeline = $timeline;
+
+        return $this->respond($record);
     }
 }

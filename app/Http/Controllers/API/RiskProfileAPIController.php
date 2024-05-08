@@ -257,4 +257,30 @@ class RiskProfileAPIController extends RiskProfileResourceController
 
         return $this->respond($record);
     }
+
+    public function matriks(Request $request)
+    {
+        // $data = $request->all();
+        // $data = $this->model->matriks($data);
+        $data = [];
+        $data[] = [
+            "id_register" => 1,
+            "id_risk_profile" => 1,
+            "nama" => "Pembengkakan HPP (Harga Pokok Penjualan)",
+            "risk_owner" => "Divisi Sipil dan Umum",
+            "inheren" => "<span style='color:red'>Ekstrem [5x5]</span>",
+            "target_residual" => "<span style='color:yellow'>Moderat [5x1]</span>",
+            "residual" => "<span style='color:yellow'>Moderat [5x1]</span>",
+        ];
+        $data[] = [
+            "id_register" => 2,
+            "id_risk_profile" => 2,
+            "nama" => "Keterbatasan Pendanaan JTTS",
+            "risk_owner" => "Divisi Corporate Planing",
+            "inheren" => "<span style='color:red'>Ekstrem [5x4]</span>",
+            "target_residual" => "<span style='color:orange'>Tinggi [5x3]</span>",
+            "residual" => "<span style='color:orange'>Tinggi [5x3]</span>",
+        ];
+        return $this->respond($data);
+    }
 }

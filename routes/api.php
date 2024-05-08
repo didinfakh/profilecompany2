@@ -224,18 +224,24 @@ function routeRiskRegister($name, $controller)
     Route::delete($name . '/{id_register}/{id}', [$controller, 'destroy']);
 }
 
+Route::get('risk_profile/matriks', [App\Http\Controllers\API\RiskProfileAPIController::class, 'matriks']);
 routeRiskRegister('risk_metrik_strategi_risiko', App\Http\Controllers\API\RiskMetrikStrategiRisikoAPIController::class);
 routeRiskRegister('risk_profile', App\Http\Controllers\API\RiskProfileAPIController::class);
 routeRiskRegister('risk_sasaran', App\Http\Controllers\API\RiskSasaranAPIController::class);
 routeRiskRegister('risk_capacity_limit', App\Http\Controllers\API\RiskCapacityLimitAPIController::class);
-routeRiskRegister('risk_profile_mitigasi', App\Http\Controllers\API\RiskProfileMitigasiAPIController::class);
+function routeRisiko($name, $controller)
+{
+    Route::get($name . '/{id_register}', [$controller, 'index']);
+    Route::get($name . '/{id_risk_profile}/{id}', [$controller, 'show']);
+    Route::post($name . '/{id_risk_profile}', [$controller, 'store']);
+    Route::put($name . '/{id_risk_profile}/{id}', [$controller, 'update']);
+    Route::delete($name . '/{id_risk_profile}/{id}', [$controller, 'destroy']);
+}
+routeRisiko('risk_profile_mitigasi', App\Http\Controllers\API\RiskProfileMitigasiAPIController::class);
 
 
 Route::get('risk_profile_target_residual/{id_register}/{id_risk_profile}', [App\Http\Controllers\API\RiskProfileTargetResidualAPIController::class, 'show']);
 Route::put('risk_profile_target_residual/{id_register}/{id_risk_profile}', [App\Http\Controllers\API\RiskProfileTargetResidualAPIController::class, 'update']);
-
-// Route::resource('risk_profile_mitigasi', App\Http\Controllers\API\RiskProfileMitigasiAPIController::class)
-//     ->except(['create', 'edit']);
 
 Route::put('risk_sasaran/approve/{id_register}/{id}/{jenis}', [App\Http\Controllers\API\RiskSasaranAPIController::class, 'approve']);
 Route::get('risk_capacity_limit/eksposur/{id_register}/{tahun}', [App\Http\Controllers\API\RiskCapacityLimitAPIController::class, 'eksposur']);
@@ -349,3 +355,6 @@ Route::resource('mt_risk_jenis_program_rkap', App\Http\Controllers\API\MtRiskJen
 Route::resource('mt_risk_jenis_perlakuan', App\Http\Controllers\API\MtRiskJenisPerlakuanAPIController::class)
     ->except(['create', 'edit']);
 
+
+Route::resource('risk_profile_mitigasi_timeline', App\Http\Controllers\API\RiskProfileMitigasiTimelineAPIController::class)
+    ->except(['create', 'edit']);
