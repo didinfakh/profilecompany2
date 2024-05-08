@@ -348,3 +348,4 @@ Route::resource('mt_risk_jenis_program_rkap', App\Http\Controllers\API\MtRiskJen
 
 Route::resource('mt_risk_jenis_perlakuan', App\Http\Controllers\API\MtRiskJenisPerlakuanAPIController::class)
     ->except(['create', 'edit']);
+

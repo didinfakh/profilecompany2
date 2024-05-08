@@ -8,7 +8,7 @@ class MtRiskPerlakuan extends BaseModel
 {
     public $table = 'mt_risk_perlakuan';
 
-    public $primaryKey = 'id_perluakuan';
+    protected $primaryKey = 'id_perluakuan';
 
     public $fillable = [
         'nama',
@@ -17,14 +17,17 @@ class MtRiskPerlakuan extends BaseModel
         'created_by',
         'modified_by',
         'created_by_desc',
-        'modified_by_desc'
+        'modified_by_desc',
+        'deleted_by',
+        'deleted_by_desc'
     ];
 
     protected $casts = [
         'nama' => 'string',
         'keterangan' => 'string',
         'created_by_desc' => 'string',
-        'modified_by_desc' => 'string'
+        'modified_by_desc' => 'string',
+        'deleted_by_desc' => 'string'
     ];
 
     public array $rules = [
@@ -37,11 +40,18 @@ class MtRiskPerlakuan extends BaseModel
         'modified_by' => 'nullable',
         'created_by_desc' => 'nullable|string|max:200',
         'modified_by_desc' => 'nullable|string|max:200',
-        'deleted_at' => 'nullable'
+        'deleted_at' => 'nullable',
+        'deleted_by' => 'nullable',
+        'deleted_by_desc' => 'nullable|string|max:200'
     ];
 
     public function mtRiskTingkatPerlakuans(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(\App\Models\MtRiskTingkatPerlakuan::class, 'id_perlakuan');
+    }
+
+    public function riskProfileMitigasis(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(\App\Models\RiskProfileMitigasi::class, 'id_perluakuan');
     }
 }
