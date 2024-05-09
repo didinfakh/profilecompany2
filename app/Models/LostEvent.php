@@ -144,8 +144,13 @@ class LostEvent extends BaseModel
             $paramarr[] = $params['id_register'];
         }
         if ($params["tahun"]) {
-            $where .= " and to_char(tgl_loss_event,'YYYY') = ?";
-            $paramarr[] = $params['tahun'];
+            if ($params["bulan"]) {
+                $where .= " and to_char(tgl_loss_event,'YYYYMM') = ?";
+                $paramarr[] = $params['tahun'] . str_pad($params['bulan'], 2, '0', STR_PAD_LEFT);
+            } else {
+                $where .= " and to_char(tgl_loss_event,'YYYY') = ?";
+                $paramarr[] = $params['tahun'];
+            }
         }
 
         $sql = "select rs.*, 
@@ -164,7 +169,7 @@ class LostEvent extends BaseModel
         left join mt_lost_event_status_asuransi mlesa on rs.id_lost_event_status_asuransi = mlesa.id_lost_event_status_asuransi
         where rs.deleted_at is null 
         $where";
-        
+
         $rows = DB::select($sql, $paramarr);
         return $rows;
     }
