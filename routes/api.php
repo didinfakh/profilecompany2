@@ -368,3 +368,7 @@ Route::post('risk_profile_realisasi_residual/{id_risk_profile}/{periode}', [App\
 
 // Route::resource('risk_profile_realisasi_residual', App\Http\Controllers\API\RiskProfileRealisasiResidualAPIController::class)
 //     ->except(['create', 'edit']);
+
+
+Route::resource('mt_status_rencana_perlakuan', App\Http\Controllers\API\MtStatusRencanaPerlakuanAPIController::class)
+    ->except(['create', 'edit']);
