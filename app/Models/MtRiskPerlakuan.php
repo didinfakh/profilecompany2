@@ -8,7 +8,7 @@ class MtRiskPerlakuan extends BaseModel
 {
     public $table = 'mt_risk_perlakuan';
 
-    protected $primaryKey = 'id_perluakuan';
+    protected $primaryKey = 'id_perlakuan';
 
     public $fillable = [
         'nama',
@@ -52,6 +52,6 @@ class MtRiskPerlakuan extends BaseModel
 
     public function riskProfileMitigasis(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->hasMany(\App\Models\RiskProfileMitigasi::class, 'id_perluakuan');
+        return $this->hasMany(\App\Models\RiskProfileMitigasi::class, 'id_perlakuan');
     }
 }

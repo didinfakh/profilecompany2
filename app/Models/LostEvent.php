@@ -139,9 +139,9 @@ class LostEvent extends BaseModel
     {
         $paramarr = [];
         $where = "";
-        if ($params["id_unit"] && $params["id_unit"] != 'null') {
-            $where .= " and rs.id_unit = ?";
-            $paramarr[] = $params['id_unit'];
+        if ($params["id_register"] && $params["id_register"] != 'null') {
+            $where .= " and rs.id_register = ?";
+            $paramarr[] = $params['id_register'];
         }
         if ($params["tahun"]) {
             $where .= " and to_char(tgl_loss_event,'YYYY') = ?";

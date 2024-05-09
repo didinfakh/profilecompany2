@@ -7,7 +7,7 @@ foreach ($header as $i => $r) {
     $level++;
     foreach ($r as $keycolumn => $r1) {
         $span = "";
-        if (isset($r1['cols']))
+        if (isset($r1['cols']) && $r1['cols'])
             $span = "colspan='" . $r1['cols'] . "' ";
         else if (($rowspan - $level) > 1)
             $span = "rowspan='" . $rowspan - $level . "' ";

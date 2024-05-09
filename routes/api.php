@@ -243,9 +243,9 @@ routeRisiko('risk_profile_mitigasi', App\Http\Controllers\API\RiskProfileMitigas
 Route::get('risk_profile_target_residual/{id_register}/{id_risk_profile}', [App\Http\Controllers\API\RiskProfileTargetResidualAPIController::class, 'show']);
 Route::put('risk_profile_target_residual/{id_register}/{id_risk_profile}', [App\Http\Controllers\API\RiskProfileTargetResidualAPIController::class, 'update']);
 
+
 Route::put('risk_sasaran/approve/{id_register}/{id}/{jenis}', [App\Http\Controllers\API\RiskSasaranAPIController::class, 'approve']);
 Route::get('risk_capacity_limit/eksposur/{id_register}/{tahun}', [App\Http\Controllers\API\RiskCapacityLimitAPIController::class, 'eksposur']);
-
 Route::put('risk_risiko/approve/{id}', [App\Http\Controllers\API\RiskRisikoAPIController::class, 'approve']);
 Route::put('risk_penyebab/approve/{id}', [App\Http\Controllers\API\RiskPenyebabAPIController::class, 'approve']);
 Route::put('risk_dampak/approve/{id}', [App\Http\Controllers\API\RiskDampakAPIController::class, 'approve']);
@@ -358,3 +358,13 @@ Route::resource('mt_risk_jenis_perlakuan', App\Http\Controllers\API\MtRiskJenisP
 
 Route::resource('risk_profile_mitigasi_timeline', App\Http\Controllers\API\RiskProfileMitigasiTimelineAPIController::class)
     ->except(['create', 'edit']);
+
+Route::resource('risk_profile_mitigasi_jenis', App\Http\Controllers\API\RiskProfileMitigasiJenisAPIController::class)
+    ->except(['create', 'edit']);
+
+
+Route::get('risk_profile_realisasi_residual/{id_risk_profile}/{periode}', [App\Http\Controllers\API\RiskProfileRealisasiResidualAPIController::class, 'show']);
+Route::post('risk_profile_realisasi_residual/{id_risk_profile}/{periode}', [App\Http\Controllers\API\RiskProfileRealisasiResidualAPIController::class, 'update']);
+
+// Route::resource('risk_profile_realisasi_residual', App\Http\Controllers\API\RiskProfileRealisasiResidualAPIController::class)
+//     ->except(['create', 'edit']);

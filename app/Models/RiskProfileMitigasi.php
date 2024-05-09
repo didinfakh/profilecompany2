@@ -13,7 +13,7 @@ class RiskProfileMitigasi extends BaseModel
     public $fillable = [
         'id_risk_profile',
         'id_profile_penyebab',
-        'id_perluakuan',
+        'id_perlakuan',
         'nama',
         'output_perlakuan',
         'biaya',
@@ -39,7 +39,7 @@ class RiskProfileMitigasi extends BaseModel
     public array $rules = [
         'id_risk_profile' => 'nullable',
         'id_profile_penyebab' => 'nullable',
-        'id_perluakuan' => 'nullable',
+        'id_perlakuan' => 'nullable',
         'nama' => 'nullable|string|max:2000',
         'output_perlakuan' => 'nullable|string|max:2000',
         'biaya' => 'nullable|numeric',
@@ -66,9 +66,9 @@ class RiskProfileMitigasi extends BaseModel
         return $this->belongsTo(\App\Models\RiskProfilePenyebab::class, 'id_profile_penyebab');
     }
 
-    public function idPerluakuan(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function idperlakuan(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(\App\Models\MtRiskPerlakuan::class, 'id_perluakuan');
+        return $this->belongsTo(\App\Models\MtRiskPerlakuan::class, 'id_perlakuan');
     }
 
     public function idJenisProgramRkap(): \Illuminate\Database\Eloquent\Relations\BelongsTo

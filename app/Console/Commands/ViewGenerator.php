@@ -25,9 +25,9 @@ class ViewGenerator extends ModelGenerator
         parent::__construct();
 
         // $this->path = $this->config->paths->model;
-        $this->path = 'D:/CLOUD/BITBUCKET/hk_rms_frontend';
+        // $this->path = 'D:/CLOUD/BITBUCKET/hk_rms_frontend';
         // $this->path = 'F:/xamp/htdocs/hk_rms_frontend';
-        // $this->path = 'D:/Dev/web/hk_rms_frontend';
+        $this->path = 'D:/Dev/web/hk_rms_frontend';
         $this->fileName = $this->config->modelNames->name . '.php';
     }
 

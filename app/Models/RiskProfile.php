@@ -187,7 +187,7 @@ class RiskProfile extends BaseModel
                             mrjpr.nama as mitigasi_jenis_program_rkap,
                             msj.nama as mitigasi_pic
                             from risk_profile_mitigasi rpm 
-                            left join mt_risk_perlakuan mrp on rpm.id_perluakuan = mrp.id_perluakuan
+                            left join mt_risk_perlakuan mrp on rpm.id_perlakuan = mrp.id_perlakuan
                             left join mt_risk_jenis_program_rkap mrjpr on rpm.id_jenis_program_rkap = mrjpr.id_jenis_program_rkap
                             left join mt_sdm_jabatan msj on rpm.id_pic = msj.id_jabatan
                             where rpm.deleted_at is null 

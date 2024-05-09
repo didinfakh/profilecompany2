@@ -136,7 +136,9 @@ class RiskProfileMitigasiAPIController extends RisikoResourceController
 
         $ret = true;
         $timeline = $data['timeline'];
+        $id_jenis_perlakuan = $data['id_jenis_perlakuan'];
         unset($data['timeline']);
+        unset($data['id_jenis_perlakuan']);
         if ($ret) {
             if ($id) {
                 $ret = $this->model->update($id, $data);
@@ -146,8 +148,9 @@ class RiskProfileMitigasiAPIController extends RisikoResourceController
                 $data[$this->model->primaryKey] = $id;
             }
 
+            $id_mitigasi = $data[$this->model->primaryKey];
+
             if ($ret) {
-                $id_mitigasi = $data[$this->model->primaryKey];
                 $timem = new \App\Models\RiskProfileMitigasiTimeline();
                 foreach ($timeline as $periode => $is_proses) {
 
@@ -166,13 +169,50 @@ class RiskProfileMitigasiAPIController extends RisikoResourceController
 
                     $rec = ["is_proses" => (int)$is_proses, "periode" => $periode, "id_mitigasi" => $id_mitigasi];
                     if ($id_mitigasi_timeline) {
-                        $ret = $timem->update($id, $rec);
+                        $ret = $timem->update($id_mitigasi_timeline, $rec);
                     } else {
                         $ret = $id_mitigasi_timeline = $timem->insert($rec);
                     }
                     $data['timeline'][$periode] = $is_proses;
                     $data['id_mitigasi_timeline'][$periode] = $id_mitigasi_timeline;
                 }
+            }
+
+
+            if ($ret) {
+                $jenism = new \App\Models\RiskProfileMitigasiJenis();
+                $id_mitigasi_jenisarr = [];
+                foreach ($id_jenis_perlakuan as $id_jenis_perlakuan) {
+
+                    if (!$ret)
+                        break;
+
+                    if (!$periode)
+                        continue;
+
+                    $rt = $jenism->where("id_mitigasi", $id_mitigasi)->where("id_jenis_perlakuan", $id_jenis_perlakuan)->get();
+
+                    if (isset($rt[0]))
+                        $id_mitigasi_jenis = $rt[0]->id_mitigasi_jenis;
+                    else
+                        $id_mitigasi_jenis = null;
+
+                    $rec = ["id_jenis_perlakuan" => $id_jenis_perlakuan, "id_mitigasi" => $id_mitigasi];
+                    if ($id_mitigasi_jenis) {
+                        $ret = $jenism->update($id_mitigasi_jenis, $rec);
+                    } else {
+                        $ret = $id_mitigasi_jenis = $jenism->insert($rec);
+                    }
+                    $data['id_mitigasi_jenis'][] = $id_mitigasi_jenis;
+
+                    $id_mitigasi_jenisarr[] = $id_mitigasi_jenis;
+                }
+
+                if ($ret)
+                    $ret = $jenism->where("id_mitigasi", $id_mitigasi)->whereNotIn(
+                        "id_mitigasi_jenis",
+                        $id_mitigasi_jenisarr
+                    )->delete() !== false;
             }
         }
 
@@ -200,6 +240,14 @@ class RiskProfileMitigasiAPIController extends RisikoResourceController
             $timeline[$r->periode] = $r->is_proses;
         }
         $record->timeline = $timeline;
+
+        $jenism = new \App\Models\RiskProfileMitigasiJenis();
+        $rows = $jenism->where("id_mitigasi", $record->id_mitigasi)->get();
+        $id_mitigasi_jenisarr = [];
+        foreach ($rows as $r) {
+            $id_mitigasi_jenisarr[] = $r->id_jenis_perlakuan;
+        }
+        $record->id_jenis_perlakuan = $id_mitigasi_jenisarr;
 
         return $this->respond($record);
     }
