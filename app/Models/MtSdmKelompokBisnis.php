@@ -8,7 +8,7 @@ class MtSdmKelompokBisnis extends BaseModel
 {
     public $table = 'mt_sdm_kelompok_bisnis';
 
-    protected $primaryKey = 'id_kelompok_bisnis';
+    public $primaryKey = 'id_kelompok_bisnis';
 
     public $fillable = [
         'nama',

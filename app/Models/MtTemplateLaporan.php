@@ -8,7 +8,7 @@ class MtTemplateLaporan extends BaseModel
 {
     public $table = 'mt_template_laporan';
 
-    protected $primaryKey = 'id_template_laporan';
+    public $primaryKey = 'id_template_laporan';
 
     public $fillable = [
         'halaman',

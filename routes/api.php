@@ -113,12 +113,6 @@ Route::resource('mt_risk_taksonomi_area', App\Http\Controllers\API\MtSdmUnitAPIC
 Route::resource('mt_risk_taksonomi_objective', App\Http\Controllers\API\MtSdmUnitAPIController::class)
     ->except(['create', 'edit']);
 
-Route::resource('mt_risk_tingkat', App\Http\Controllers\API\MtSdmUnitAPIController::class)
-    ->except(['create', 'edit']);
-
-Route::resource('mt_risk_tingkat_perlakuan', App\Http\Controllers\API\MtSdmUnitAPIController::class)
-    ->except(['create', 'edit']);
-
 Route::resource('mt_sdm_jabatan', App\Http\Controllers\API\MtSdmUnitAPIController::class)
     ->except(['create', 'edit']);
 
@@ -153,12 +147,6 @@ Route::resource('mt_risk_taksonomi_area', App\Http\Controllers\API\MtRiskTaksono
     ->except(['create', 'edit']);
 
 Route::resource('mt_risk_taksonomi_objective', App\Http\Controllers\API\MtRiskTaksonomiObjectiveAPIController::class)
-    ->except(['create', 'edit']);
-
-Route::resource('mt_risk_tingkat', App\Http\Controllers\API\MtRiskTingkatAPIController::class)
-    ->except(['create', 'edit']);
-
-Route::resource('mt_risk_tingkat_perlakuan', App\Http\Controllers\API\MtRiskTingkatPerlakuanAPIController::class)
     ->except(['create', 'edit']);
 
 Route::resource('mt_sdm_jabatan', App\Http\Controllers\API\MtSdmJabatanAPIController::class)
@@ -371,4 +359,17 @@ Route::post('risk_profile_realisasi_residual/{id_risk_profile}/{periode}', [App\
 
 
 Route::resource('mt_status_rencana_perlakuan', App\Http\Controllers\API\MtStatusRencanaPerlakuanAPIController::class)
+    ->except(['create', 'edit']);
+
+// Route::resource('risk_profile_mitigasi_realisasi', App\Http\Controllers\API\RiskProfileMitigasiRealisasiAPIController::class)
+//     ->except(['create', 'edit']);
+
+Route::get('risk_profile_mitigasi_realisasi/{id_risk_profile}/{periode}', [App\Http\Controllers\API\RiskProfileMitigasiRealisasiAPIController::class, 'show']);
+Route::post('risk_profile_mitigasi_realisasi/{id_risk_profile}/{periode}', [App\Http\Controllers\API\RiskProfileMitigasiRealisasiAPIController::class, 'update']);
+Route::post('risk_profile_mitigasi_realisasi/{id_risk_profile}/{periode}', [App\Http\Controllers\API\RiskProfileMitigasiRealisasiAPIController::class, 'update']);
+Route::get('risk_profile_kri/check_status/{id_kri}/{nilai}', [App\Http\Controllers\API\RiskProfileKriAPIController::class, 'checkstatus']);
+Route::get('level_risiko/{id_register}/{tahun}', [App\Http\Controllers\API\RiskProfileAPIController::class, 'levelrisiko']);
+
+
+Route::resource('risk_profile_kri_hasil', App\Http\Controllers\API\RiskProfileKriHasilAPIController::class)
     ->except(['create', 'edit']);

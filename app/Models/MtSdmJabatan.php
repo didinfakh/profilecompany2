@@ -8,7 +8,7 @@ class MtSdmJabatan extends BaseModel
 {
     public $table = 'mt_sdm_jabatan';
 
-    protected $primaryKey = 'id_jabatan';
+    public $primaryKey = 'id_jabatan';
 
     public $fillable = [
         'nama',

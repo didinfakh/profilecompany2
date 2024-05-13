@@ -258,6 +258,39 @@ class RiskProfileAPIController extends RiskProfileResourceController
         return $this->respond($record);
     }
 
+    public function levelrisiko($id_register = null, $tahun = null, Request $request)
+    {
+        $risklimit = new \App\Models\RiskCapacityLimit();
+        $riskmatrix = new \App\Models\MtRiskMatrix();
+        $riskkemungkinan = new \App\Models\MtRiskKemungkinan();
+        $riskdampak = new \App\Models\MtRiskDampak();
+
+        $register = $risklimit->where("id_register", $id_register)->where("tahun", $tahun - 1)->get();
+        $ret = [];
+        $risk_limit = 0;
+        if (isset($register[0])) {
+            $register = $register[0];
+            $risk_limit = $register->risk_limit;
+        }
+        
+        $dampak = $riskdampak->get();
+        foreach ($dampak as &$r) {
+            $r->nilai_mulai = $r->mulai * $risk_limit;
+            $r->nilai_sampai = $r->sampai * $risk_limit;
+        }
+        $ret["dampak"] = $dampak;
+
+        $ret["kemungkinan"] = $riskkemungkinan->get();;
+        $matrix = $riskmatrix->get();
+        $rmatriks = [];
+        foreach ($matrix as &$r1) {
+            $rmatriks[$r1->id_kemungkinan][$r1->id_dampak] = $r1;
+        }
+        $ret["matrix"] = $rmatriks;
+
+        return $ret;
+    }
+
     public function matriks(Request $request)
     {
         // $data = $request->all();

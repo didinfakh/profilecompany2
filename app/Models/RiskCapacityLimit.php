@@ -9,7 +9,7 @@ class RiskCapacityLimit extends BaseModel
 {
     public $table = 'risk_capacity_limit';
 
-    protected $primaryKey = 'id_capacity_limit';
+    public $primaryKey = 'id_capacity_limit';
     public $orderDefault = 'tahun';
 
     public $fillable = [

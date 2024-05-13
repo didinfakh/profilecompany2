@@ -8,7 +8,7 @@ class RiskSasaranStrategi extends BaseModel
 {
     public $table = 'risk_sasaran_strategi';
 
-    protected $primaryKey = 'id_sasaran_strategi';
+    public $primaryKey = 'id_sasaran_strategi';
 
     public $fillable = [
         'id_sasaran',

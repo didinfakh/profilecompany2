@@ -8,7 +8,7 @@ class RiskProfileMitigasiTimeline extends BaseModel
 {
     public $table = 'risk_profile_mitigasi_timeline';
 
-    protected $primaryKey = 'id_mitigasi_timeline';
+    public $primaryKey = 'id_mitigasi_timeline';
 
     public $fillable = [
         'periode',

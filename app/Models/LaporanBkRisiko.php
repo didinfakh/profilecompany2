@@ -8,7 +8,7 @@ class LaporanBkRisiko extends BaseModel
 {
     public $table = 'laporan_bk_risiko';
 
-    protected $primaryKey = 'id';
+    public $primaryKey = 'id';
 
     public $fillable = [
         'a'
