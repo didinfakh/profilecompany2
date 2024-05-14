@@ -8,7 +8,7 @@ class RiskProfileTargetResidual extends BaseModel
 {
     public $table = 'risk_profile_target_residual';
 
-    protected $primaryKey = 'id_target_residual';
+    public $primaryKey = 'id_target_residual';
 
     public $fillable = [
         'id_risk_profile',

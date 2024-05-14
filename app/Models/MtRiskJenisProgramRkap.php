@@ -8,7 +8,7 @@ class MtRiskJenisProgramRkap extends BaseModel
 {
     public $table = 'mt_risk_jenis_program_rkap';
 
-    protected $primaryKey = 'id_jenis_program_rkap';
+    public $primaryKey = 'id_jenis_program_rkap';
 
     public $fillable = [
         'nama'

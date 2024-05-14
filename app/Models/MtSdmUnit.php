@@ -8,7 +8,7 @@ class MtSdmUnit extends BaseModel
 {
     public $table = 'mt_sdm_unit';
 
-    protected $primaryKey = 'id_unit';
+    public $primaryKey = 'id_unit';
 
     public $fillable = [
         'nama',

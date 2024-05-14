@@ -8,7 +8,7 @@ class RiskProfileMitigasiJenis extends BaseModel
 {
     public $table = 'risk_profile_mitigasi_jenis';
 
-    protected $primaryKey = 'id_mitigasi_jenis';
+    public $primaryKey = 'id_mitigasi_jenis';
 
     public $fillable = [
         'id_mitigasi',

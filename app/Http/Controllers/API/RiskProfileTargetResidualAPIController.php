@@ -39,6 +39,7 @@ class RiskProfileTargetResidualAPIController extends RiskProfileResourceControll
 
     public function show($id_register = null, $id_risk_profile = null): JsonResponse
     {
+        $this->_beforeDetailRisiko($id_register, $id_risk_profile);
         $rows = $this->model->where("id_risk_profile", $id_risk_profile)->whereNotNull("periode")->get();
         if (!$rows) {
             return $this->failNotFound("item not found");
@@ -51,6 +52,18 @@ class RiskProfileTargetResidualAPIController extends RiskProfileResourceControll
             $record["nilai_kemungkinan"][$r->periode] = $r->nilai_kemungkinan;
             $record["id_kemungkinan"][$r->periode] = $r->id_kemungkinan;
             $record["id_target_residual"][$r->periode] = $r->id_target_residual;
+        }
+
+        if (count($rows) == 0) {
+            $qarr = ["q1", "q2", "q3", "q4"];
+            $rowrisiko = $this->data['rowheader1'];
+            foreach ($qarr as $p) {
+                $periode = explode("-", $rowrisiko->tgl_risiko)[0] . $p;
+                $record["nilai_dampak"][$periode] = $rowrisiko->nilai_dampak_inheren;
+                $record["id_dampak"][$periode] = $rowrisiko->id_dampak_inheren;
+                $record["nilai_kemungkinan"][$periode] = $rowrisiko->nilai_kemungkinan;
+                $record["id_kemungkinan"][$periode] = $rowrisiko->id_kemungkinan_inheren;
+            }
         }
 
         return $this->respond($record);
@@ -89,7 +102,7 @@ class RiskProfileTargetResidualAPIController extends RiskProfileResourceControll
             $idperiodearr = [];
             foreach ($data as $k => $rws) {
                 foreach ((array)$rws as $periode => $v) {
-                    if(!$periode)
+                    if (!$periode)
                         continue;
 
                     if (!isset($idperiodearr[$periode])) {

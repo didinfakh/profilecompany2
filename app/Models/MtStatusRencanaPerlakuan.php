@@ -8,7 +8,7 @@ class MtStatusRencanaPerlakuan extends BaseModel
 {
     public $table = 'mt_status_rencana_perlakuan';
 
-    protected $primaryKey = 'id_status_rencana_perlakuan';
+    public $primaryKey = 'id_status_rencana_perlakuan';
 
     public $fillable = [
         'nama'
