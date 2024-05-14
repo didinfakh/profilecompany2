@@ -11,6 +11,7 @@ class MtRiskMatrix extends BaseModel
     public $primaryKey = 'id_dampak';
 
     public $fillable = [
+        'id_dampak',
         'id_kemungkinan',
         'id_tingkat',
         'css',
@@ -20,7 +21,8 @@ class MtRiskMatrix extends BaseModel
         'created_by_desc',
         'modified_by_desc',
         'deleted_by',
-        'deleted_by_desc'
+        'deleted_by_desc',
+        'skala'
     ];
 
     protected $casts = [
