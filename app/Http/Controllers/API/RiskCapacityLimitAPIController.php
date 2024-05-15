@@ -119,7 +119,7 @@ class RiskCapacityLimitAPIController extends RiskProfileResourceController
                 $r['risk_limit_divisi'] = DB::select(
                     "select sum(risk_limit) total from risk_capacity_limit rcl 
                     where tahun = ? and 
-                    deteled_at is null and 
+                    deleted_at is null and 
                     exists(select 1 from risk_register rr 
                     where rr.id_register = rcl.id_register 
                     and rr.id_tingkat_agregasi_risiko = 2)",
@@ -129,7 +129,7 @@ class RiskCapacityLimitAPIController extends RiskProfileResourceController
                 $r['risk_limit_proyek'] = DB::select(
                     "select sum(risk_limit) total from risk_capacity_limit rcl 
                     where tahun = ? and 
-                    deteled_at is null and 
+                    deleted_at is null and 
                     exists(select 1 from risk_register rr 
                     where rr.id_register = rcl.id_register 
                     and rr.id_tingkat_agregasi_risiko = 3)",
@@ -142,7 +142,7 @@ class RiskCapacityLimitAPIController extends RiskProfileResourceController
                 $r['risk_limit_corporate'] = DB::select(
                     "select sum(risk_limit) total from risk_capacity_limit rcl 
                     where tahun = ? and 
-                    deteled_at is null and 
+                    deleted_at is null and 
                     exists(select 1 from risk_register rr 
                     where rr.id_register = rcl.id_register 
                     and rr.id_tingkat_agregasi_risiko = 1)",
@@ -154,7 +154,7 @@ class RiskCapacityLimitAPIController extends RiskProfileResourceController
                 $r['risk_limit_proyek'] = DB::select(
                     "select sum(risk_limit) total from risk_capacity_limit rcl 
                     where tahun = ? and 
-                    deteled_at is null and 
+                    deleted_at is null and 
                     exists(select 1 from risk_register rr 
                     where rr.id_register = rcl.id_register 
                     and rr.id_tingkat_agregasi_risiko = 3 
@@ -168,7 +168,7 @@ class RiskCapacityLimitAPIController extends RiskProfileResourceController
                 $r['risk_limit_corporate'] = DB::select(
                     "select sum(risk_limit) total from risk_capacity_limit rcl 
                     where tahun = ? and 
-                    deteled_at is null and 
+                    deleted_at is null and 
                     exists(select 1 from risk_register rr 
                     where rr.id_register = rcl.id_register 
                     and rr.id_tingkat_agregasi_risiko = 1)",
@@ -178,7 +178,7 @@ class RiskCapacityLimitAPIController extends RiskProfileResourceController
                 $r['risk_limit_divisi'] = DB::select(
                     "select sum(risk_limit) total from risk_capacity_limit rcl 
                     where tahun = ? and 
-                    deteled_at is null and 
+                    deleted_at is null and 
                     exists(select 1 from risk_register rr 
                     where rr.id_register = rcl.id_register 
                     and rr.id_tingkat_agregasi_risiko = 2 

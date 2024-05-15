@@ -284,6 +284,12 @@ class RiskProfileAPIController extends RiskProfileResourceController
         $matrix = $riskmatrix->get();
         $rmatriks = [];
         foreach ($matrix as &$r1) {
+            $rc = DB::select("select warna, nama from mt_risk_tingkat where id_tingkat = ?",[$r1->id_tingkat]);
+            if($rc){
+                $r1->warna = $rc[0]->warna;
+                $r1->nama = $rc[0]->nama;
+            }
+
             $rmatriks[$r1->id_kemungkinan][$r1->id_dampak] = $r1;
         }
         $ret["matrix"] = $rmatriks;
