@@ -24,7 +24,7 @@ class MtRiskMatrixAPIController extends BaseResourceController
         
 
 
-        if (!$this->model->where([['id_dampak','=', $id],['id_kemungkinan','=',$request->input('id_kemungkinan')]])->get()) {
+        if (!$this->model->where([['id_dampak','=', $id],['id_kemungkinan','=',$request->input('id_kemungkinan')], ['jenis', '=', $request->input('jenis')]])->get()) {
             return $this->failNotFound(sprintf(
                 'item with id %d not found',
                 $id
@@ -34,7 +34,7 @@ class MtRiskMatrixAPIController extends BaseResourceController
         // $data       = $request->getRawInput();		
         // $updateData = array_filter($data);
         // if(!$ret){
-            $ret = $this->model->where([['id_dampak','=', $id],['id_kemungkinan','=',$request->input('id_kemungkinan')]])->update($updateData);
+            $ret = $this->model->where([['id_dampak','=', $id],['id_kemungkinan','=',$request->input('id_kemungkinan')],['jenis', '=', $request->input('jenis')]])->update($updateData);
         // }
         // if (!$ret) {
         //     return $this->fail($this->model->errors());
