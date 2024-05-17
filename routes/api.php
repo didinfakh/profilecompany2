@@ -388,3 +388,4 @@ Route::resource('mt_lost_event_frakuensi_kejadian', App\Http\Controllers\API\MtL
 
 Route::resource('mt_lost_event_sumber_penyebab_kejadian', App\Http\Controllers\API\MtLostEventSumberPenyebabKejadianAPIController::class)
     ->except(['create', 'edit']);
+
