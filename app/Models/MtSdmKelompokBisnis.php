@@ -8,7 +8,7 @@ class MtSdmKelompokBisnis extends BaseModel
 {
     public $table = 'mt_sdm_kelompok_bisnis';
 
-    public $primaryKey = 'id_kelompok_bisnis';
+    protected $primaryKey = 'id_kelompok_bisnis';
 
     public $fillable = [
         'nama',
@@ -40,8 +40,18 @@ class MtSdmKelompokBisnis extends BaseModel
         'deleted_by_desc' => 'nullable|string|max:200'
     ];
 
+    public function mtRiskKriteriaDampaks(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(\App\Models\MtRiskKriteriaDampak::class, 'mt_risk_agregasi_risiko');
+    }
+
     public function mtSdmUnits(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(\App\Models\MtSdmUnit::class, 'id_kelompok_bisnis');
+    }
+
+    public function riskRegisters(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(\App\Models\RiskRegister::class, 'id_kelompok_bisnis');
     }
 }

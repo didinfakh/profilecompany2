@@ -388,3 +388,9 @@ Route::resource('mt_lost_event_frakuensi_kejadian', App\Http\Controllers\API\MtL
 
 Route::resource('mt_lost_event_sumber_penyebab_kejadian', App\Http\Controllers\API\MtLostEventSumberPenyebabKejadianAPIController::class)
     ->except(['create', 'edit']);
+
+Route::resource('mt_sdm_kelompok_bisnis', App\Http\Controllers\API\MtSdmKelompokBisnisAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('mt_sdm_jabatan', App\Http\Controllers\API\MtSdmJabatanAPIController::class)
+    ->except(['create', 'edit']);

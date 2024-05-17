@@ -8,7 +8,7 @@ class MtSdmJabatan extends BaseModel
 {
     public $table = 'mt_sdm_jabatan';
 
-    public $primaryKey = 'id_jabatan';
+    protected $primaryKey = 'id_jabatan';
 
     public $fillable = [
         'nama',
@@ -71,13 +71,23 @@ class MtSdmJabatan extends BaseModel
         return $this->belongsTo(\App\Models\MtSdmUnit::class, 'id_unit');
     }
 
-    public function riskRegisters(): \Illuminate\Database\Eloquent\Relations\HasMany
-    {
-        return $this->hasMany(\App\Models\RiskRegister::class, 'id_owner');
-    }
-
     public function riskProfileMitigasis(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(\App\Models\RiskProfileMitigasi::class, 'id_pic');
+    }
+
+    public function mtStatusRencanaPerlakuans(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(\App\Models\MtStatusRencanaPerlakuan::class, 'risk_profile_mitigasi_realisasi');
+    }
+
+    public function riskRegisters(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(\App\Models\RiskRegister::class, 'internal_control_testing');
+    }
+
+    public function riskRegister1s(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(\App\Models\RiskRegister::class, 'id_owner');
     }
 }
