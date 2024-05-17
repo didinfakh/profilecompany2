@@ -9,7 +9,7 @@ class RiskRegister extends BaseModel
     public $table = 'risk_register';
 
     public $primaryKey = 'id_register';
-    public $orderDefault = 'id_tingkat_agregasi_risiko,id_register';
+    public $orderDefault = 'sort,id_tingkat_agregasi_risiko,id_register';
 
     public $fillable = [
         'nama',

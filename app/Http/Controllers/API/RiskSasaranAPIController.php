@@ -56,7 +56,8 @@ class RiskSasaranAPIController extends RiskProfileResourceController
                 $id_sasaran_strategiarr[] = $p['id_sasaran_strategi'];
             }
         }
-        $ret = $strategim->where("id_sasaran", $data['id_sasaran'])->whereNotIn($id_sasaran_strategiarr)->delete() !== false;
+        if ($id_sasaran_strategiarr)
+            $ret = $strategim->where("id_sasaran", $data['id_sasaran'])->whereNotIn("id_sasaran_strategi", $id_sasaran_strategiarr)->delete() !== false;
 
         if ($ret)
             DB::commit();

@@ -1,12 +1,12 @@
 <?php
 
 namespace App\Http\Controllers\API;
-use App\Http\Controllers\BaseResourceController;
+use App\Http\Controllers\RiskProfileResourceController;
 
 /**
  * Class LostEventAPIController
  */
-class LostEventAPIController extends BaseResourceController
+class LostEventAPIController extends RiskProfileResourceController
 {
     public function __construct()
     {

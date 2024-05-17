@@ -217,6 +217,13 @@ routeRiskRegister('risk_metrik_strategi_risiko', App\Http\Controllers\API\RiskMe
 routeRiskRegister('risk_profile', App\Http\Controllers\API\RiskProfileAPIController::class);
 routeRiskRegister('risk_sasaran', App\Http\Controllers\API\RiskSasaranAPIController::class);
 routeRiskRegister('risk_capacity_limit', App\Http\Controllers\API\RiskCapacityLimitAPIController::class);
+routeRiskRegister('lost_event', App\Http\Controllers\API\LostEventAPIController::class);
+
+
+// Route::resource('lost_event', App\Http\Controllers\API\LostEventAPIController::class)
+//     ->except(['create', 'edit']);
+
+
 function routeRisiko($name, $controller)
 {
     Route::get($name . '/{id_register}', [$controller, 'index']);
@@ -228,6 +235,7 @@ function routeRisiko($name, $controller)
 routeRisiko('risk_profile_mitigasi', App\Http\Controllers\API\RiskProfileMitigasiAPIController::class);
 
 
+Route::get('getinduk/{id_register}/{id_kriteria_dampak}', [App\Http\Controllers\API\RiskProfileAPIController::class, 'getinduk']);
 Route::get('risk_profile_target_residual/{id_register}/{id_risk_profile}', [App\Http\Controllers\API\RiskProfileTargetResidualAPIController::class, 'show']);
 Route::put('risk_profile_target_residual/{id_register}/{id_risk_profile}', [App\Http\Controllers\API\RiskProfileTargetResidualAPIController::class, 'update']);
 
@@ -270,9 +278,6 @@ Route::resource('mt_risk_dampak', App\Http\Controllers\API\MtRiskDampakAPIContro
 
 
 Route::resource('mt_lost_event_kategori', App\Http\Controllers\API\MtLostEventKategoriAPIController::class)
-    ->except(['create', 'edit']);
-
-Route::resource('lost_event', App\Http\Controllers\API\LostEventAPIController::class)
     ->except(['create', 'edit']);
 
 Route::resource('mt_risk_kriteria_dampak', App\Http\Controllers\API\MtRiskKriteriaDampakAPIController::class)
@@ -368,8 +373,18 @@ Route::get('risk_profile_mitigasi_realisasi/{id_risk_profile}/{periode}', [App\H
 Route::post('risk_profile_mitigasi_realisasi/{id_risk_profile}/{periode}', [App\Http\Controllers\API\RiskProfileMitigasiRealisasiAPIController::class, 'update']);
 Route::post('risk_profile_mitigasi_realisasi/{id_risk_profile}/{periode}', [App\Http\Controllers\API\RiskProfileMitigasiRealisasiAPIController::class, 'update']);
 Route::get('risk_profile_kri/check_status/{id_kri}/{nilai}', [App\Http\Controllers\API\RiskProfileKriAPIController::class, 'checkstatus']);
-Route::get('level_risiko/{id_register}/{tahun}', [App\Http\Controllers\API\RiskProfileAPIController::class, 'levelrisiko']);
+Route::get('level_risiko/{id_register}/{tahun}/{jenis}', [App\Http\Controllers\API\RiskProfileAPIController::class, 'levelrisiko']);
 
 
 Route::resource('risk_profile_kri_hasil', App\Http\Controllers\API\RiskProfileKriHasilAPIController::class)
+    ->except(['create', 'edit']);
+
+
+Route::resource('mt_lost_event_status_asuransi', App\Http\Controllers\API\MtLostEventStatusAsuransiAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('mt_lost_event_frakuensi_kejadian', App\Http\Controllers\API\MtLostEventFrakuensiKejadianAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('mt_lost_event_sumber_penyebab_kejadian', App\Http\Controllers\API\MtLostEventSumberPenyebabKejadianAPIController::class)
     ->except(['create', 'edit']);

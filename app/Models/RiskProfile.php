@@ -141,7 +141,7 @@ class RiskProfile extends BaseModel
         mrt.nama taksonomi_nama,
         mrd.nama skala_dampak,
         mrk.nama skala_probabilitas,
-        coalesce(rp.nilai_dampak_inheren,0)*coalesce(rp.nilai_kemungkinan,0) as eksposur_risiko,
+        coalesce(rp.nilai_dampak_inheren,0)*coalesce(rp.nilai_kemungkinan,0)/100 as eksposur_risiko,
         mrm.skala as skala_risiko,
         mrtk.nama as level_risiko
         from risk_profile rp 
@@ -319,7 +319,7 @@ class RiskProfile extends BaseModel
                 $rows1 = DB::select("select rptr.*, 
                 mrd.nama as skala_dampak,
                 mrk.nama as skala_probabilitas,
-                coalesce(rptr.nilai_dampak,0)*coalesce(rptr.nilai_kemungkinan,0) as eksposur_risiko,
+                coalesce(rptr.nilai_dampak,0)*coalesce(rptr.nilai_kemungkinan,0)/100 as eksposur_risiko,
                 mrm.skala as skala_risiko,
                 mrtk.nama as level_risiko
                 from risk_profile_target_residual rptr 
@@ -352,7 +352,7 @@ class RiskProfile extends BaseModel
                 $rows1 = DB::select("select rrtr.*, 
                 mrd.nama as skala_dampak,
                 mrk.nama as skala_probabilitas,
-                coalesce(rrtr.nilai_dampak,0)*coalesce(rrtr.nilai_kemungkinan,0) as eksposur_risiko,
+                coalesce(rrtr.nilai_dampak,0)*coalesce(rrtr.nilai_kemungkinan,0)/100 as eksposur_risiko,
                 mrm.skala as skala_risiko,
                 mrtk.nama as level_risiko
                 from risk_profile_realisasi_residual rrtr 
