@@ -404,3 +404,6 @@ Route::resource('mt_sdm_pegawai', App\Http\Controllers\API\MtSdmPegawaiAPIContro
 
 Route::resource('sys_user', App\Http\Controllers\API\SysUserAPIController::class)
     ->except(['create', 'edit']);
+
+Route::resource('sys_user_group', App\Http\Controllers\API\SysUserGroupAPIController::class)
+    ->except(['create', 'edit']);

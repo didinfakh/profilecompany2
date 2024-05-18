@@ -4,12 +4,12 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\BaseResourceController;
 
 /**
- * Class SysUserAPIController
+ * Class SysUserGroupAPIController
  */
-class SysUserAPIController extends BaseResourceController
+class SysUserGroupAPIController extends BaseResourceController
 {
     public function __construct()
     {
-        $this->model = new \App\Models\SysUserModel;
+        $this->model = new \App\Models\SysUserGroup;
     }
 }
