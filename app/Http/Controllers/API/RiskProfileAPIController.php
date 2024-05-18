@@ -83,7 +83,7 @@ class RiskProfileAPIController extends RiskProfileResourceController
             foreach ($rows1 as $r1) {
                 $periode = str_replace(date("Y", strtotime($r->tgl_risiko)), "", $r1->periode);
                 $r->{"res_eksposur_risiko" . $periode} = $r1->eksposur_risiko;
-                $r->{"res_level_inheren" . $periode} = $rmt[$r1->id_kemungkinan][$r1->id_dampak];
+                $r->{"res_level" . $periode} = $rmt[$r1->id_kemungkinan][$r1->id_dampak];
             }
 
 
@@ -94,8 +94,20 @@ class RiskProfileAPIController extends RiskProfileResourceController
             and rrtr.id_risk_profile = ?", [$r->id_risk_profile]);
             foreach ($rows1 as $r1) {
                 $periode = str_replace(date("Y", strtotime($r->tgl_risiko)), "", $r1->periode);
-                $r->{"real_eksposur_risiko" . $periode} = $r1->eksposur_risiko;
-                $r->{"real_level_inheren" . $periode} = $rmt[$r1->id_kemungkinan][$r1->id_dampak];
+                if (in_array($periode, ['1', '2', '3']))
+                    $periode = 1;
+
+                if (in_array($periode, ['4', '5', '6']))
+                    $periode = 2;
+
+                if (in_array($periode, ['7', '8', '9']))
+                    $periode = 3;
+
+                if (in_array($periode, ['10', '11', '12']))
+                    $periode = 4;
+
+                $r->{"real_eksposur_risikoq" . $periode} = $r1->eksposur_risiko;
+                $r->{"real_levelq" . $periode} = $rmt[$r1->id_kemungkinan][$r1->id_dampak];
             }
 
             $items[] = $r;
