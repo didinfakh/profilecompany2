@@ -373,7 +373,7 @@ class RiskProfileAPIController extends RiskProfileResourceController
             $register = $register[0];
             $risk_limit = $register->risk_limit;
         }
-
+        $ret['risk_limit'] = $risk_limit;
         $dampak = $riskdampak->get();
         foreach ($dampak as &$r) {
             $r->nilai_mulai = $r->mulai * $risk_limit;
