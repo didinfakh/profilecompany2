@@ -390,5 +390,11 @@ Route::resource('mt_lost_event_sumber', App\Http\Controllers\API\MtLostEventSumb
     ->except(['create', 'edit']);
 
 
-Route::resource('mt_sdm_jabatan', App\Http\Controllers\API\MtSdmJabatanAPIController::class)
+Route::resource('mt_risk_agregasi_risiko', App\Http\Controllers\API\MtRiskAgregasiRisikoAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('mt_assessment_type', App\Http\Controllers\API\MtAssessmentTypeAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('internal_control_testing', App\Http\Controllers\API\InternalControlTestingAPIController::class)
     ->except(['create', 'edit']);
