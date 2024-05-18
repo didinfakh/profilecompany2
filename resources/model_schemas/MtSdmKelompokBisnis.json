@@ -133,6 +133,14 @@
     },
     {
         "type": "relation",
+        "relation": "mtm,MtRiskKriteriaDampak,mt_risk_agregasi_risiko"
+    },
+    {
+        "type": "relation",
         "relation": "1tm,MtSdmUnit,id_kelompok_bisnis"
+    },
+    {
+        "type": "relation",
+        "relation": "1tm,RiskRegister,id_kelompok_bisnis"
     }
 ]
