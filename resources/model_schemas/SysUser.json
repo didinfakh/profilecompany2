@@ -1,9 +1,21 @@
 [
     {
-        "name": "nid",
+        "name": "id_user",
+        "dbType": "bigInteger,true",
+        "htmlType": "number",
+        "validations": "",
+        "searchable": false,
+        "fillable": false,
+        "primary": true,
+        "inForm": false,
+        "inIndex": false,
+        "inView": false
+    },
+    {
+        "name": "name",
         "dbType": "string",
         "htmlType": "text",
-        "validations": "nullable|string|max:10|nullable|string|max:10|nullable|string|max:10",
+        "validations": "required|string|max:255|string|max:255|string|max:255",
         "searchable": true,
         "fillable": true,
         "primary": false,
@@ -15,7 +27,7 @@
         "name": "email",
         "dbType": "string",
         "htmlType": "email",
-        "validations": "nullable|string|max:500|nullable|string|max:500|nullable|string|max:500",
+        "validations": "required|string|max:255|string|max:255|string|max:255",
         "searchable": true,
         "fillable": true,
         "primary": false,
@@ -24,10 +36,10 @@
         "inView": true
     },
     {
-        "name": "position_id",
-        "dbType": "string",
-        "htmlType": "text",
-        "validations": "nullable|string|max:10|nullable|string|max:10|nullable|string|max:10",
+        "name": "email_verified_at",
+        "dbType": "datetime",
+        "htmlType": "date",
+        "validations": "nullable|nullable|nullable",
         "searchable": true,
         "fillable": true,
         "primary": false,
@@ -36,10 +48,22 @@
         "inView": true
     },
     {
-        "name": "nama_lengkap",
+        "name": "password",
+        "dbType": "string",
+        "htmlType": "password",
+        "validations": "required|string|max:255|string|max:255|string|max:255",
+        "searchable": true,
+        "fillable": true,
+        "primary": false,
+        "inForm": true,
+        "inIndex": true,
+        "inView": true
+    },
+    {
+        "name": "remember_token",
         "dbType": "string",
         "htmlType": "text",
-        "validations": "required|string|max:500|string|max:500|string|max:500",
+        "validations": "nullable|string|max:100|nullable|string|max:100|nullable|string|max:100",
         "searchable": true,
         "fillable": true,
         "primary": false,
@@ -72,8 +96,32 @@
         "inView": false
     },
     {
+        "name": "last_ip",
+        "dbType": "string",
+        "htmlType": "text",
+        "validations": "nullable|string|max:30|nullable|string|max:30|nullable|string|max:30",
+        "searchable": true,
+        "fillable": true,
+        "primary": false,
+        "inForm": true,
+        "inIndex": true,
+        "inView": true
+    },
+    {
+        "name": "last_login",
+        "dbType": "time",
+        "htmlType": "text",
+        "validations": "nullable|nullable|nullable",
+        "searchable": true,
+        "fillable": true,
+        "primary": false,
+        "inForm": true,
+        "inIndex": true,
+        "inView": true
+    },
+    {
         "name": "created_by",
-        "dbType": "bigInteger,false",
+        "dbType": "integer,false",
         "htmlType": "number",
         "validations": "nullable|nullable|nullable",
         "searchable": true,
@@ -84,8 +132,8 @@
         "inView": true
     },
     {
-        "name": "modified_by",
-        "dbType": "bigInteger,false",
+        "name": "updated_by",
+        "dbType": "integer,false",
         "htmlType": "number",
         "validations": "nullable|nullable|nullable",
         "searchable": true,
@@ -112,6 +160,18 @@
         "dbType": "string",
         "htmlType": "text",
         "validations": "nullable|string|max:200|nullable|string|max:200|nullable|string|max:200",
+        "searchable": true,
+        "fillable": true,
+        "primary": false,
+        "inForm": true,
+        "inIndex": true,
+        "inView": true
+    },
+    {
+        "name": "salt",
+        "dbType": "string",
+        "htmlType": "text",
+        "validations": "nullable|string|max:20|nullable|string|max:20|nullable|string|max:20",
         "searchable": true,
         "fillable": true,
         "primary": false,
@@ -156,7 +216,7 @@
         "inView": true
     },
     {
-        "name": "id_jabatan",
+        "name": "id_pegawai",
         "dbType": "integer,false",
         "htmlType": "number",
         "validations": "nullable|nullable|nullable",
@@ -168,19 +228,11 @@
         "inView": true
     },
     {
-        "name": "id_pegawai",
-        "dbType": "integer,true",
-        "htmlType": "number",
-        "validations": "",
-        "searchable": false,
-        "fillable": false,
-        "primary": true,
-        "inForm": false,
-        "inIndex": false,
-        "inView": false
+        "type": "relation",
+        "relation": "mt1,MtSdmPegawai,id_pegawai"
     },
     {
         "type": "relation",
-        "relation": "mt1,MtSdmJabatan,id_jabatan"
+        "relation": "1tm,SysUserGroup,id_user"
     }
 ]

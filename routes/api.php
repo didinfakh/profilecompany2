@@ -398,3 +398,9 @@ Route::resource('mt_assessment_type', App\Http\Controllers\API\MtAssessmentTypeA
 
 Route::resource('internal_control_testing', App\Http\Controllers\API\InternalControlTestingAPIController::class)
     ->except(['create', 'edit']);
+
+Route::resource('mt_sdm_pegawai', App\Http\Controllers\API\MtSdmPegawaiAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('sys_user', App\Http\Controllers\API\SysUserAPIController::class)
+    ->except(['create', 'edit']);
