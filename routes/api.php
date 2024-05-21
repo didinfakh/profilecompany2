@@ -426,3 +426,9 @@ Route::resource('mt_status_pengajuan_page_disable', App\Http\Controllers\API\MtS
 
 Route::resource('mt_status_pengajuan_penerima', App\Http\Controllers\API\MtStatusPengajuanPenerimaAPIController::class)
     ->except(['create', 'edit']);
+
+Route::resource('risk_msg', App\Http\Controllers\API\RiskMsgAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('risk_msg_penerima', App\Http\Controllers\API\RiskMsgPenerimaAPIController::class)
+    ->except(['create', 'edit']);

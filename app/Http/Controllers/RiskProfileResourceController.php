@@ -218,18 +218,19 @@ class RiskProfileResourceController extends ResourceController
                 from risk_profile 
                 where status = ? and id_register = ?", ['Draft', $id_register]);
 
-            if ($cekprofile)
+            if ($cekprofile[0]->total)
                 $id_status_pengajuan = 6;
 
-            if ($id_status_pengajuan)
+            if ($id_status_pengajuan) {
                 $cekcapacity = DB::select("select count(1) total 
                 from risk_capacity_limit 
                 where deleted_at is null 
                 and status = ? 
                 and id_register = ?", ['Draft', $id_register]);
 
-            if ($cekcapacity)
-                $id_status_pengajuan = 1;
+                if ($cekcapacity[0]->total)
+                    $id_status_pengajuan = 1;
+            }
         }
 
         return $mr->update($id_register, ["id_status_pengajuan" => $id_status_pengajuan]);

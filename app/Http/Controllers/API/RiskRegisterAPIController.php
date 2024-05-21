@@ -40,12 +40,14 @@ class RiskRegisterAPIController extends BaseResourceController
                 $id
             ));
         }
-        $rs = DB::select("select nama 
+        $rs = DB::select("select nama,warna 
         from mt_status_pengajuan 
         where id_status_pengajuan = ?", [$record->id_status_pengajuan]);
 
-        if ($rs)
+        if ($rs) {
             $record->nama_status_pengajuan = $rs[0]->nama;
+            $record->warna = $rs[0]->warna;
+        }
 
         $record->history_pengajuan = DB::select("select * 
         from risk_msg 
@@ -84,34 +86,57 @@ class RiskRegisterAPIController extends BaseResourceController
             $record->id_assessment_type
         ]);
         if ($row) {
-            $button = ["ajukan" => "Ajukan " . $row[0]->selanjutnya];
+            if (strstr($row[0]->selanjutnya, "Disetujui") !== false)
+                $button = ["ajukan" => "Setujui"];
+            elseif (strstr($row[0]->selanjutnya, "Pemantauan") !== false)
+                $button = ["ajukan" => "Setujui"];
+            else
+                $button = ["ajukan" => "Ajukan " . $row[0]->selanjutnya];
+
             if ($row[0]->dikembalikan)
                 $button["kembalikan"] = "Kembalikan " . str_replace("Dikembalikan", "", $row[0]->dikembalikan);
 
             $record->button = $button;
         }
 
+        $record->parent = $this->registerParent($id);
+
         return $this->respond($record);
+    }
+
+    private function registerParent($id_register)
+    {
+        $ret = [];
+        $row = $this->model->find($id_register);
+        if ($row->id_parent_register) {
+            $arr = $this->registerParent($row->id_parent_register);
+            foreach ($arr as $r) {
+                $ret[] = $r;
+            }
+        }
+        $ret[] = $row;
+        return $ret;
     }
 
     private function idJabatanBawahan($id_jabatan)
     {
-        $ret = [];
+        $ret = [0];
         $cek = DB::select("select 1 
-        from sys_group_menu b 
+        from sys_user_group a
+        join sys_group_menu b on b.deleted_at is null and a.id_group = b.id_group
         join sys_menu c on b.id_menu = c.id_menu and c.deleted_at is null
         join sys_group_action d on b.id_group_menu = d.id_group_menu and d.deleted_at is null
         join sys_action e on e.id_action = d.id_action and c.id_menu = e.id_menu and e.deleted_at is null
-        where b.deleted_at is null
-        and b.id_jabatan = ?
-        and c.url = 'risk_profile' and e.nama = 'add'", $id_jabatan);
-        if ($cek[0])
+        where a.deleted_at is null
+        and a.id_jabatan = ?
+        and c.url = 'risk_profile' and e.nama = 'add'", [$id_jabatan]);
+        if ($cek)
             $ret[] = $id_jabatan;
 
         $rows = DB::select("select id_jabatan 
         from mt_sdm_jabatan a
         where a.deleted_at is null 
-        and id_jabatan_prent = ?", [$id_jabatan]);
+        and id_jabatan_parent = ?", [$id_jabatan]);
         foreach ($rows as $r) {
             $arr = $this->idJabatanBawahan($r->id_jabatan);
             foreach ($arr as $id)
@@ -143,6 +168,7 @@ class RiskRegisterAPIController extends BaseResourceController
             $rr->id_assessment_type
         ])[0];
 
+
         if ($jenis == 1)
             $id_status_pengajuan = $rowstatus->id_status_pengajuan_selanjutnya;
         else
@@ -164,6 +190,7 @@ class RiskRegisterAPIController extends BaseResourceController
             "msg" => $data["msg"],
             "url" => $url
         ];
+
         $ret = $id_msg = $rm->insert($record);
         $id_jabatanarr = $this->idJabatanBawahan($rr->id_owner);
         $penerima = DB::select(
@@ -181,7 +208,7 @@ class RiskRegisterAPIController extends BaseResourceController
             from sys_group_menu b 
             join sys_menu c on b.id_menu = c.id_menu  and c.deleted_at is null
             join sys_group_action d on b.id_group_menu = d.id_group_menu  and d.deleted_at is null
-            join sys_action e on d.id_action = e.id_action and c.id_menu = e.menu and e.deleted_at is null
+            join sys_action e on d.id_action = e.id_action and c.id_menu = e.id_menu and e.deleted_at is null
             where a.id_group = b.id_group
             and a.deleted_at is null
             and 
@@ -219,10 +246,15 @@ class RiskRegisterAPIController extends BaseResourceController
                     $ret = $mrl->where("id_register", $rr->id_register)->update(["status" => "Aktif"]);
                 }
 
-                if ($id_status_pengajuan == 10) {
+                if ($id_status_pengajuan == 10 && $ret) {
                     $mrl = new \App\Models\RiskProfile();
                     $ret = $mrl->where("id_register", $rr->id_register)->update(["status" => "Aktif"]);
                 }
+            }
+            if ($ret) {
+                $ret = $this->model
+                    ->where("id_register", $rr->id_register)
+                    ->update(["id_status_pengajuan" => $id_status_pengajuan]);
             }
         }
 
