@@ -167,6 +167,9 @@ class RiskProfileResourceController extends ResourceController
         }
 
         if ($ret)
+            $ret = $this->_setStatus($this->data['rowheader']['id_register']);
+
+        if ($ret)
             DB::commit();
         else
             DB::rollBack();
@@ -202,5 +205,33 @@ class RiskProfileResourceController extends ResourceController
     protected function filterArray($array, $filter)
     {
         return array_values(array_filter($array, $filter))[0];
+    }
+
+    protected function _setStatus($id_register)
+    {
+        $mr = new \App\Models\RiskRegister();
+        $rm = $mr->find($id_register);
+        $id_status_pengajuan = $rm->id_status_pengajuan;
+
+        if (in_array($id_status_pengajuan, [1, 5, 6, 9]) || !$id_status_pengajuan) {
+            $cekprofile = DB::select("select count(1) total 
+                from risk_profile 
+                where status = ? and id_register = ?", ['Draft', $id_register]);
+
+            if ($cekprofile)
+                $id_status_pengajuan = 6;
+
+            if ($id_status_pengajuan)
+                $cekcapacity = DB::select("select count(1) total 
+                from risk_capacity_limit 
+                where deleted_at is null 
+                and status = ? 
+                and id_register = ?", ['Draft', $id_register]);
+
+            if ($cekcapacity)
+                $id_status_pengajuan = 1;
+        }
+
+        return $mr->update($id_register, ["id_status_pengajuan" => $id_status_pengajuan]);
     }
 }
