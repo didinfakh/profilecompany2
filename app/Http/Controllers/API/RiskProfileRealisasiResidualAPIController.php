@@ -69,6 +69,7 @@ class RiskProfileRealisasiResidualAPIController extends RiskProfileResourceContr
 
         $ret = true;
 
+        $data["status"] = "Draft";
         if ($ret) {
             if ($id) {
                 $ret = $this->model->update($id, $data);
@@ -78,6 +79,9 @@ class RiskProfileRealisasiResidualAPIController extends RiskProfileResourceContr
                 $data[$this->model->primaryKey] = $id;
             }
         }
+
+        if ($ret)
+            $ret =  $this->_setStatus($this->data['rowheader1']['id_register']);
 
         if ($ret)
             DB::commit();

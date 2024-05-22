@@ -432,3 +432,9 @@ Route::resource('risk_msg', App\Http\Controllers\API\RiskMsgAPIController::class
 
 Route::resource('risk_msg_penerima', App\Http\Controllers\API\RiskMsgPenerimaAPIController::class)
     ->except(['create', 'edit']);
+
+Route::resource('mt_risk_agregasi_kelompok_bisnis', App\Http\Controllers\API\MtRiskAgregasiKelompokBisnisAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('mt_status_rencana_perlakuan', App\Http\Controllers\API\MtStatusRencanaPerlakuanAPIController::class)
+    ->except(['create', 'edit']);

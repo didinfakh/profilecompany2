@@ -12,6 +12,7 @@ class RiskProfileRealisasiResidual extends BaseModel
 
     public $fillable = [
         'id_risk_profile',
+        'status',
         'periode',
         'penjelasan_dampak',
         'nilai_dampak',

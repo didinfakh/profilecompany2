@@ -213,24 +213,36 @@ class RiskProfileResourceController extends ResourceController
         $rm = $mr->find($id_register);
         $id_status_pengajuan = $rm->id_status_pengajuan;
 
-        if (in_array($id_status_pengajuan, [1, 5, 6, 9]) || !$id_status_pengajuan) {
+        if (in_array($id_status_pengajuan, [5, 10, 15, 16, 17]) || !$id_status_pengajuan) {
             $cekprofile = DB::select("select count(1) total 
-                from risk_profile 
-                where status = ? and id_register = ?", ['Draft', $id_register]);
+                from risk_profile_realisasi_residual a 
+                where deleted_at is null 
+                and status = ? 
+                and exists(select 1 from risk_profile b 
+                where a.id_risk_profile = b.id_risk_profile 
+                and b.deleted_at is null 
+                and b.id_register = ?)", ['Draft', $id_register]);
 
             if ($cekprofile[0]->total)
-                $id_status_pengajuan = 6;
+                $id_status_pengajuan = 11;
 
-            if ($id_status_pengajuan) {
-                $cekcapacity = DB::select("select count(1) total 
-                from risk_capacity_limit 
+            $cekprofile = DB::select("select count(1) total 
+                from risk_profile 
                 where deleted_at is null 
                 and status = ? 
                 and id_register = ?", ['Draft', $id_register]);
 
-                if ($cekcapacity[0]->total)
-                    $id_status_pengajuan = 1;
-            }
+            if ($cekprofile[0]->total)
+                $id_status_pengajuan = 6;
+
+            $cekcapacity = DB::select("select count(1) total 
+                    from risk_capacity_limit 
+                    where deleted_at is null 
+                    and status = ? 
+                    and id_register = ?", ['Draft', $id_register]);
+
+            if ($cekcapacity[0]->total)
+                $id_status_pengajuan = 1;
         }
 
         return $mr->update($id_register, ["id_status_pengajuan" => $id_status_pengajuan]);

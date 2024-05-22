@@ -250,6 +250,18 @@ class RiskRegisterAPIController extends BaseResourceController
                     $mrl = new \App\Models\RiskProfile();
                     $ret = $mrl->where("id_register", $rr->id_register)->update(["status" => "Aktif"]);
                 }
+
+                if ($id_status_pengajuan == 10 && $rr->id_status_pengajuan == 14 && $ret) {
+                    $mrl = new \App\Models\RiskProfileRealisasiResidual();
+                    $mrp = new \App\Models\RiskProfile();
+                    $rows = $mrp->where("id_register", $rr->id_register)->get();
+                    foreach ($rows as $r1) {
+                        if (!$ret)
+                            break;
+
+                        $ret = $mrl->where("id_risk_profile", $r1->id_risk_profile)->update(["status" => "Aktif"]);
+                    }
+                }
             }
             if ($ret) {
                 $ret = $this->model
