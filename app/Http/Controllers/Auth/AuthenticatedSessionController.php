@@ -17,6 +17,7 @@ class AuthenticatedSessionController extends AppBaseController
      */
     public function store(LoginRequest $request)
     {
+        
         $request->authenticate();
 
         $user = $request->user();
@@ -37,15 +38,15 @@ class AuthenticatedSessionController extends AppBaseController
             $response['groups'] = $groups;
         } else {
             $id_group = $groups[0]->id_group;
+            
             list($access, $menu, $accessmethod) = $this->_getAccessMenu($id_group);
             $response['access'] = $access;
             $response['menu'] = $menu;
             $response['id_group'] = $id_group;
             $response['accessmethod'] = $accessmethod;
+            $request->session()->regenerate();
+
         }
-
-        $request->session()->regenerate();
-
         return $this->respond($response, 200, 'success');
     }
 

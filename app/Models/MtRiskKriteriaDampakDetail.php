@@ -19,7 +19,9 @@ class MtRiskKriteriaDampakDetail extends BaseModel
         'created_by_desc',
         'modified_by_desc',
         'deleted_by',
-        'deleted_by_desc'
+        'deleted_by_desc',
+        'mulai',
+        'sampai',
     ];
 
     protected $casts = [

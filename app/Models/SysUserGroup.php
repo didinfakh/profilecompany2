@@ -8,14 +8,16 @@ class SysUserGroup extends BaseModel
 {
     public $table = 'sys_user_group';
 
-    protected $primaryKey = 'id';
+    protected $primaryKey = 'id_user';
 
     public $fillable = [
         'id_user',
         'id_group',
         'deleted_by',
         'deleted_by_desc',
-        'id_jabatan'
+        'id_jabatan',
+        'update_at',
+        'created_at'
     ];
 
     protected $casts = [
