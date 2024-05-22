@@ -20,6 +20,8 @@ class RiskRegister extends BaseModel
         'updated_by',
         'id_kajian_risiko',
         'id_unit',
+        'id_kelompok_bisnis',
+        'id_assessment_type',
         'id_parent_register',
         'navigasi',
         'id_tingkat_agregasi_risiko',
