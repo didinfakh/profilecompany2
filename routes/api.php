@@ -158,6 +158,10 @@ Route::resource('mt_sdm_pegawai', App\Http\Controllers\API\MtSdmPegawaiAPIContro
 
 Route::get('risk_register/tree', [App\Http\Controllers\API\RiskRegisterAPIController::class, 'tree']);
 
+Route::get('risk_register/getdetail/{id}', [App\Http\Controllers\API\RiskRegisterAPIController::class, 'getdetail']);
+Route::post('risk_register/ajukan/{jenis}', [App\Http\Controllers\API\RiskRegisterAPIController::class, 'ajukan']);
+Route::post('risk_register/readmsg', [App\Http\Controllers\API\RiskRegisterAPIController::class, 'readmsg']);
+
 Route::resource('risk_register', App\Http\Controllers\API\RiskRegisterAPIController::class)
     ->except(['create', 'edit']);
 
@@ -406,4 +410,31 @@ Route::resource('sys_user', App\Http\Controllers\API\SysUserAPIController::class
     ->except(['create', 'edit']);
 
 Route::resource('sys_user_group', App\Http\Controllers\API\SysUserGroupAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('risk_msg', App\Http\Controllers\API\RiskMsgAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('risk_msg_penerima', App\Http\Controllers\API\RiskMsgPenerimaAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('risk_msg_penerima', App\Http\Controllers\API\RiskMsgPenerimaAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('mt_status_pengajuan_page_disable', App\Http\Controllers\API\MtStatusPengajuanPageDisableAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('mt_status_pengajuan_penerima', App\Http\Controllers\API\MtStatusPengajuanPenerimaAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('risk_msg', App\Http\Controllers\API\RiskMsgAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('risk_msg_penerima', App\Http\Controllers\API\RiskMsgPenerimaAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('mt_risk_agregasi_kelompok_bisnis', App\Http\Controllers\API\MtRiskAgregasiKelompokBisnisAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('mt_status_rencana_perlakuan', App\Http\Controllers\API\MtStatusRencanaPerlakuanAPIController::class)
     ->except(['create', 'edit']);

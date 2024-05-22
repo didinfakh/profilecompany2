@@ -38,7 +38,7 @@ class AuthenticatedSessionController extends AppBaseController
             $response['groups'] = $groups;
         } else {
             $id_group = $groups[0]->id_group;
-            
+            $request->session()->put("id_group", $id_group);
             list($access, $menu, $accessmethod) = $this->_getAccessMenu($id_group);
             $response['access'] = $access;
             $response['menu'] = $menu;
@@ -61,6 +61,7 @@ class AuthenticatedSessionController extends AppBaseController
         $response['menu'] = $menu;
         $response['accessmethod'] = $accessmethod;
 
+        $request->session()->put("id_group", $id_group);
         return $this->respond($response, 200, 'success');
     }
 

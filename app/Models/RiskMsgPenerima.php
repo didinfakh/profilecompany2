@@ -4,21 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class RiskProfileRealisasiResidual extends BaseModel
+class RiskMsgPenerima extends BaseModel
 {
-    public $table = 'risk_profile_realisasi_residual';
+    public $table = 'risk_msg_penerima';
 
-    public $primaryKey = 'id_realisasi_residual';
+    protected $primaryKey = 'id_msg';
 
     public $fillable = [
-        'id_risk_profile',
-        'status',
-        'periode',
-        'penjelasan_dampak',
-        'nilai_dampak',
-        'id_dampak',
-        'nilai_kemungkinan',
-        'id_kemungkinan',
+        'is_read',
+        'id_user',
+        'id_msg_penerima',
         'created_by',
         'updated_by',
         'deleted_by',
@@ -28,22 +23,16 @@ class RiskProfileRealisasiResidual extends BaseModel
     ];
 
     protected $casts = [
-        'periode' => 'string',
-        'penjelasan_dampak' => 'string',
-        'nilai_dampak' => 'decimal:0',
-        'nilai_kemungkinan' => 'decimal:2',
+        'is_read' => 'string',
         'created_by_desc' => 'string',
         'updated_by_desc' => 'string',
         'deleted_by_desc' => 'string'
     ];
 
     public array $rules = [
-        'periode' => 'nullable|string|max:20',
-        'penjelasan_dampak' => 'nullable|string|max:2000',
-        'nilai_dampak' => 'nullable|numeric',
-        'id_dampak' => 'nullable',
-        'nilai_kemungkinan' => 'nullable|numeric',
-        'id_kemungkinan' => 'nullable',
+        'is_read' => 'nullable|string|max:1',
+        'id_user' => 'required',
+        'id_msg_penerima' => 'required',
         'created_at' => 'nullable',
         'updated_at' => 'nullable',
         'created_by' => 'nullable',

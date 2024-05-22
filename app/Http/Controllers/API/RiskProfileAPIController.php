@@ -205,11 +205,12 @@ class RiskProfileAPIController extends RiskProfileResourceController
             $r["id_jenis_risiko"] = $data['id_jenis_risiko'];
             $r["nama"] = $data['nama'];
             $r["status"] = 'Draft';
-            $r["id_unit"] = $this->data['rowheader']['id_unit'];
+            $r["id_unit"] = $this->data['rowheader']->id_unit;
             $data['id_risiko'] = $risikom->insert($r);
         }
 
         if ($ret) {
+            $data["status"] = "Draft";
             if ($id) {
                 $ret = $this->model->update($id, $data);
                 $data[$this->model->primaryKey] = $id;
@@ -229,7 +230,7 @@ class RiskProfileAPIController extends RiskProfileResourceController
                     $rt = [];
                     $rt['id_risiko'] = $data['id_risiko'];
                     $rt['nama'] = $p['nama'];
-                    $rt['id_unit'] = $this->data['rowheader']['id_unit'];
+                    $rt['id_unit'] = $this->data['rowheader']->id_unit;
                     $rt['status'] = 'Draft';
                     $ret = $p['id_penyebab'] = $pm->insert($rt);
                 }
@@ -319,7 +320,7 @@ class RiskProfileAPIController extends RiskProfileResourceController
                 $rt = [];
                 $rt['id_risiko'] = $data['id_risiko'];
                 $rt['nama'] = $d['nama'];
-                $rt['id_unit'] = $this->data['rowheader']['id_unit'];
+                $rt['id_unit'] = $this->data['rowheader']->id_unit;
                 $rt['status'] = 'Draft';
                 $ret = $d['id_dampak'] = $dm->insert($rt);
             }
@@ -339,6 +340,9 @@ class RiskProfileAPIController extends RiskProfileResourceController
                 "id_profile_dampak",
                 $id_profile_dampakarr
             )->delete() !== false;
+
+        if ($ret)
+            $ret = $this->_setStatus($this->data['rowheader']['id_register']);
 
         if ($ret)
             DB::commit();

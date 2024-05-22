@@ -4,21 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class RiskProfileRealisasiResidual extends BaseModel
+class MtStatusPengajuanPageDisable extends BaseModel
 {
-    public $table = 'risk_profile_realisasi_residual';
+    public $table = 'mt_status_pengajuan_page_disable';
 
-    public $primaryKey = 'id_realisasi_residual';
+    protected $primaryKey = 'id_status_pengajuan_page_disable';
 
     public $fillable = [
-        'id_risk_profile',
-        'status',
-        'periode',
-        'penjelasan_dampak',
-        'nilai_dampak',
-        'id_dampak',
-        'nilai_kemungkinan',
-        'id_kemungkinan',
+        'id_status_pengajuan',
+        'page',
         'created_by',
         'updated_by',
         'deleted_by',
@@ -28,22 +22,15 @@ class RiskProfileRealisasiResidual extends BaseModel
     ];
 
     protected $casts = [
-        'periode' => 'string',
-        'penjelasan_dampak' => 'string',
-        'nilai_dampak' => 'decimal:0',
-        'nilai_kemungkinan' => 'decimal:2',
+        'page' => 'string',
         'created_by_desc' => 'string',
         'updated_by_desc' => 'string',
         'deleted_by_desc' => 'string'
     ];
 
     public array $rules = [
-        'periode' => 'nullable|string|max:20',
-        'penjelasan_dampak' => 'nullable|string|max:2000',
-        'nilai_dampak' => 'nullable|numeric',
-        'id_dampak' => 'nullable',
-        'nilai_kemungkinan' => 'nullable|numeric',
-        'id_kemungkinan' => 'nullable',
+        'id_status_pengajuan' => 'nullable',
+        'page' => 'nullable|string|max:1000',
         'created_at' => 'nullable',
         'updated_at' => 'nullable',
         'created_by' => 'nullable',
@@ -55,5 +42,8 @@ class RiskProfileRealisasiResidual extends BaseModel
         'deleted_by_desc' => 'nullable|string|max:200'
     ];
 
-    
+    public function idStatusPengajuan(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(\App\Models\MtStatusPengajuan::class, 'id_status_pengajuan');
+    }
 }
