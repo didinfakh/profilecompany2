@@ -62,7 +62,10 @@ class RiskProfileAPIController extends RiskProfileResourceController
         // dd($data->items);
         $mts = DB::select("select a.id_kemungkinan, a.id_dampak, a.skala, b.nama, b.warna, b.penanganan 
         from mt_risk_matrix a 
-        join mt_risk_tingkat b on a.id_tingkat = b.id_tingkat");
+        join mt_risk_tingkat b on a.id_tingkat = b.id_tingkat
+        where a.deleted_at is null 
+        and b.deleted_at is null 
+        and a.jenis = ?", [$search['jenis']]);
         $rmt = [];
         foreach ($mts as $rm) {
             $rmt[$rm->id_kemungkinan][$rm->id_dampak] = $rm;
@@ -393,12 +396,17 @@ class RiskProfileAPIController extends RiskProfileResourceController
         $ret['risk_limit'] = $risk_limit;
         $dampak = $riskdampak->get();
         foreach ($dampak as &$r) {
-            $r->nilai_mulai = $r->mulai * $risk_limit;
-            $r->nilai_sampai = $r->sampai * $risk_limit;
+            $r->nama = $r->kode . '-' . $r->nama;
+            $r->nilai_mulai = $r->mulai / 100 * $risk_limit;
+            $r->nilai_sampai = $r->sampai / 100 * $risk_limit;
         }
         $ret["dampak"] = $dampak;
 
-        $ret["kemungkinan"] = $riskkemungkinan->get();;
+        $kemungkinan = $riskkemungkinan->get();
+        foreach ($kemungkinan as &$r1) {
+            $r1->nama = $r1->kode . ' - ' . $r1->nama;
+        }
+        $ret["kemungkinan"] = $kemungkinan;
         // $matrix = $riskmatrix->get();
         $matrix = $riskmatrix->where("jenis", $jenis)->get();
         $rmatriks = [];
