@@ -85,10 +85,10 @@ class RiskMetrikStrategiRisiko extends BaseModel
             $where .= " and rmss.id_register = ?";
             $paramarr[] = $params['id_register'];
         }
-        if ($params["tahun"]) {
-            $where .= " and tahun = ?";
-            $paramarr[] = $params['tahun'];
-        }
+        // if ($params["tahun"]) {
+        //     $where .= " and tahun = ?";
+        //     $paramarr[] = $params['tahun'] ;
+        // }
 
         $sql = "select rmss.*, mrt.nama as namataksonomi, mrjr.nama as namajenis_risiko, mrst.nama as namasikap_terhadap_risiko
         from risk_metrik_strategi_risiko rmss 

@@ -1,3 +1,7 @@
+<div>
+<h4 style="text-align: center; margin-bottom: 0px;">Metrik Strategi Risiko</h5>
+<h4 style="text-align: center; margin-top: 0px;">Tahun&nbsp;<?= $tahun?></h4>
+</div>
 <table>
     <thead>
         <tr>
