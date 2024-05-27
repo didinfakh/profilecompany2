@@ -19,6 +19,7 @@ class RiskProfile extends BaseModel
         'id_risiko',
         'nama',
         'jenis',
+        'tgl_risiko',
         'deskripsi',
         'id_register',
         'is_kuantitatif',

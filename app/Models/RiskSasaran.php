@@ -86,12 +86,13 @@ class RiskSasaran extends BaseModel
 
         $no = 0;
         foreach ($rows as &$r) {
-            $rows1 = DB::select("select strategi from risk_sasaran_strategi where deleted_at is null and id_sasaran = ?", [$r->id_sasaran]);
-            $arr = [];
-            foreach ($rows1 as $r1) {
-                $arr[] = $r1->strategi;
-            }
-            $r->nama_strategi = implode(",", $arr);
+            $rows1 = DB::select("select strategi as nama_strategi from risk_sasaran_strategi where deleted_at is null and id_sasaran = ?", [$r->id_sasaran]);
+            // $arr = [];
+            // foreach ($rows1 as $r1) {
+            //     $arr[] = $r1->strategi;
+            // }
+            // $r->nama_strategi = implode(",", $arr);
+            $r->strategis = $rows1;
         }
         return $rows;
     }

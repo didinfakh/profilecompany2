@@ -22,6 +22,9 @@ foreach ($header as $i => $r) {
 }
 sort($retstr);
 // dump($cols);
+echo "<pre>";
+var_dump($rows);
+return;
 ?>
 <table style="width: 100%;">
     <thead>
