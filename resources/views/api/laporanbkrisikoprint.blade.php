@@ -22,11 +22,14 @@ foreach ($header as $i => $r) {
 }
 sort($retstr);
 // dump($cols);
-echo "<pre>";
-var_dump($rows);
-return;
+// echo "<pre>";
+// var_dump($rows);
+// return;
 ?>
-<table style="width: 100%;">
+<div>
+<h4 style="text-align: center; margin-bottom: 0px;">Metrik Strategi Risiko</h5>
+<h4 style="text-align: center; margin-top: 0px;">Tahun&nbsp;<?= $tahun?></h4>
+</div><table style="width: 100%;">
     <thead>
         <?= implode("", $retstr) ?>
     </thead>

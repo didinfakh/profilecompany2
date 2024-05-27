@@ -322,6 +322,7 @@ class LaporanBkRisikoAPIController extends BaseResourceController
     public function printmatrik(Request $request)
     {
         $data = $request->all();
+        $this->data['tahun'] = $data['tahun'];
         $this->data['rowslimit'] = \App\Models\RiskCapacityLimit::laporan($data);
         $this->data['rowsmetrik'] = \App\Models\RiskMetrikStrategiRisiko::laporan($data);
         return view('api/laporanmetrikstrategirisikoprint', $this->data);
@@ -330,6 +331,7 @@ class LaporanBkRisikoAPIController extends BaseResourceController
     public function printsasaran(Request $request)
     {
         $data = $request->all();
+        $this->data['tahun'] = $data['tahun'];
 
         $this->data['header'] = [[
             "nama" => ["label" => "Pilihan Sasaran"],
@@ -354,6 +356,7 @@ class LaporanBkRisikoAPIController extends BaseResourceController
     public function printlossevent(Request $request)
     {
         $data = $request->all();
+        $this->data['tahun'] = $data['tahun'];
 
         $this->data['header'] = [[
             "nama_kejadian" => ["label" => "Nama Kejadian"],

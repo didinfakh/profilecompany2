@@ -36,7 +36,7 @@
         </tr>
     </thead>
     <tbody>
-        <?php $no = 0;
+        <?php $no = 1;
         foreach ($rowsmetrik as $r) { ?>
             <tr>
                 <td style='border:1pt solid #333;'><?= $no++ ?></td>

@@ -80,12 +80,13 @@ class RiskSasaran extends BaseModel
         $sql = "select rs.*
         from risk_sasaran rs
         where rs.deleted_at is null 
-        $where";
+        $where order by id_sasaran asc";
 
         $rows = DB::select($sql, $paramarr);
 
         $no = 0;
         foreach ($rows as &$r) {
+            $r->keputusan_penetapan = $r->is_accept? 'Accept' : 'Avoid';
             $rows1 = DB::select("select strategi as nama_strategi from risk_sasaran_strategi where deleted_at is null and id_sasaran = ?", [$r->id_sasaran]);
             // $arr = [];
             // foreach ($rows1 as $r1) {
