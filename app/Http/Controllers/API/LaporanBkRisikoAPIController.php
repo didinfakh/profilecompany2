@@ -340,7 +340,14 @@ class LaporanBkRisikoAPIController extends BaseResourceController
             "keputusan_penetapan" => ["label" => "Keputusan Penetapan"],
         ]];
         $this->data['cols'] = ["nama", "nama_strategi", "hasil_yang_diharapkan", "nilai_risiko", "nilai_limit", "keputusan_penetapan"];
-        $this->data['rows'] = \App\Models\RiskSasaran::laporan($data);
+        $this->data['rows1'] = $rows = \App\Models\RiskSasaran::laporan($data);
+        $this->data['rows'] = [];
+        // $rws = [$rows[0]];
+        foreach ($rows as $rw) {
+            $r = [];
+            $this->levelRows($rw, $r, 0, $this->data['cols']);
+            $this->data['rows'][] = $r;
+        }
         return view('api/laporanbkrisikoprint', $this->data);
     }
 
