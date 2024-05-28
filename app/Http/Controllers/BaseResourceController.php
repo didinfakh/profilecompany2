@@ -217,13 +217,13 @@ class BaseResourceController extends ResourceController
             }
         }
 
-        // if (!$valparent && $row) {
-        //     foreach ($row as $k => $v) {
-        //         $row[$k]->{$colparent} = null;
-        //     }
+        if (!$valparent && $row) {
+            foreach ($row as $k => $v) {
+                $row[$k]->{$colparent} = null;
+            }
 
-        //     $return = array_merge($return, $row);
-        // }
+            $return = array_merge($return, $row);
+        }
 
         return $return;
     }

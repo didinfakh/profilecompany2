@@ -101,7 +101,7 @@ class RiskCapacityLimitAPIController extends RiskProfileResourceController
         foreach ($data->items() as $r) {
 
             $avg = DB::select("select 
-            avg(total_realisasi_eksposur_risiko_residual/kapasitas_risiko*100) total
+            avg(case when kapasitas_risiko <> 0 and kapasitas_risiko is not null then total_realisasi_eksposur_risiko_residual/kapasitas_risiko*100 else 0 end) total
             from risk_capacity_limit 
             where deleted_at is null and id_register = ? and tahun <= ?", [$r->id_register, $r->tahun])[0]->total;
 
@@ -114,7 +114,7 @@ class RiskCapacityLimitAPIController extends RiskProfileResourceController
             and a.id_risk_profile = b.id_risk_profile and b.id_register = ?) 
             and a.deleted_at is null and a.periode=?", [$r->id_register, ($r->tahun + 1) . 'q4'])[0]->total;
 
-            if ($this->data['rowheader']->id_tingkat_agregasi_risiko == 1) {
+            if ($this->data['rowheader']->id_assessment_type == 1) {
                 $r['risk_limit_corporate'] = $r['risk_limit'];
                 $r['risk_limit_divisi'] = DB::select(
                     "select sum(risk_limit) total from risk_capacity_limit rcl 
@@ -122,7 +122,7 @@ class RiskCapacityLimitAPIController extends RiskProfileResourceController
                     deleted_at is null and 
                     exists(select 1 from risk_register rr 
                     where rr.id_register = rcl.id_register 
-                    and rr.id_tingkat_agregasi_risiko = 2)",
+                    and rr.id_assessment_type = 2)",
                     [$r->tahun]
                 )[0]->total;
 
@@ -132,20 +132,20 @@ class RiskCapacityLimitAPIController extends RiskProfileResourceController
                     deleted_at is null and 
                     exists(select 1 from risk_register rr 
                     where rr.id_register = rcl.id_register 
-                    and rr.id_tingkat_agregasi_risiko = 3)",
+                    and rr.id_assessment_type in (3,4))",
                     [$r->tahun]
                 )[0]->total;
             }
 
 
-            if ($this->data['rowheader']->id_tingkat_agregasi_risiko == 2) {
+            if ($this->data['rowheader']->id_assessment_type == 2) {
                 $r['risk_limit_corporate'] = DB::select(
                     "select sum(risk_limit) total from risk_capacity_limit rcl 
                     where tahun = ? and 
                     deleted_at is null and 
                     exists(select 1 from risk_register rr 
                     where rr.id_register = rcl.id_register 
-                    and rr.id_tingkat_agregasi_risiko = 1)",
+                    and rr.id_assessment_type = 1)",
                     [$r->tahun]
                 )[0]->total;
 
@@ -157,21 +157,21 @@ class RiskCapacityLimitAPIController extends RiskProfileResourceController
                     deleted_at is null and 
                     exists(select 1 from risk_register rr 
                     where rr.id_register = rcl.id_register 
-                    and rr.id_tingkat_agregasi_risiko = 3 
+                    and rr.id_assessment_type in (3,4) 
                     and rr.id_unit = ?)",
                     [$r->tahun, $this->data['rowheader']->id_unit]
                 )[0]->total;
             }
 
 
-            if ($this->data['rowheader']->id_tingkat_agregasi_risiko == 3) {
+            if ($this->data['rowheader']->id_assessment_type == 3 or $this->data['rowheader']->id_assessment_type == 4) {
                 $r['risk_limit_corporate'] = DB::select(
                     "select sum(risk_limit) total from risk_capacity_limit rcl 
                     where tahun = ? and 
                     deleted_at is null and 
                     exists(select 1 from risk_register rr 
                     where rr.id_register = rcl.id_register 
-                    and rr.id_tingkat_agregasi_risiko = 1)",
+                    and rr.id_assessment_type = 1)",
                     [$r->tahun]
                 )[0]->total;
 
@@ -181,7 +181,7 @@ class RiskCapacityLimitAPIController extends RiskProfileResourceController
                     deleted_at is null and 
                     exists(select 1 from risk_register rr 
                     where rr.id_register = rcl.id_register 
-                    and rr.id_tingkat_agregasi_risiko = 2 
+                    and rr.id_assessment_type = 2 
                     and rr.id_unit = ?)",
                     [$r->tahun, $this->data['rowheader']->id_unit]
                 )[0]->total;

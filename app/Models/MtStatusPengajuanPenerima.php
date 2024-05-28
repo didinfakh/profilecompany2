@@ -12,7 +12,6 @@ class MtStatusPengajuanPenerima extends BaseModel
 
     public $fillable = [
         'id_status_pengajuan',
-        'id_tingkat_agregasi_risiko',
         'id_group',
         'id_status_pengajuan_selanjutnya',
         'created_by',
@@ -31,7 +30,6 @@ class MtStatusPengajuanPenerima extends BaseModel
 
     public array $rules = [
         'id_status_pengajuan' => 'nullable',
-        'id_tingkat_agregasi_risiko' => 'nullable',
         'id_group' => 'nullable',
         'id_status_pengajuan_selanjutnya' => 'nullable',
         'created_at' => 'nullable',
@@ -48,11 +46,6 @@ class MtStatusPengajuanPenerima extends BaseModel
     public function idStatusPengajuan(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(\App\Models\MtStatusPengajuan::class, 'id_status_pengajuan');
-    }
-
-    public function idTingkatAgregasiRisiko(): \Illuminate\Database\Eloquent\Relations\BelongsTo
-    {
-        return $this->belongsTo(\App\Models\MtRiskTingkatAgregasiRisiko::class, 'id_tingkat_agregasi_risiko');
     }
 
     public function idGroup(): \Illuminate\Database\Eloquent\Relations\BelongsTo

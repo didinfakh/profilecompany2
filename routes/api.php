@@ -239,7 +239,6 @@ function routeRisiko($name, $controller)
 routeRisiko('risk_profile_mitigasi', App\Http\Controllers\API\RiskProfileMitigasiAPIController::class);
 
 
-Route::get('getinduk/{id_register}/{id_kriteria_dampak}', [App\Http\Controllers\API\RiskProfileAPIController::class, 'getinduk']);
 Route::get('risk_profile_target_residual/{id_register}/{id_risk_profile}', [App\Http\Controllers\API\RiskProfileTargetResidualAPIController::class, 'show']);
 Route::put('risk_profile_target_residual/{id_register}/{id_risk_profile}', [App\Http\Controllers\API\RiskProfileTargetResidualAPIController::class, 'update']);
 
@@ -437,4 +436,7 @@ Route::resource('mt_risk_agregasi_kelompok_bisnis', App\Http\Controllers\API\MtR
     ->except(['create', 'edit']);
 
 Route::resource('mt_status_rencana_perlakuan', App\Http\Controllers\API\MtStatusRencanaPerlakuanAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('mt_assessment_type', App\Http\Controllers\API\MtAssessmentTypeAPIController::class)
     ->except(['create', 'edit']);
