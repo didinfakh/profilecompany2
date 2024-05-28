@@ -110,7 +110,8 @@ class RiskProfileAPIController extends RiskProfileResourceController
                     $periode = 4;
 
                 $r->{"real_eksposur_risikoq" . $periode} = $r1->eksposur_risiko;
-                $r->{"real_levelq" . $periode} = $rmt[$r1->id_kemungkinan][$r1->id_dampak];
+                if ($r1->id_kemungkinan && $r1->id_dampak)
+                    $r->{"real_levelq" . $periode} = $rmt[$r1->id_kemungkinan][$r1->id_dampak];
             }
 
             $items[] = $r;

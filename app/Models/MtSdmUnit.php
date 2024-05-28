@@ -11,6 +11,7 @@ class MtSdmUnit extends BaseModel
     public $primaryKey = 'id_unit';
 
     public $fillable = [
+        'id_unit',
         'nama',
         'created_by',
         'modified_by',

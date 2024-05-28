@@ -87,9 +87,11 @@ class RiskProfileMitigasiRealisasiAPIController extends RiskProfileResourceContr
         rpkh.id_status_rencana_perlakuan,
         rpkh.penjelasan_status_rencana_perlakuan,
         coalesce(rpkh.output_perlakuan, rpk.output_perlakuan) as output_perlakuan, 
-        coalesce(rpkh.id_pic, rpk.id_pic) as id_pic
+        coalesce(rpkh.id_pic, rpk.id_pic) as id_pic,
+        rpp.nama as penyebab
         from risk_profile_mitigasi rpk
         left join risk_profile_mitigasi_realisasi rpkh on rpkh.id_mitigasi = rpk.id_mitigasi and rpkh.periode = ?
+        left join risk_profile_penyebab rpp on rpk.id_profile_penyebab = rpp.id_profile_penyebab
         where rpk.id_risk_profile = ? 
         and rpk.deleted_at is null", [$periode, $id_risk_profile]);
 
