@@ -129,6 +129,24 @@ class RiskProfile extends BaseModel
         $params['header'] = explode(",", $params['header']);
         $paramarr = [];
         $where = "";
+        // $titleHeader = DB::table('mt_template_laporan')->get();
+
+        // echo '<pre>';
+        // var_dump($params);
+
+
+        if($params['id_assessment_type'] && $params["id_assessment_type"] != 'null'){
+            $where .= " and rr.id_assessment_type = ?";
+            $paramarr[] = $params['id_assessment_type'];
+        }
+        if($params['id_kelompok_bisnis'] && $params["id_kelompok_bisnis"] != 'null'){
+            $where .= " and rr.id_kelompok_bisnis = ?";
+            $paramarr[] = $params['id_kelompok_bisnis'];
+        }
+        if($params['id_unit'] && $params["id_unit"] != 'null'){
+            $where .= " and rr.id_unit = ?";
+            $paramarr[] = $params['id_unit'];
+        }
         if ($params["id_register"] && $params["id_register"] != 'null') {
             $where .= " and rp.id_register = ?";
             $paramarr[] = $params['id_register'];
@@ -138,6 +156,7 @@ class RiskProfile extends BaseModel
             $paramarr[] = $params['tahun'];
         }
 
+        // DB::enableQueryLog();
         $sql = "select rp.*, 
         mts.nama sasaran_nama,
         mrjr.nama jenis_risiko_nama,
@@ -148,17 +167,20 @@ class RiskProfile extends BaseModel
         mrm.skala as skala_risiko,
         mrtk.nama as level_risiko
         from risk_profile rp 
+        left join risk_register rr on rp.id_register = rr.id_register
         left join mt_risk_sasaran mts on rp.id_sasaran = mts.id_sasaran
         left join mt_risk_jenis_risiko mrjr on rp.id_jenis_risiko = mrjr.id_jenis_risiko
         left join mt_risk_taksonomi mrt on rp.id_taksonomi = mrt.id_taksonomi
         left join mt_risk_dampak mrd on rp.id_dampak_inheren = mrd.id_dampak
         left join mt_risk_kemungkinan mrk on rp.id_kemungkinan_inheren = mrk.id_kemungkinan
-        left join mt_risk_matrix mrm on rp.id_dampak_inheren = mrm.id_dampak and rp.id_kemungkinan_inheren = mrm.id_kemungkinan 
+        left join mt_risk_matrix mrm on rp.id_dampak_inheren = mrm.id_dampak and rp.id_kemungkinan_inheren = mrm.id_kemungkinan and mrm.jenis = rp.jenis
         left join mt_risk_tingkat mrtk on mrm.id_tingkat = mrtk.id_tingkat
         where rp.deleted_at is null 
         $where";
 
         $rows = DB::select($sql, $paramarr);
+
+        // var_dump( DB::getQueryLog());
 
         $no = 0;
         foreach ($rows as &$r) {
