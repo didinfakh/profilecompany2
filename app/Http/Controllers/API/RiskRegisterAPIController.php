@@ -113,6 +113,8 @@ class RiskRegisterAPIController extends BaseResourceController
             "nama"
         );
 
+        // $data1 = $rows;
+
         return $this->respond([
             'page' => $data->currentPage(),
             'page_size' => $data->perPage(),
