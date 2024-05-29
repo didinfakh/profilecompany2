@@ -110,7 +110,8 @@ class RiskProfileAPIController extends RiskProfileResourceController
                     $periode = 4;
 
                 $r->{"real_eksposur_risikoq" . $periode} = $r1->eksposur_risiko;
-                $r->{"real_levelq" . $periode} = $rmt[$r1->id_kemungkinan][$r1->id_dampak];
+                if ($r1->id_kemungkinan && $r1->id_dampak)
+                    $r->{"real_levelq" . $periode} = $rmt[$r1->id_kemungkinan][$r1->id_dampak];
             }
 
             $items[] = $r;
@@ -453,48 +454,5 @@ class RiskProfileAPIController extends RiskProfileResourceController
             "residual" => "<span style='color:orange'>Tinggi [5x3]</span>",
         ];
         return $this->respond($data);
-    }
-
-    public function getinduk($id_register = null, $id_kriteria_dampak = null, Request $request)
-    {
-        $this->_beforeDetail($id_register);
-        $id_tingkat_agregasi_risiko = $this->data['rowheader']->id_tingkat_agregasi_risiko;
-        $id_unit = $this->data['rowheader']->id_unit;
-        $id_kelompok_bisnis = $this->data['rowheader']->id_kelompok_bisnis;
-
-        $id_tingkat_agregasi_parent = DB::select("select 
-        id_tingkat_agregasi_risiko_parent 
-        from mt_risk_tingkat_agregasi_risiko 
-        where id_tingkat_agregasi_risiko = ?", $id_tingkat_agregasi_risiko)[0]["id_tingkat_agregasi_risiko_parent"];
-
-        $paramarr = [];
-        $valarr = [];
-        $paramarr[] = "b.id_kriteria_dampak = ?";
-        $valarr[] = $id_kriteria_dampak;
-        $paramarr[] = "c.id_tingkat_agregasi_risiko = ?";
-        $valarr[] = $id_tingkat_agregasi_parent;
-        if ($id_tingkat_agregasi_risiko == 4) {
-            $paramarr[] = "c.id_unit = ?";
-            $valarr[] = $id_unit;
-        }
-        if ($id_tingkat_agregasi_risiko == 3) {
-            $paramarr[] = "c.id_kelompok_bisnis = ?";
-            $valarr[] = $id_kelompok_bisnis;
-        }
-        if ($id_tingkat_agregasi_risiko == 2) {
-        }
-        if ($id_tingkat_agregasi_risiko == 1) {
-            $paramarr[] = "1 <> ?";
-            $valarr[] = 1;
-        }
-
-        $rows = DB::select("select id_risiko, nama 
-        from risk_risiko a 
-        where exists (select 1 from risk_profile b 
-        left join risk_register c on b.id_register = c.id_register
-        where " . implode(" and ", $paramarr) . "
-        )", $valarr);
-
-        return $rows;
     }
 }

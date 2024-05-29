@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\RisikoResourceController;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -70,8 +71,14 @@ class RiskProfileMitigasiAPIController extends RisikoResourceController
 
 
         $db = DB::table("risk_profile")
-            ->leftJoin("risk_profile_penyebab", "risk_profile.id_risk_profile", "=", "risk_profile_penyebab.id_risk_profile")
-            ->leftJoin("risk_profile_mitigasi", "risk_profile_penyebab.id_profile_penyebab", "=", "risk_profile_mitigasi.id_profile_penyebab")
+            ->leftJoin("risk_profile_penyebab", function (JoinClause $join) {
+                $join->on('risk_profile.id_risk_profile', '=', 'risk_profile_penyebab.id_risk_profile')
+                    ->whereRaw('risk_profile_penyebab.deleted_at is null');
+            })
+            ->leftJoin("risk_profile_mitigasi", function (JoinClause $join) {
+                $join->on('risk_profile_penyebab.id_profile_penyebab', '=', 'risk_profile_mitigasi.id_profile_penyebab')
+                    ->whereRaw('risk_profile_mitigasi.deleted_at is null');
+            })
             ->select(
                 "risk_profile.*",
                 "risk_profile_penyebab.id_profile_penyebab",
@@ -97,7 +104,7 @@ class RiskProfileMitigasiAPIController extends RisikoResourceController
                 $db = $db->orderBy($column, $sc);
             }
         } else if ($this->model->orderDefault) {
-            $db = $db->orderBy($this->model->orderDefault);
+            $db = $db->orderByRaw($this->model->orderDefault);
         } else if ($this->model->primaryKey) {
             $db = $db->orderBy($this->model->primaryKey);
         }

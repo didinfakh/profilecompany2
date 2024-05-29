@@ -9,6 +9,7 @@ class RiskProfileMitigasi extends BaseModel
     public $table = 'risk_profile_mitigasi';
 
     public $primaryKey = 'id_mitigasi';
+    public $orderDefault = 'id_risk_profile, id_profile_penyebab, id_mitigasi';
 
     public $fillable = [
         'id_risk_profile',

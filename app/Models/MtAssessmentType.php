@@ -17,7 +17,8 @@ class MtAssessmentType extends BaseModel
         'deleted_by',
         'created_by_desc',
         'updated_by_desc',
-        'deleted_by_desc'
+        'deleted_by_desc',
+        'id_assessment_type_parent'
     ];
 
     protected $casts = [
@@ -37,8 +38,14 @@ class MtAssessmentType extends BaseModel
         'deleted_at' => 'nullable',
         'created_by_desc' => 'nullable|string|max:200',
         'updated_by_desc' => 'nullable|string|max:200',
-        'deleted_by_desc' => 'nullable|string|max:200'
+        'deleted_by_desc' => 'nullable|string|max:200',
+        'id_assessment_type_parent' => 'nullable'
     ];
+
+    public function mtStatusPengajuanPenerimas(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(\App\Models\MtStatusPengajuanPenerima::class, 'id_assessment_type');
+    }
 
     public function riskRegisters(): \Illuminate\Database\Eloquent\Relations\HasMany
     {

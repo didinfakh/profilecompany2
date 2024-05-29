@@ -9,7 +9,7 @@ class RiskRegister extends BaseModel
     public $table = 'risk_register';
 
     public $primaryKey = 'id_register';
-    public $orderDefault = 'sort,id_tingkat_agregasi_risiko,id_register';
+    public $orderDefault = 'sort,id_assessment_type,id_register';
 
     public $fillable = [
         'nama',
@@ -24,9 +24,10 @@ class RiskRegister extends BaseModel
         'id_assessment_type',
         'id_parent_register',
         'navigasi',
-        'id_tingkat_agregasi_risiko',
         'is_kegiatan',
         'kode',
+        'periode_mulai',
+        'periode_selesai',
         'id_status_pengajuan',
         'id_owner',
         'nama_owner',
@@ -61,7 +62,6 @@ class RiskRegister extends BaseModel
         'id_unit' => 'nullable|string|max:18',
         'id_parent_register' => 'nullable',
         'navigasi' => 'nullable|string|max:1',
-        'id_tingkat_agregasi_risiko' => 'nullable',
         'is_kegiatan' => 'nullable|string|max:1',
         'kode' => 'nullable|string|max:20',
         'id_status_pengajuan' => 'nullable',
@@ -84,11 +84,6 @@ class RiskRegister extends BaseModel
     public function idUnit(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(\App\Models\MtSdmUnit::class, 'id_unit');
-    }
-
-    public function idTingkatAgregasiRisiko(): \Illuminate\Database\Eloquent\Relations\BelongsTo
-    {
-        return $this->belongsTo(\App\Models\MtRiskTingkatAgregasiRisiko::class, 'id_tingkat_agregasi_risiko');
     }
 
     public function riskMetrikStrategiRisikos(): \Illuminate\Database\Eloquent\Relations\HasMany

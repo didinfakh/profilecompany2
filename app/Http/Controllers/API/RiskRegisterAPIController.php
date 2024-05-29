@@ -19,6 +19,116 @@ class RiskRegisterAPIController extends BaseResourceController
         $this->model = new \App\Models\RiskRegister;
     }
 
+    public function index(Request $request): JsonResponse
+    {
+        $search = $request->get('q');
+        if ($search) {
+            if (!empty($search['nama']))
+                $search['nama'] = "%" . $search['nama'] . "%";
+            if (!empty($search['kode']))
+                $search['kode'] = "%" . $search['kode'] . "%";
+        }
+
+        $tgl_efektif = date('Y-m-d');
+
+        $tahun = null;
+        if (!empty($search['tahun']))
+            $tahun = $search['tahun'];
+        $bulan = null;
+        if (!empty($search['bulan']))
+            $bulan = $search['bulan'];
+        if (!empty($search['tgl_efektif']))
+            $tgl_efektif = $search['tgl_efektif'];
+
+        unset($search['tahun']);
+        unset($search['bulan']);
+        unset($search['tgl_efektif']);
+        // $filter = $request->get('q');
+        $page = $request->get('page') ?? 1;
+        $limit = $request->get('pagesize') ?? $this->limit;
+        $db = $this->model->search($search);
+
+        if ($bulan && $tahun) {
+            $bulantahun = $tahun . $bulan;
+            $db = $db->whereRaw(
+                "? between 
+                coalesce(to_char(periode_mulai,'YYYYMM'),?) 
+                and 
+                coalesce(to_char(periode_selesai,'YYYYMM'),?)",
+                [$bulantahun, $bulantahun, $bulantahun]
+            );
+        } else if ($tahun) {
+            $db = $db->whereRaw(
+                "? between 
+                coalesce(to_char(periode_mulai,'YYYY'),?) 
+                and 
+                coalesce(to_char(periode_selesai,'YYYY'),?)",
+                [$tahun, $tahun, $tahun]
+            );
+        } elseif ($tgl_efektif) {
+            $db = $db->whereRaw(" TO_DATE(?,'YYYYMMDD') 
+            between 
+            coalesce(periode_mulai,TO_DATE(?,'YYYYMMDD')) 
+            and 
+            coalesce(periode_selesai,TO_DATE(?,'YYYYMMDD'))", [$tgl_efektif, $tgl_efektif, $tgl_efektif]);
+        }
+        $orderby = $request->get('order');
+        if ($orderby) {
+            $orderby = explode(",", $orderby);
+            if (!is_array($orderby))
+                $orderby = array($orderby);
+
+            foreach ($orderby as $v) {
+                $exp = explode(" ", $v);
+                $column = $exp[0];
+                if ($exp[1])
+                    $sc = $exp[1];
+
+                $db = $db->orderBy($column, $sc);
+            }
+        } else if ($this->model->orderDefault) {
+            $exp = explode(",", $this->model->orderDefault);
+            if (!is_array($exp))
+                $exp = array($exp);
+
+            foreach ($exp as $v)
+                $db = $db->orderBy(trim($v));
+        } else if ($this->model->primaryKey) {
+            $db = $db->orderBy($this->model->primaryKey);
+        }
+
+        // if($filter)
+        // 	$db = $db->where($filter);
+        $data = $db->paginate($limit);
+        // $pagination = [
+        // 	'currentPage' => $this->model->pager->getCurrentPage(),
+        // 	'totalPage' => $this->model->pager->getPageCount(),
+        // ];
+        // dd($data->items);
+        $rows = $data->items();
+        $data1 = $this->GenerateTreeEasyUi(
+            $rows,
+            "id_parent_register",
+            "id_register",
+            "nama"
+        );
+
+        return $this->respond([
+            'page' => $data->currentPage(),
+            'page_size' => $data->perPage(),
+            'data' => $data1,
+            'total_page' => ceil($data->total() / $limit),
+            'total_records' => $data->total()
+        ]);
+        // return $this->respond([
+        //     'page' => $this->model->pager->getCurrentPage(),
+        //     'page_size' => $limit,
+        //     'data' => $data,
+        //     'total_page' => $this->model->pager->getPageCount(),
+        //     'total_records' => $this->model->pager->getDataCount()
+        // ]);
+    }
+
     public function tree(): JsonResponse
     {
         $rows = $this->model->get();
