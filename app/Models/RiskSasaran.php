@@ -77,12 +77,16 @@ class RiskSasaran extends BaseModel
             $paramarr[] = $params['tahun'];
         }
 
+        // DB::enableQueryLog();
         $sql = "select rs.*
         from risk_sasaran rs
         where rs.deleted_at is null 
         $where order by id_sasaran asc";
 
         $rows = DB::select($sql, $paramarr);
+        // echo "<pre>";
+        // var_dump( DB::getQueryLog());
+
 
         $no = 0;
         foreach ($rows as &$r) {

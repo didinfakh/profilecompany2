@@ -23,13 +23,13 @@ foreach ($header as $i => $r) {
 sort($retstr);
 // dump($cols);
 // echo "<pre>";
-// var_dump($cols);
+// var_dump($header_type);
 // return;
 ?>
 <div>
 <h4 style="text-align: center; margin-bottom: 0px;"><?= $title ?></h5>
 <h4 style="text-align: center; margin-top: 0px;"><?= $tahun?></h4>
-<?php if($nama_unit){?>
+<?php if(isset($nama_unit)){?>
 <h4 style="margin: 0px;">Unit Kerja : <?= $nama_unit?></h4>
 <?php }?>
 </div>
@@ -129,7 +129,7 @@ sort($retstr);
     
                                 if (in_array($column, array_keys($r))) { ?>
                                     <td style='border:1pt solid #333;' rowspan="<?= $rowspan > 1 ? $rowspan : null ?>">
-                                        <?= $r[$column] ?>
+                                        <?= isset($header_type[$column]) && $header_type[$column] == 'rupiah' ? rupiah($r[$column]) : $r[$column] ?>
                                     </td>
                         <?php }
                             }
@@ -173,13 +173,13 @@ sort($retstr);
             <?php }?>
             <?php if(isset($key_col_eksposur_risiko)){?>
                 <td colspan="<?= $key_col_eksposur_risiko - $key_col_nilai_dampak_inheren -1 ?>" ></td>
-                <td style="border:1pt solid #333;"><?=$total_eksposur_risiko?></td>
+                <td style="border:1pt solid #333;"><?=rupiah($total_eksposur_risiko)?></td>
             </tr >
             <?php }?>
             
         </tbody>
     </table>
-    <?php if($nama_jabatan){?>
+    <?php if(isset($nama_jabatan)){?>
    
     <p style=" text-align: right; margin: 0px;">Jakarta,<?= $tanggal?></p>
     <p style=" text-align: right; margin: 0px;">Mengetahui,</p>

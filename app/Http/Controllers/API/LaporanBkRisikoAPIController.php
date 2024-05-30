@@ -41,6 +41,24 @@ class LaporanBkRisikoAPIController extends BaseResourceController
         return $ret;
     }
 
+    private function header_type(){
+        $return = [];
+        $return['eksposur_risiko'] = 'rupiah';
+        $return['nilai_dampak_inheren'] = 'rupiah';
+        $return['res_nilai_dampakq1'] = 'rupiah';
+        $return['res_nilai_dampakq2'] = 'rupiah';
+        $return['res_nilai_dampakq3'] = 'rupiah';
+        $return['res_nilai_dampakq4'] = 'rupiah';
+        $return['res_eksposur_risikoq1'] = 'rupiah';
+        $return['res_eksposur_risikoq2'] = 'rupiah';
+        $return['res_eksposur_risikoq3'] = 'rupiah';
+        $return['res_eksposur_risikoq4'] = 'rupiah';
+        $return['realisasi_mitigasi_biaya'] = 'rupiah';
+
+
+        return $return;
+    }
+
     private function header()
     {
         $return = [];
@@ -344,6 +362,7 @@ class LaporanBkRisikoAPIController extends BaseResourceController
             $this->data['header'],
             $this->data['cols']
         );
+        $this->data['header_type'] = $this->header_type();
         $this->data['rows1'] = $rows = $this->model->laporan($data);
      
         $this->data['rows'] = [];
@@ -428,7 +447,11 @@ if(isset($data['id_register']) && $data['id_register'] != 'null'){
             $dataUnit = DB::table('mt_sdm_unit')->where('id_unit','=',$data['id_unit'])->get();
             $this->data['nama_unit'] = $dataUnit[0]->nama;
         }
-
+        $this->data['header_type'] = [
+            "nilai_kerugian" => 'rupiah',
+            "nilai_premi" => 'rupiah',
+            "nilai_klaim" => 'rupiah',
+        ];
         $this->data['header'] = [[
             "nama_kejadian" => ["label" => "Nama Kejadian"],
             "identifikasi_kejadian" => ["label" => "Identifikasi Kejadian"],
