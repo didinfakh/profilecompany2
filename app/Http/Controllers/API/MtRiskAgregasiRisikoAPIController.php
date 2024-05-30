@@ -27,18 +27,20 @@ class MtRiskAgregasiRisikoAPIController extends BaseResourceController
             if (!empty($search['kode']))
                 $search['kode'] = "%" . $search['kode'] . "%";
         }
-        // $id_kelompok_bisnis = null;
-        // if ($search['id_kelompok_bisnis'])
-        //     $id_kelompok_bisnis = $search['id_kelompok_bisnis'];
+        $id_kelompok_bisnis = null;
+        if ($search['id_kelompok_bisnis'])
+            $id_kelompok_bisnis = $search['id_kelompok_bisnis'];
 
-        // unset($search['id_kelompok_bisnis']);
+        unset($search['id_kelompok_bisnis']);
         // $filter = $request->get('q');
         $page = $request->get('page') ?? 1;
         $limit = $request->get('pagesize') ?? $this->limit;
         $db = $this->model->search($search);
-        // if ($id_kelompok_bisnis) {
-        //     $db = $db->where("");
-        // }
+        if ($id_kelompok_bisnis) {
+            $db = $db->whereRaw("exists (select 1 from mt_risk_agregasi_kelompok_bisnis 
+            where mt_risk_agregasi_risiko.id_risk_agregasi_risiko = mt_risk_agregasi_kelompok_bisnis.id_risk_agregasi_risiko
+            and mt_risk_agregasi_kelompok_bisnis.id_kelompok_bisnis = ?)", [$id_kelompok_bisnis]);
+        }
         $orderby = $request->get('order');
         if ($orderby) {
             $orderby = explode(",", $orderby);

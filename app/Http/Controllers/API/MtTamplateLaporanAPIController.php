@@ -59,8 +59,8 @@ class MtTamplateLaporanAPIController extends BaseResourceController
         // ];
         // dd($data->items);
         $items = [];
-        foreach($data->items() as $i){
-            $i->kolom = json_decode($i->kolom)
+        foreach ($data->items() as $i) {
+            $i->kolom = json_decode($i->kolom);
             $items[] = $i;
         }
         return $this->respond([

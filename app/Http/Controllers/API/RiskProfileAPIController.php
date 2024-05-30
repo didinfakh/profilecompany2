@@ -27,11 +27,25 @@ class RiskProfileAPIController extends RiskProfileResourceController
             if (!empty($search['kode']))
                 $search['kode'] = "%" . $search['kode'] . "%";
         }
+        $bulan = date("m");
+        $tahun = date("Y");
+        if (!empty($search['bulan']))
+            $bulan = $search['bulan'];
+        if (!empty($search['tahun']))
+            $tahun = $search['tahun'];
+
+        unset($search['bulan']);
+        unset($search['tahun']);
         // $filter = $request->get('q');
         $page = $request->get('page') ?? 1;
         $limit = $request->get('pagesize') ?? $this->limit;
         $db = $this->model->search($search);
         $db = $db->where("id_register", $id_register);
+        if ($bulan && $tahun) {
+            $blnthn = $blnthn1 = $tahun . $bulan;
+            $db = $db->whereRaw("to_char(coalesce(tgl_risiko,to_date(?,'YYYYMM')),'YYYYMM') <= ? 
+			and to_char(coalesce(tgl_close,to_date(?,'YYYYMM')),'YYYYMM') >= ?", [$blnthn1, $blnthn1, $blnthn, $blnthn]);
+        }
         $orderby = $request->get('order');
         if ($orderby) {
             $orderby = explode(",", $orderby);
