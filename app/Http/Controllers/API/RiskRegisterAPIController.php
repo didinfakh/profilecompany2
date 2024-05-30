@@ -110,7 +110,7 @@ class RiskRegisterAPIController extends BaseResourceController
             $rows,
             "id_parent_register",
             "id_register",
-            "nama"
+            "nama",
         );
 
         // $data1 = $rows;

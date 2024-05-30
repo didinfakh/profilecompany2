@@ -135,15 +135,15 @@ class RiskProfile extends BaseModel
         // var_dump($params);
 
 
-        if($params['id_assessment_type'] && $params["id_assessment_type"] != 'null'){
+        if(isset($params['id_assessment_type']) && $params["id_assessment_type"] != 'null'){
             $where .= " and rr.id_assessment_type = ?";
             $paramarr[] = $params['id_assessment_type'];
         }
-        if($params['id_kelompok_bisnis'] && $params["id_kelompok_bisnis"] != 'null'){
+        if(isset($params['id_kelompok_bisnis']) && $params["id_kelompok_bisnis"] != 'null'){
             $where .= " and rr.id_kelompok_bisnis = ?";
             $paramarr[] = $params['id_kelompok_bisnis'];
         }
-        if($params['id_unit'] && $params["id_unit"] != 'null'){
+        if(isset($params['id_unit']) && $params["id_unit"] != 'null'){
             $where .= " and rr.id_unit = ?";
             $paramarr[] = $params['id_unit'];
         }
@@ -156,6 +156,7 @@ class RiskProfile extends BaseModel
             $paramarr[] = $params['tahun'];
         }
 
+    
         // DB::enableQueryLog();
         $sql = "select rp.*, 
         mts.nama sasaran_nama,

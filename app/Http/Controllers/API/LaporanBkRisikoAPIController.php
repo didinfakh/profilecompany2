@@ -300,16 +300,15 @@ class LaporanBkRisikoAPIController extends BaseResourceController
     public function print(Request $request)
     {
         $data = $request->all();
+        $this->data['title'] = 
         $titleHeader = DB::table('mt_template_laporan')->where('id_template_laporan','=',$data['id_template_laporan'])->get();
 
         $this->data['title'] = $titleHeader[0]->judul;
         $this->data['tahun'] = 'Periode TW I/II/III/IV Tahun' . ' ' . $data['tahun'];
-        $this->data['nama_jabatan'] = '';
+        $this->data['nama_unit'] = null;
+        $this->data['nama_jabatan'] = null;
 
-        if($data['id_unit'] && $data['id_unit'] != null ){
-            $dataUnit = DB::table('mt_sdm_unit')->where('id_unit','=',$data['id_unit'])->get();
-            $this->data['nama_unit'] = $dataUnit[0]->nama;
-        }elseif($data['id_register'] && $data['id_register'] != null){
+    if(isset($data['id_register']) && $data['id_register'] != 'null'){
         $sql1 = 'SELECT ID_OWNER,
         MSJ.NAMA AS nama_jabatan,
         MSU.NAMA AS nama_unit,
@@ -331,9 +330,11 @@ class LaporanBkRisikoAPIController extends BaseResourceController
     $this->data['nama_jabatan'] = $dataTTD[0]->nama_jabatan;
     $this->data['nama_user'] = $dataTTD[0]->nama_user;
 
-        }
+        }elseif(isset($data['id_unit']) && $data['id_unit'] != null ){
+            $dataUnit = DB::table('mt_sdm_unit')->where('id_unit','=',$data['id_unit'])->get();
+            $this->data['nama_unit'] = $dataUnit[0]->nama;
 
-        
+        };
         $this->data['tanggal'] = date("d M Y");
         $this->data['header'] = [];
         $this->data['cols'] = [];
@@ -344,6 +345,7 @@ class LaporanBkRisikoAPIController extends BaseResourceController
             $this->data['cols']
         );
         $this->data['rows1'] = $rows = $this->model->laporan($data);
+     
         $this->data['rows'] = [];
         // $rws = [$rows[0]];
         foreach ($rows as $rw) {
@@ -395,7 +397,37 @@ class LaporanBkRisikoAPIController extends BaseResourceController
     public function printlossevent(Request $request)
     {
         $data = $request->all();
-        $this->data['tahun'] = $data['tahun'];
+        $this->data['title'] = 'Loss Event Report';
+        $this->data['tahun'] = 'Periode TW I/II/III/IV Tahun' . ' ' . $data['tahun'];
+        $this->data['nama_unit'] = null;
+        $this->data['nama_jabatan'] = null;
+
+if(isset($data['id_register']) && $data['id_register'] != 'null'){
+        $sql1 = 'SELECT ID_OWNER,
+        MSJ.NAMA AS nama_jabatan,
+        MSU.NAMA AS nama_unit,
+        SU.NAME AS nama_user
+    FROM RISK_REGISTER RR
+    LEFT JOIN MT_SDM_JABATAN MSJ ON RR.ID_OWNER = MSJ.ID_JABATAN
+    LEFT JOIN MT_SDM_UNIT MSU ON MSJ.ID_UNIT = MSU.ID_UNIT
+    LEFT JOIN SYS_USER_GROUP SUG ON MSJ.ID_JABATAN = SUG.ID_JABATAN
+    LEFT JOIN SYS_USER SU ON SUG.ID_USER = SU.ID_USER
+    WHERE SU.DELETED_AT IS NULL
+        AND MSJ.DELETED_AT IS NULL
+        AND MSU.DELETED_AT IS NULL
+        AND SU.DELETED_AT IS NULL
+        AND RR.ID_REGISTER = ?';
+    $params1=[];
+    $params1[] = $data['id_register'];
+    $dataTTD = DB::select($sql1,$params1);
+    $this->data['nama_unit'] = $dataTTD[0]->nama_unit;
+    $this->data['nama_jabatan'] = $dataTTD[0]->nama_jabatan;
+    $this->data['nama_user'] = $dataTTD[0]->nama_user;
+
+        }if(isset($data['id_unit']) && $data['id_unit'] != 'null' ){
+            $dataUnit = DB::table('mt_sdm_unit')->where('id_unit','=',$data['id_unit'])->get();
+            $this->data['nama_unit'] = $dataUnit[0]->nama;
+        }
 
         $this->data['header'] = [[
             "nama_kejadian" => ["label" => "Nama Kejadian"],
@@ -420,7 +452,14 @@ class LaporanBkRisikoAPIController extends BaseResourceController
             "nilai_klaim" => ["label" => "Nilai Klaim"],
         ]];
         $this->data['cols'] = array_keys($this->data['header'][0]);
-        $this->data['rows'] = \App\Models\LostEvent::laporan($data);
+        $this->data['rows1'] = $rows = \App\Models\LostEvent::laporan($data);
+        $this->data['rows'] = [];
+        // $rws = [$rows[0]];
+        foreach ($rows as $rw) {
+            $r = [];
+            $this->levelRows($rw, $r, 0, $this->data['cols']);
+            $this->data['rows'][] = $r;
+        }
         return view('api/laporanbkrisikoprint', $this->data);
     }
 }

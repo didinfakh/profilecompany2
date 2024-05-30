@@ -187,7 +187,8 @@ class BaseResourceController extends ResourceController
         $collabel,
         $valparent = null,
         $level = 0,
-        $idarr = array()
+        $idarr = array(),
+
     ) {
 
         if (!empty($idarr[$valparent]))
@@ -200,6 +201,11 @@ class BaseResourceController extends ResourceController
         $i = 0;
         foreach ($row as $idkey => $value) {
             # code...
+
+
+                $value->text = $value->{$collabel};
+                $value->id = $value->{$colid};
+
             if (trim($value->{$colparent}) == trim($valparent) && ($value->{$colparent} or $valparent === null)) {
 
                 if (!empty($idarr[$value->{$colid}]))

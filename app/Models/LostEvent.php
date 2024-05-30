@@ -139,6 +139,18 @@ class LostEvent extends BaseModel
     {
         $paramarr = [];
         $where = "";
+        if(isset($params['id_assessment_type']) && $params["id_assessment_type"] != 'null'){
+            $where .= " and rr.id_assessment_type = ?";
+            $paramarr[] = $params['id_assessment_type'];
+        }
+        if(isset($params['id_kelompok_bisnis']) && $params["id_kelompok_bisnis"] != 'null'){
+            $where .= " and rr.id_kelompok_bisnis = ?";
+            $paramarr[] = $params['id_kelompok_bisnis'];
+        }
+        if(isset($params['id_unit']) && $params["id_unit"] != 'null'){
+            $where .= " and rr.id_unit = ?";
+            $paramarr[] = $params['id_unit'];
+        }
         if ($params["id_register"] && $params["id_register"] != 'null') {
             $where .= " and rs.id_register = ?";
             $paramarr[] = $params['id_register'];
@@ -153,6 +165,7 @@ class LostEvent extends BaseModel
             }
         }
 
+                // DB::enableQueryLog();
         $sql = "select rs.*, 
         mlek.nama as namalost_event_kategori,
         mlespk.nama as namalost_event_penyebab_kejadian,
@@ -161,6 +174,7 @@ class LostEvent extends BaseModel
         mlefk.nama as namalost_event_frakuensi_kejadian,
         mlesa.nama as namalost_event_status_asuransi
         from lost_event rs 
+        left join risk_register rr on rs.id_register = rr.id_register
         left join mt_lost_event_kategori mlek on rs.id_lost_event_kategori = mlek.id_lost_event_kategori
         left join mt_lost_event_sumber_penyebab_kejadian mlespk on rs.id_lost_event_sumber_penyebab_kejadian = mlespk.id_lost_event_sumber_penyebab_kejadian
         left join mt_risk_jenis_risiko mrjr on rs.id_jenis_risiko = mrjr.id_jenis_risiko
@@ -171,6 +185,8 @@ class LostEvent extends BaseModel
         $where";
 
         $rows = DB::select($sql, $paramarr);
+        // var_dump( DB::getQueryLog());
+
         return $rows;
     }
 }
