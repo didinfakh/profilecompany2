@@ -65,6 +65,14 @@ class RiskProfileMitigasiAPIController extends RisikoResourceController
             if (!empty($search['kode']))
                 $search['kode'] = "%" . $search['kode'] . "%";
         }
+        $bulan = date("m");
+        $tahun = date("Y");
+        if (!empty($search['bulan']))
+            $bulan = $search['bulan'];
+        if (!empty($search['tahun']))
+            $tahun = $search['tahun'];
+        unset($search['bulan']);
+        unset($search['tahun']);
         // $filter = $request->get('q');
         $page = $request->get('page') ?? 1;
         $limit = $request->get('pagesize') ?? $this->limit;
@@ -88,6 +96,11 @@ class RiskProfileMitigasiAPIController extends RisikoResourceController
             );
         $db = $this->search($db, $search);
         $db = $db->where("risk_profile.id_register", $id_register);
+        if ($bulan && $tahun) {
+            $blnthn = $blnthn1 = $tahun . $bulan;
+            $db = $db->whereRaw("to_char(coalesce(risk_profile.tgl_risiko,to_date(?,'YYYYMM')),'YYYYMM') <= ? 
+			and to_char(coalesce(risk_profile.tgl_close,to_date(?,'YYYYMM')),'YYYYMM') >= ?", [$blnthn1, $blnthn1, $blnthn, $blnthn]);
+        }
 
         $orderby = $request->get('order');
         if ($orderby) {
@@ -117,10 +130,20 @@ class RiskProfileMitigasiAPIController extends RisikoResourceController
         // 	'totalPage' => $this->model->pager->getPageCount(),
         // ];
         // dd($data->items);
+        $items = [];
+        foreach ($data->items() as $i) {
+            $periode = $tahun . (int)$bulan;
+            $rs = DB::select("select progress, biaya from risk_profile_mitigasi_realisasi where id_mitigasi = ? and periode = ?", [$i->id_mitigasi, $periode]);
+            if($rs){
+                $i->progress = $rs[0]->progress;
+                $i->biaya = $rs[0]->biaya;
+            }
+            $items[] = $i;
+        }
         return $this->respond([
             'page' => $data->currentPage(),
             'page_size' => $data->perPage(),
-            'data' => $data->items(),
+            'data' => $items,
             'total_page' => ceil($data->total() / $limit),
             'total_records' => $data->total()
         ]);

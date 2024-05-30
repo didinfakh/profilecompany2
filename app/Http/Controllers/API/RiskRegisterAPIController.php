@@ -152,6 +152,28 @@ class RiskRegisterAPIController extends BaseResourceController
                 $id
             ));
         }
+
+        $rs = DB::select("select nama 
+        from mt_assessment_type 
+        where id_assessment_type = ?", [$record->id_assessment_type]);
+        if ($rs) {
+            $record->nama_assessment_type = $rs[0]->nama;
+        }
+
+        $rs = DB::select("select nama 
+        from mt_sdm_kelompok_bisnis 
+        where id_kelompok_bisnis = ?", [$record->id_kelompok_bisnis]);
+        if ($rs) {
+            $record->nama_kelompok_bisnis = $rs[0]->nama;
+        }
+
+        $rs = DB::select("select nama 
+        from mt_sdm_unit 
+        where id_unit = ?", [$record->id_unit]);
+        if ($rs) {
+            $record->nama_unit = $rs[0]->nama;
+        }
+
         $rs = DB::select("select nama,warna 
         from mt_status_pengajuan 
         where id_status_pengajuan = ?", [$record->id_status_pengajuan]);
@@ -174,6 +196,15 @@ class RiskRegisterAPIController extends BaseResourceController
             $page_disable[] = $r->page;
         }
         $record->page_disable = $page_disable;
+
+        $rows = DB::select("select page 
+        from mt_status_pengajuan_read_only 
+        where id_status_pengajuan = ? and deleted_at is null ", [$record->id_status_pengajuan]);
+        $page_read_only = [];
+        foreach ($rows as $r) {
+            $page_read_only[] = $r->page;
+        }
+        $record->page_read_only = $page_read_only;
 
         $id_group = $request->session()->get('id_group');
 
@@ -220,6 +251,14 @@ class RiskRegisterAPIController extends BaseResourceController
     {
         $ret = [];
         $row = $this->model->find($id_register);
+        $rs = DB::select("select nama 
+        from mt_assessment_type 
+        where id_assessment_type = ?", [$row->id_assessment_type]);
+        if ($rs) {
+            $row->nama_assessment_type = $rs[0]->nama;
+            $row->nama .= " (" . $row->nama_assessment_type . ")";
+        }
+
         if ($row->id_parent_register) {
             $arr = $this->registerParent($row->id_parent_register);
             foreach ($arr as $r) {

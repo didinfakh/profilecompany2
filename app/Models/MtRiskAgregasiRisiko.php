@@ -14,6 +14,7 @@ class MtRiskAgregasiRisiko extends BaseModel
         'nama',
         'id_kelompok_bisnis',
         'id_kriteria_dampak',
+        'keterangan',
         'jenis',
         'created_by',
         'updated_by',
