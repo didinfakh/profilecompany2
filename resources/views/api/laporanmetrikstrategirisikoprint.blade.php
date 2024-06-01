@@ -14,10 +14,10 @@
     <tbody>
         <?php foreach ($rowslimit as $r) { ?>
             <tr>
-                <td style='border:1pt solid #333;' colspan="2"><?= $r->kapasitas_risiko ?></td>
-                <td style='border:1pt solid #333;'><?= $r->risk_appetite ?></td>
-                <td style='border:1pt solid #333;'><?= $r->risk_tolerance ?></td>
-                <td style='border:1pt solid #333;'><?= $r->risk_limit ?></td>
+                <td style='border:1pt solid #333; text-align: right;' colspan="2"><?= rupiah($r->kapasitas_risiko) ?></td>
+                <td style='border:1pt solid #333; text-align: right;'><?= rupiah($r->risk_appetite) ?></td>
+                <td style='border:1pt solid #333; text-align: right;'><?= rupiah($r->risk_tolerance) ?></td>
+                <td style='border:1pt solid #333; text-align: right;'><?= rupiah($r->risk_limit) ?></td>
             </tr>
         <?php } ?>
     </tbody>
