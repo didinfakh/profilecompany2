@@ -217,6 +217,7 @@ function routeRiskRegister($name, $controller)
 }
 
 Route::get('risk_profile/matriks', [App\Http\Controllers\API\RiskProfileAPIController::class, 'matriks']);
+Route::get('risk_profile/top_risk', [App\Http\Controllers\API\RiskProfileAPIController::class, 'top_risk']);
 routeRiskRegister('risk_metrik_strategi_risiko', App\Http\Controllers\API\RiskMetrikStrategiRisikoAPIController::class);
 routeRiskRegister('risk_profile', App\Http\Controllers\API\RiskProfileAPIController::class);
 routeRiskRegister('risk_sasaran', App\Http\Controllers\API\RiskSasaranAPIController::class);
