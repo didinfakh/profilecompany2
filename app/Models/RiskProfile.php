@@ -500,11 +500,17 @@ class RiskProfile extends BaseModel
     //     AND RPTS.ID_KEMUNGKINAN = MRM2.ID_KEMUNGKINAN
     //     WHERE RP.DELETED_AT IS NULL " . $where . " order by " . $order . " desc limit " . $limit ;
     $sql = "
-    SELECT RP.*,
+    SELECT RP.nama,
 	MSJ.NAMA AS RISK_OWNER,
 	MRM.SKALA AS SKALA_INHEREN,
 	mrm1.skala as skala_target,
 	MRM2.SKALA AS SKALA_REALISASI,
+    mrm.id_dampak as id_dampak_inheren,
+	mrm.id_kemungkinan as id_kemungkinan_inheren,
+	mrm1.id_dampak as id_dampak_target,
+	mrm1.id_kemungkinan as id_kemungkinan_target,
+	mrm2.id_dampak as id_dampak_realisasi,
+	mrm2.id_kemungkinan as id_kemungkinan_realisasi,
 	MRM.ID_TINGKAT AS ID_TINGKAT_INHEREN,
 	MRM1.ID_TINGKAT AS ID_TINGKAT_TARGET,
 	MRM2.ID_TINGKAT AS ID_TINGKAT_REALISASI
@@ -559,11 +565,17 @@ WHERE RP.DELETED_AT IS NULL and is_kuantitatif is not null " . $where . " order 
         $response = [];
 
              $sql = "
-        SELECT RP.*,
+        SELECT RP.nama,
         msj.nama as risk_owner,
         MRM.SKALA AS SKALA_INHEREN,
             MRM1.SKALA AS SKALA_TARGET,
             MRM2.SKALA AS SKALA_REALISASI,
+            mrm.id_dampak as id_dampak_inheren,
+	mrm.id_kemungkinan as id_kemungkinan_inheren,
+	mrm1.id_dampak as id_dampak_target,
+	mrm1.id_kemungkinan as id_kemungkinan_target,
+	mrm2.id_dampak as id_dampak_realisasi,
+	mrm2.id_kemungkinan as id_kemungkinan_realisasi,
             mrm.id_tingkat as id_tingkat_inheren,
 	mrm1.id_tingkat as id_tingkat_target,
 	mrm2.id_tingkat as id_tingkat_realisasi
