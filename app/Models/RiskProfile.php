@@ -434,7 +434,7 @@ class RiskProfile extends BaseModel
             }
             $periode_target = (string)$filter['tahun'] . $periode;
         }
-        
+
         if(isset($filter['jenis']) && $filter['jenis'] != 'null'){
             $where .= ' and rp.jenis = ?';
             $params[] = $filter['jenis'];
@@ -500,7 +500,7 @@ class RiskProfile extends BaseModel
     //     AND RPTS.ID_KEMUNGKINAN = MRM2.ID_KEMUNGKINAN
     //     WHERE RP.DELETED_AT IS NULL " . $where . " order by " . $order . " desc limit " . $limit ;
     $sql = "
-    SELECT RP.NAMA,
+    SELECT RP.*,
 	MSJ.NAMA AS RISK_OWNER,
 	MRM.SKALA AS SKALA_INHEREN,
 	mrm1.skala as skala_target,
