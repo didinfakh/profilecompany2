@@ -114,15 +114,19 @@ class RiskCapacityLimitAPIController extends RiskProfileResourceController
             and a.id_risk_profile = b.id_risk_profile and b.id_register = ?) 
             and a.deleted_at is null and a.periode=?", [$r->id_register, ($r->tahun + 1) . 'q4'])[0]->total;
 
-            if ($this->data['rowheader']->id_assessment_type == 1) {
+            #korporat
+            if ($this->data['rowheader']->id_tingkat_agregasi_risiko == 1) {
                 $r['risk_limit_corporate'] = $r['risk_limit'];
+                #mengambil risk limit divisi yang divisi/ap/dept
                 $r['risk_limit_divisi'] = DB::select(
                     "select sum(risk_limit) total from risk_capacity_limit rcl 
                     where tahun = ? and 
                     deleted_at is null and 
                     exists(select 1 from risk_register rr 
                     where rr.id_register = rcl.id_register 
-                    and rr.id_assessment_type = 2)",
+                    and rr.id_tingkat_agregasi_risiko = 2 
+                    and rr.id_assessment_type = 3
+                    and rr.deleted_at is null)",
                     [$r->tahun]
                 )[0]->total;
 
@@ -132,20 +136,22 @@ class RiskCapacityLimitAPIController extends RiskProfileResourceController
                     deleted_at is null and 
                     exists(select 1 from risk_register rr 
                     where rr.id_register = rcl.id_register 
-                    and rr.id_assessment_type in (3,4))",
+                    and rr.id_tingkat_agregasi_risiko = 3
+                    and rr.deleted_at is null)",
                     [$r->tahun]
                 )[0]->total;
             }
 
-
-            if ($this->data['rowheader']->id_assessment_type == 2) {
+            #divisi
+            if ($this->data['rowheader']->id_tingkat_agregasi_risiko == 2) {
                 $r['risk_limit_corporate'] = DB::select(
                     "select sum(risk_limit) total from risk_capacity_limit rcl 
                     where tahun = ? and 
                     deleted_at is null and 
                     exists(select 1 from risk_register rr 
                     where rr.id_register = rcl.id_register 
-                    and rr.id_assessment_type = 1)",
+                    and rr.id_tingkat_agregasi_risiko = 1
+                    and rr.deleted_at is null)",
                     [$r->tahun]
                 )[0]->total;
 
@@ -157,21 +163,23 @@ class RiskCapacityLimitAPIController extends RiskProfileResourceController
                     deleted_at is null and 
                     exists(select 1 from risk_register rr 
                     where rr.id_register = rcl.id_register 
-                    and rr.id_assessment_type in (3,4) 
-                    and rr.id_unit = ?)",
+                    and rr.id_tingkat_agregasi_risiko = 3 
+                    and rr.id_unit = ?
+                    and rr.deleted_at is null)",
                     [$r->tahun, $this->data['rowheader']->id_unit]
                 )[0]->total;
             }
 
-
-            if ($this->data['rowheader']->id_assessment_type == 3 or $this->data['rowheader']->id_assessment_type == 4) {
+            #proyek
+            if ($this->data['rowheader']->id_tingkat_agregasi_risiko == 3 or $this->data['rowheader']->id_tingkat_agregasi_risiko == 4) {
                 $r['risk_limit_corporate'] = DB::select(
                     "select sum(risk_limit) total from risk_capacity_limit rcl 
                     where tahun = ? and 
                     deleted_at is null and 
                     exists(select 1 from risk_register rr 
                     where rr.id_register = rcl.id_register 
-                    and rr.id_assessment_type = 1)",
+                    and rr.id_tingkat_agregasi_risiko = 1
+                    and rr.deleted_at is null)",
                     [$r->tahun]
                 )[0]->total;
 
@@ -181,8 +189,10 @@ class RiskCapacityLimitAPIController extends RiskProfileResourceController
                     deleted_at is null and 
                     exists(select 1 from risk_register rr 
                     where rr.id_register = rcl.id_register 
-                    and rr.id_assessment_type = 2 
-                    and rr.id_unit = ?)",
+                    and rr.id_tingkat_agregasi_risiko = 2 
+                    and rr.id_unit = ?
+                    and rr.id_assessment_type = 3
+                    and rr.deleted_at is null)",
                     [$r->tahun, $this->data['rowheader']->id_unit]
                 )[0]->total;
 
