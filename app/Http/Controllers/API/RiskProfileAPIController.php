@@ -473,7 +473,7 @@ class RiskProfileAPIController extends RiskProfileResourceController
     public function top_risk(Request $request)
     {
         $filter = $request->get('q');
-        $response=$this->model->top_risk($filter);
+        $response = $this->model->top_risk($filter);
 
 
         return $this->respond($response);

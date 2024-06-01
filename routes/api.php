@@ -441,3 +441,6 @@ Route::resource('mt_status_rencana_perlakuan', App\Http\Controllers\API\MtStatus
 
 Route::resource('mt_assessment_type', App\Http\Controllers\API\MtAssessmentTypeAPIController::class)
     ->except(['create', 'edit']);
+
+Route::resource('mt_risk_agregasi_risiko_sasaran', App\Http\Controllers\API\MtRiskAgregasiRisikoSasaranAPIController::class)
+    ->except(['create', 'edit']);
