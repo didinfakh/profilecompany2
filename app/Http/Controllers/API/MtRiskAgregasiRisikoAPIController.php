@@ -28,7 +28,7 @@ class MtRiskAgregasiRisikoAPIController extends BaseResourceController
                 $search['kode'] = "%" . $search['kode'] . "%";
         }
         $id_kelompok_bisnis = null;
-        if ($search['id_kelompok_bisnis'])
+        if (!empty($search['id_kelompok_bisnis']))
             $id_kelompok_bisnis = $search['id_kelompok_bisnis'];
 
         unset($search['id_kelompok_bisnis']);
