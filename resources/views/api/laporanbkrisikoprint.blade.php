@@ -127,11 +127,18 @@ sort($retstr);
                                 if ($ic[$column] == $ck[$column])
                                     $rowspan = $cr - $ck[$column];
     
-                                if (in_array($column, array_keys($r))) { ?>
-                                    <td style='border:1pt solid #333;' rowspan="<?= $rowspan > 1 ? $rowspan : null ?>">
-                                        <?= isset($header_type[$column]) && $header_type[$column] == 'rupiah' ? rupiah($r[$column]) : $r[$column] ?>
+                                if (in_array($column, array_keys($r))) { 
+                                    if(isset($header_type[$column]) && $header_type[$column] == 'rupiah' ){
+                                    ?>
+                                
+                                    <td style='border:1pt solid #333; text-align:right;' rowspan="<?= $rowspan > 1 ? $rowspan : null ?>">
+                                        <?=  rupiah($r[$column]) ?>
                                     </td>
-                        <?php }
+                        <?php }else{ ?>
+                            <td style='border:1pt solid #333;' rowspan="<?= $rowspan > 1 ? $rowspan : null ?>">
+                                        <?=  $r[$column] ?>
+                                    </td>
+                        <?php }}
                             }
                         } ?>
                     </tr>
@@ -145,7 +152,7 @@ sort($retstr);
             <tr>
                 <td colspan="<?= $key_col_mitigasi_biaya - 1 ?>" ></td>
                 <td style="border:1pt solid #333;">Total</td>
-                <td style="border:1pt solid #333;"><?=$total_mitigasi_biaya . '.00'?></td>
+                <td style="border:1pt solid #333; text-align:right;"><?= rupiah($total_mitigasi_biaya)?></td>
             </tr >
             <?php }?>
 
@@ -154,12 +161,12 @@ sort($retstr);
             <tr>
                 <td colspan="<?= $key_col_res_nilai_dampakq4 - 1 ?>" ></td>
                 <td style="border:1pt solid #333;">Total</td>
-                <td style="border:1pt solid #333;"><?=$total_res_nilai_dampakq4 ?></td>
+                <td style="border:1pt solid #333; text-align:right;"><?= rupiah($total_res_nilai_dampakq4) ?></td>
             
             <?php }?>
             <?php if(isset($key_col_res_eksposur_dampakq4)){?>
                 <td colspan="<?= $key_col_res_eksposur_dampakq4 - $key_col_res_nilai_dampakq4 -1 ?>" ></td>
-                <td style="border:1pt solid #333;"><?=$total_res_eksposur_dampakq4?></td>
+                <td style="border:1pt solid #333; text-align: right;"><?= rupiah($total_res_eksposur_dampakq4)?></td>
             </tr >
             <?php }?>
 
@@ -168,12 +175,12 @@ sort($retstr);
             <tr>
                 <td colspan="<?= $key_col_nilai_dampak_inheren - 1 ?>" ></td>
                 <td style="border:1pt solid #333;">Total</td>
-                <td style="border:1pt solid #333;"><?=$total_nilai_dampak_inheren ?></td>
+                <td style="border:1pt solid #333; text-align: right;"><?= rupiah($total_nilai_dampak_inheren) ?></td>
             
             <?php }?>
             <?php if(isset($key_col_eksposur_risiko)){?>
                 <td colspan="<?= $key_col_eksposur_risiko - $key_col_nilai_dampak_inheren -1 ?>" ></td>
-                <td style="border:1pt solid #333;"><?=rupiah($total_eksposur_risiko)?></td>
+                <td style="border:1pt solid #333; text-align: right;"><?= rupiah($total_eksposur_risiko)?></td>
             </tr >
             <?php }?>
             

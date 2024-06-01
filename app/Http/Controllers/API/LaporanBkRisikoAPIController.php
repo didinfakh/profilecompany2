@@ -420,6 +420,8 @@ class LaporanBkRisikoAPIController extends BaseResourceController
         $this->data['tahun'] = 'Periode TW I/II/III/IV Tahun' . ' ' . $data['tahun'];
         $this->data['nama_unit'] = null;
         $this->data['nama_jabatan'] = null;
+        $this->data['tanggal'] = date("d M Y");
+
 
 if(isset($data['id_register']) && $data['id_register'] != 'null'){
         $sql1 = 'SELECT ID_OWNER,
