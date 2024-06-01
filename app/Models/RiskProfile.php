@@ -416,4 +416,72 @@ class RiskProfile extends BaseModel
         if ($params['tahun'] && $params['tahun'] != 'null')
             $paramarr[] = $params['tahun'];
     }
+
+    public function top_risk($filter = []){
+
+        $where = '';
+        $params = [];
+       if(isset($filter['id_register']) && $filter['id_register'] != 'null'){
+        $where .= ' and rp.id_register = ?';  
+        $params[] = $filter['id_register'];
+       }
+       if(isset($filter['id_unit']) && $filter['id_unit'] != 'null'){
+        $where .= ' and rr.id_unit = ?';  
+        $params[] = $filter['id_unit'];
+       }
+
+       if(isset($filter['urutan']) && $filter['urutan'] != 'null'){
+        $order = $filter['urutan'];
+       }else{
+        $order = 'skala_inheren'; 
+       }
+
+    //    if(isset($filter['top']) && $filter['top'] != 'null'){
+    //     $where .= ' limit ?';
+    //     $params[] = $filter['top'];
+    //    }else{
+    //     $where .= ' limit ? ';
+    //     $params[] = 10;
+    //    }
+
+
+       
+
+    //    echo '<pre>';
+    //    var_dump($params);
+        $sql = "
+        SELECT RP.*,
+        msj.nama as risk_owner,
+        MRM.SKALA AS SKALA_INHEREN,
+            MRM1.SKALA AS SKALA_TARGET,
+            MRM2.SKALA AS SKALA_REALISASI,
+            mrm.id_tingkat as id_tingkat_inheren,
+	mrm1.id_tingkat as id_tingkat_target,
+	mrm2.id_tingkat as id_tingkat_realisasi
+        FROM RISK_PROFILE RP 
+        left join risk_register rr on rp.id_register = rr.id_register
+        left join mt_sdm_jabatan msj on rr.id_owner = msj.id_jabatan
+        LEFT JOIN RISK_PROFILE_TARGET_RESIDUAL RPTS ON RP.ID_RISK_PROFILE = RPTS.ID_RISK_PROFILE
+        AND RPTS.PERIODE = '2024q2'
+        LEFT JOIN RISK_PROFILE_REALISASI_RESIDUAL RPRR ON RP.ID_RISK_PROFILE = RPRR.ID_RISK_PROFILE
+        AND RPRR.PERIODE = '20243'
+        LEFT JOIN MT_RISK_MATRIX MRM ON RP.ID_DAMPAK_INHEREN = MRM.ID_DAMPAK
+        AND RP.ID_KEMUNGKINAN_INHEREN = MRM.ID_KEMUNGKINAN
+        LEFT JOIN MT_RISK_MATRIX MRM1 ON RPTS.ID_DAMPAK = MRM1.ID_DAMPAK
+        AND RPTS.ID_KEMUNGKINAN = MRM1.ID_KEMUNGKINAN
+        LEFT JOIN MT_RISK_MATRIX MRM2 ON RPTS.ID_DAMPAK = MRM2.ID_DAMPAK
+        AND RPTS.ID_KEMUNGKINAN = MRM2.ID_KEMUNGKINAN
+        WHERE RP.DELETED_AT IS NULL " . $where . " order by " .  . " desc";
+        $rows = DB::select($sql, $params);
+        $response = [];
+        foreach($rows as &$rows1){
+            if($rows1->is_kuantitatif != null){
+                $response['kuantitatif'][] = $rows1;
+            }else{
+                $response['kualitatif'][] = $rows1;
+            }
+        }
+        return $response;
+    }
+
 }

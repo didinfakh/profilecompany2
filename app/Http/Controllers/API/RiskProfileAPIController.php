@@ -469,4 +469,13 @@ class RiskProfileAPIController extends RiskProfileResourceController
         ];
         return $this->respond($data);
     }
+
+    public function top_risk(Request $request)
+    {
+        $filter = $request->get('q');
+        $response=$this->model->top_risk($filter);
+
+
+        return $this->respond($response);
+    }
 }
