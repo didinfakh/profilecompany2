@@ -1,195 +1,195 @@
-SELECT
-	A.*,
-	MRM.ID_TINGKAT AS ID_TINGKAT_INHEREN,
-	MRM.SKALA AS SKALA_INHEREN,
-	MRMT.ID_TINGKAT AS ID_TINGKAT_TARGET,
-	MRMT.SKALA AS SKALA_TARGET,
-	MRMR.ID_TINGKAT AS ID_TINGKAT_REAL,
-	MRMR.SKALA AS SKALA_REAL
-FROM
+select
+	a.*,
+	mrm.id_tingkat as id_tingkat_inheren,
+	mrm.skala as skala_inheren,
+	mrmt.id_tingkat as id_tingkat_target,
+	mrmt.skala as skala_target,
+	mrmr.id_tingkat as id_tingkat_real,
+	mrmr.skala as skala_real
+from
 	(
-		SELECT
+		select
 		id_kriteria_dampak,
-		ID_RISK_AGREGASI_RISIKO,
-			A.JENIS,
-			A.NAMA,
-			IS_KUANTITATIF,
-			CASE
-				WHEN IS_KUANTITATIF = 0
-				OR IS_KUANTITATIF IS NULL THEN A.ID_DAMPAK_KUALITATIF_INHEREN
-				ELSE MRD.ID_DAMPAK
-			END AS ID_DAMPAK_INHEREN,
-			CASE
-				WHEN IS_KUANTITATIF = 0
-				OR IS_KUANTITATIF IS NULL THEN NULL
-				ELSE A.NILAI_DAMPAK_INHEREN
-			END AS NILAI_DAMPAK_INHEREN,
-			A.NILAI_KEMUNGKINAN_INHEREN,
-			MRK.ID_KEMUNGKINAN AS ID_KEMUNGKINAN_INHEREN,
-			CASE
-				WHEN IS_KUANTITATIF = 0
-				OR IS_KUANTITATIF IS NULL THEN NULL
-				ELSE A.NILAI_EKSPOSUR_INHEREN
-			END AS NILAI_EKSPOSUR_INHEREN,
-			CASE
-				WHEN IS_KUANTITATIF = 0
-				OR IS_KUANTITATIF IS NULL THEN A.ID_DAMPAK_KUALITATIF_TARGET
-				ELSE MRDT.ID_DAMPAK
-			END AS ID_DAMPAK_TARGET,
-			CASE
-				WHEN IS_KUANTITATIF = 0
-				OR IS_KUANTITATIF IS NULL THEN NULL
-				ELSE A.NILAI_DAMPAK_TARGET
-			END AS NILAI_DAMPAK_TARGET,
-			A.NILAI_KEMUNGKINAN_TARGET,
-			MRKT.ID_KEMUNGKINAN AS ID_KEMUNGKINAN_TARGET,
-			CASE
-				WHEN IS_KUANTITATIF = 0
-				OR IS_KUANTITATIF IS NULL THEN NULL
-				ELSE A.NILAI_EKSPOSUR_TARGET
-			END AS NILAI_EKSPOSUR_TARGET,
-			CASE
-				WHEN IS_KUANTITATIF = 0
-				OR IS_KUANTITATIF IS NULL THEN A.ID_DAMPAK_KUALITATIF_REAL
-				ELSE MRDR.ID_DAMPAK
-			END AS ID_DAMPAK_REAL,
-			CASE
-				WHEN IS_KUANTITATIF = 0
-				OR IS_KUANTITATIF IS NULL THEN NULL
-				ELSE A.NILAI_DAMPAK_REAL
-			END AS NILAI_DAMPAK_REAL,
-			A.NILAI_KEMUNGKINAN_REAL,
-			MRKR.ID_KEMUNGKINAN AS ID_KEMUNGKINAN_REAL,
-			CASE
-				WHEN IS_KUANTITATIF = 0
-				OR IS_KUANTITATIF IS NULL THEN NULL
-				ELSE A.NILAI_EKSPOSUR_REAL
-			END AS NILAI_EKSPOSUR_REAL
-		FROM
+		id_risk_agregasi_risiko,
+			a.jenis,
+			a.nama,
+			is_kuantitatif,
+			case
+				when is_kuantitatif = 0
+				or is_kuantitatif is null then a.id_dampak_kualitatif_inheren
+				else mrd.id_dampak
+			end as id_dampak_inheren,
+			case
+				when is_kuantitatif = 0
+				or is_kuantitatif is null then null
+				else a.nilai_dampak_inheren
+			end as nilai_dampak_inheren,
+			a.nilai_kemungkinan_inheren,
+			mrk.id_kemungkinan as id_kemungkinan_inheren,
+			case
+				when is_kuantitatif = 0
+				or is_kuantitatif is null then null
+				else a.nilai_eksposur_inheren
+			end as nilai_eksposur_inheren,
+			case
+				when is_kuantitatif = 0
+				or is_kuantitatif is null then a.id_dampak_kualitatif_target
+				else mrdt.id_dampak
+			end as id_dampak_target,
+			case
+				when is_kuantitatif = 0
+				or is_kuantitatif is null then null
+				else a.nilai_dampak_target
+			end as nilai_dampak_target,
+			a.nilai_kemungkinan_target,
+			mrkt.id_kemungkinan as id_kemungkinan_target,
+			case
+				when is_kuantitatif = 0
+				or is_kuantitatif is null then null
+				else a.nilai_eksposur_target
+			end as nilai_eksposur_target,
+			case
+				when is_kuantitatif = 0
+				or is_kuantitatif is null then a.id_dampak_kualitatif_real
+				else mrdr.id_dampak
+			end as id_dampak_real,
+			case
+				when is_kuantitatif = 0
+				or is_kuantitatif is null then null
+				else a.nilai_dampak_real
+			end as nilai_dampak_real,
+			a.nilai_kemungkinan_real,
+			mrkr.id_kemungkinan as id_kemungkinan_real,
+			case
+				when is_kuantitatif = 0
+				or is_kuantitatif is null then null
+				else a.nilai_eksposur_real
+			end as nilai_eksposur_real
+		from
 			(
-				SELECT
-					MRA.NAMA,
-					RP.*,
-					MRAS.NILAI_SASARAN,
-					RP.NILAI_DAMPAK_INHEREN / MRAS.NILAI_SASARAN * 100 AS PERSEN_DAMPAK_INHEREN,
-					RP.NILAI_DAMPAK_TARGET / MRAS.NILAI_SASARAN * 100 AS PERSEN_DAMPAK_TARGET,
-					RP.NILAI_DAMPAK_REAL / MRAS.NILAI_SASARAN * 100 AS PERSEN_DAMPAK_REAL
-				FROM
+				select
+					mra.nama,
+					rp.*,
+					mras.nilai_sasaran,
+					rp.nilai_dampak_inheren / mras.nilai_sasaran * 100 as persen_dampak_inheren,
+					rp.nilai_dampak_target / mras.nilai_sasaran * 100 as persen_dampak_target,
+					rp.nilai_dampak_real / mras.nilai_sasaran * 100 as persen_dampak_real
+				from
 					(
-						SELECT
-							RP.JENIS,
-							TO_CHAR(RP.TGL_RISIKO, 'YYYY')::INT TAHUN,
-							IS_KUANTITATIF,
-							RP.ID_RISK_AGREGASI_RISIKO,
+						select
+							rp.jenis,
+							to_char(rp.tgl_risiko, 'yyyy')::int tahun,
+							is_kuantitatif,
+							rp.id_risk_agregasi_risiko,
 						rp.id_kriteria_dampak,
-							SUM(RP.NILAI_DAMPAK_INHEREN) AS NILAI_DAMPAK_INHEREN,
-							CASE
-								WHEN IS_KUANTITATIF = 0
-								OR IS_KUANTITATIF IS NULL THEN AVG(RP.NILAI_KEMUNGKINAN)
-								ELSE ROUND(
-									SUM(
-										RP.NILAI_DAMPAK_INHEREN * RP.NILAI_KEMUNGKINAN / 100
-									) / SUM(RP.NILAI_DAMPAK_INHEREN) * 100
+							sum(rp.nilai_dampak_inheren) as nilai_dampak_inheren,
+							case
+								when is_kuantitatif = 0
+								or is_kuantitatif is null then avg(rp.nilai_kemungkinan)
+								else round(
+									sum(
+										rp.nilai_dampak_inheren * rp.nilai_kemungkinan / 100
+									) / sum(rp.nilai_dampak_inheren) * 100
 								)
-							END AS NILAI_KEMUNGKINAN_INHEREN,
-							SUM(
-								RP.NILAI_DAMPAK_INHEREN * RP.NILAI_KEMUNGKINAN / 100
-							) AS NILAI_EKSPOSUR_INHEREN,
-							FLOOR(AVG(RP.ID_DAMPAK_INHEREN)) AS ID_DAMPAK_KUALITATIF_INHEREN,
-							SUM(RPTS.NILAI_DAMPAK) AS NILAI_DAMPAK_TARGET,
-							CASE
-								WHEN IS_KUANTITATIF = 0
-								OR IS_KUANTITATIF IS NULL THEN AVG(RPTS.NILAI_KEMUNGKINAN)
-								ELSE ROUND(
-									SUM(RPTS.NILAI_DAMPAK * RPTS.NILAI_KEMUNGKINAN / 100) / SUM(RPTS.NILAI_DAMPAK) * 100
+							end as nilai_kemungkinan_inheren,
+							sum(
+								rp.nilai_dampak_inheren * rp.nilai_kemungkinan / 100
+							) as nilai_eksposur_inheren,
+							floor(avg(rp.id_dampak_inheren)) as id_dampak_kualitatif_inheren,
+							sum(rpts.nilai_dampak) as nilai_dampak_target,
+							case
+								when is_kuantitatif = 0
+								or is_kuantitatif is null then avg(rpts.nilai_kemungkinan)
+								else round(
+									sum(rpts.nilai_dampak * rpts.nilai_kemungkinan / 100) / sum(rpts.nilai_dampak) * 100
 								)
-							END AS NILAI_KEMUNGKINAN_TARGET,
-							SUM(RPTS.NILAI_DAMPAK * RPTS.NILAI_KEMUNGKINAN / 100) AS NILAI_EKSPOSUR_TARGET,
-							FLOOR(AVG(RPTS.ID_DAMPAK)) AS ID_DAMPAK_KUALITATIF_TARGET,
-							SUM(RPRR.NILAI_DAMPAK) AS NILAI_DAMPAK_REAL,
-							CASE
-								WHEN IS_KUANTITATIF = 0
-								OR IS_KUANTITATIF IS NULL THEN AVG(RPRR.NILAI_KEMUNGKINAN)
-								ELSE ROUND(
-									SUM(RPRR.NILAI_DAMPAK * RPRR.NILAI_KEMUNGKINAN / 100) / SUM(RPTS.NILAI_DAMPAK) * 100
+							end as nilai_kemungkinan_target,
+							sum(rpts.nilai_dampak * rpts.nilai_kemungkinan / 100) as nilai_eksposur_target,
+							floor(avg(rpts.id_dampak)) as id_dampak_kualitatif_target,
+							sum(rprr.nilai_dampak) as nilai_dampak_real,
+							case
+								when is_kuantitatif = 0
+								or is_kuantitatif is null then avg(rprr.nilai_kemungkinan)
+								else round(
+									sum(rprr.nilai_dampak * rprr.nilai_kemungkinan / 100) / sum(rpts.nilai_dampak) * 100
 								)
-							END AS NILAI_KEMUNGKINAN_REAL,
-							SUM(RPRR.NILAI_DAMPAK * RPRR.NILAI_KEMUNGKINAN / 100) AS NILAI_EKSPOSUR_REAL,
-							FLOOR(AVG(RPRR.ID_DAMPAK)) AS ID_DAMPAK_KUALITATIF_REAL
-						FROM
-							RISK_PROFILE RP
-							LEFT JOIN RISK_PROFILE_TARGET_RESIDUAL RPTS ON RP.ID_RISK_PROFILE = RPTS.ID_RISK_PROFILE
-							AND RPTS.PERIODE = '2024q2'
-							LEFT JOIN RISK_PROFILE_REALISASI_RESIDUAL RPRR ON RP.ID_RISK_PROFILE = RPRR.ID_RISK_PROFILE
-							AND RPRR.PERIODE = '20243'
-						GROUP BY
-							JENIS,
+							end as nilai_kemungkinan_real,
+							sum(rprr.nilai_dampak * rprr.nilai_kemungkinan / 100) as nilai_eksposur_real,
+							floor(avg(rprr.id_dampak)) as id_dampak_kualitatif_real
+						from
+							risk_profile rp
+							left join risk_profile_target_residual rpts on rp.id_risk_profile = rpts.id_risk_profile
+							and rpts.periode = '2024q2'
+							left join risk_profile_realisasi_residual rprr on rp.id_risk_profile = rprr.id_risk_profile
+							and rprr.periode = '20243'
+						group by
+							jenis,
 						rp.id_kriteria_dampak,
-							ID_RISK_AGREGASI_RISIKO,
-							IS_KUANTITATIF,
-							TO_CHAR(RP.TGL_RISIKO, 'YYYY')
-					) RP
-					JOIN MT_RISK_AGREGASI_RISIKO MRA ON RP.ID_RISK_AGREGASI_RISIKO = MRA.ID_RISK_AGREGASI_RISIKO
-					LEFT JOIN MT_RISK_AGREGASI_RISIKO_SASARAN MRAS ON MRA.ID_RISK_AGREGASI_RISIKO = MRAS.ID_RISK_AGREGASI_RISIKO
-					AND MRAS.TAHUN = RP.TAHUN
-			) A
-			JOIN MT_RISK_DAMPAK MRD ON (
-				PERSEN_DAMPAK_INHEREN >= MRD.MULAI
-				OR MRD.ID_DAMPAK = 1
+							id_risk_agregasi_risiko,
+							is_kuantitatif,
+							to_char(rp.tgl_risiko, 'yyyy')
+					) rp
+					join mt_risk_agregasi_risiko mra on rp.id_risk_agregasi_risiko = mra.id_risk_agregasi_risiko
+					left join mt_risk_agregasi_risiko_sasaran mras on mra.id_risk_agregasi_risiko = mras.id_risk_agregasi_risiko
+					and mras.tahun = rp.tahun
+			) a
+			join mt_risk_dampak mrd on (
+				persen_dampak_inheren >= mrd.mulai
+				or mrd.id_dampak = 1
 			)
-			AND (
-				PERSEN_DAMPAK_INHEREN < MRD.SAMPAI
-				OR MRD.ID_DAMPAK = 5
+			and (
+				persen_dampak_inheren < mrd.sampai
+				or mrd.id_dampak = 5
 			)
-			JOIN MT_RISK_KEMUNGKINAN MRK ON (
-				NILAI_KEMUNGKINAN_INHEREN >= MRK.PERSENTASE_MULAI
-				OR MRK.ID_KEMUNGKINAN = 1
+			join mt_risk_kemungkinan mrk on (
+				nilai_kemungkinan_inheren >= mrk.persentase_mulai
+				or mrk.id_kemungkinan = 1
 			)
-			AND (
-				NILAI_KEMUNGKINAN_INHEREN < MRK.PERSENTASE_SAMPAI
-				OR MRK.ID_KEMUNGKINAN = 5
+			and (
+				nilai_kemungkinan_inheren < mrk.persentase_sampai
+				or mrk.id_kemungkinan = 5
 			)
-			JOIN MT_RISK_DAMPAK MRDT ON (
-				PERSEN_DAMPAK_TARGET >= MRDT.MULAI
-				OR MRDT.ID_DAMPAK = 1
+			join mt_risk_dampak mrdt on (
+				persen_dampak_target >= mrdt.mulai
+				or mrdt.id_dampak = 1
 			)
-			AND (
-				PERSEN_DAMPAK_TARGET < MRDT.SAMPAI
-				OR MRDT.ID_DAMPAK = 5
+			and (
+				persen_dampak_target < mrdt.sampai
+				or mrdt.id_dampak = 5
 			)
-			JOIN MT_RISK_KEMUNGKINAN MRKT ON (
-				NILAI_KEMUNGKINAN_TARGET >= MRKT.PERSENTASE_MULAI
-				OR MRKT.ID_KEMUNGKINAN = 1
+			join mt_risk_kemungkinan mrkt on (
+				nilai_kemungkinan_target >= mrkt.persentase_mulai
+				or mrkt.id_kemungkinan = 1
 			)
-			AND (
-				NILAI_KEMUNGKINAN_TARGET < MRKT.PERSENTASE_SAMPAI
-				OR MRKT.ID_KEMUNGKINAN = 5
+			and (
+				nilai_kemungkinan_target < mrkt.persentase_sampai
+				or mrkt.id_kemungkinan = 5
 			)
-			JOIN MT_RISK_DAMPAK MRDR ON (
-				PERSEN_DAMPAK_REAL >= MRDR.MULAI
-				OR MRDR.ID_DAMPAK = 1
+			join mt_risk_dampak mrdr on (
+				persen_dampak_real >= mrdr.mulai
+				or mrdr.id_dampak = 1
 			)
-			AND (
-				PERSEN_DAMPAK_REAL < MRDR.SAMPAI
-				OR MRDR.ID_DAMPAK = 5
+			and (
+				persen_dampak_real < mrdr.sampai
+				or mrdr.id_dampak = 5
 			)
-			JOIN MT_RISK_KEMUNGKINAN MRKR ON (
-				NILAI_KEMUNGKINAN_REAL >= MRKR.PERSENTASE_MULAI
-				OR MRKR.ID_KEMUNGKINAN = 1
+			join mt_risk_kemungkinan mrkr on (
+				nilai_kemungkinan_real >= mrkr.persentase_mulai
+				or mrkr.id_kemungkinan = 1
 			)
-			AND (
-				NILAI_KEMUNGKINAN_REAL < MRKR.PERSENTASE_SAMPAI
-				OR MRKR.ID_KEMUNGKINAN = 5
+			and (
+				nilai_kemungkinan_real < mrkr.persentase_sampai
+				or mrkr.id_kemungkinan = 5
 			)
-	) A
-	JOIN MT_RISK_MATRIX MRM ON A.ID_DAMPAK_INHEREN = MRM.ID_DAMPAK
-	AND A.ID_KEMUNGKINAN_INHEREN = MRM.ID_KEMUNGKINAN
-	AND A.JENIS = MRM.JENIS
-	JOIN MT_RISK_MATRIX MRMT ON A.ID_DAMPAK_TARGET = MRMT.ID_DAMPAK
-	AND A.ID_KEMUNGKINAN_TARGET = MRMT.ID_KEMUNGKINAN
-	AND A.JENIS = MRMT.JENIS
-	JOIN MT_RISK_MATRIX MRMR ON A.ID_DAMPAK_REAL = MRMR.ID_DAMPAK
-	AND A.ID_KEMUNGKINAN_REAL = MRMR.ID_KEMUNGKINAN
-	AND A.JENIS = MRMR.JENIS
-ORDER BY
-	SKALA_INHEREN DESC;
+	) a
+	join mt_risk_matrix mrm on a.id_dampak_inheren = mrm.id_dampak
+	and a.id_kemungkinan_inheren = mrm.id_kemungkinan
+	and a.jenis = mrm.jenis
+	join mt_risk_matrix mrmt on a.id_dampak_target = mrmt.id_dampak
+	and a.id_kemungkinan_target = mrmt.id_kemungkinan
+	and a.jenis = mrmt.jenis
+	join mt_risk_matrix mrmr on a.id_dampak_real = mrmr.id_dampak
+	and a.id_kemungkinan_real = mrmr.id_kemungkinan
+	and a.jenis = mrmr.jenis
+order by
+	skala_inheren desc;

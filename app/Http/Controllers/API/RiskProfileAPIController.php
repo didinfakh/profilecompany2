@@ -479,6 +479,15 @@ class RiskProfileAPIController extends RiskProfileResourceController
         return $this->respond($response);
     }
 
+    public function top_risk_agregasi(Request $request)
+    {
+        $filter = $request->get('q');
+        $response = $this->model->top_risk($filter);
+
+
+        return $this->respond($response);
+    }
+
     public function sebaran_risiko(Request $request)
     {
         $filter = $request->get('q');
@@ -492,6 +501,15 @@ class RiskProfileAPIController extends RiskProfileResourceController
     {
         $filter = $request->get('q');
         $response = $this->model->progress_efektifitas($filter);
+
+
+        return $this->respond($response);
+    }
+
+    public function kri(Request $request)
+    {
+        $filter = $request->get('q');
+        $response = $this->model->kri($filter);
 
 
         return $this->respond($response);
