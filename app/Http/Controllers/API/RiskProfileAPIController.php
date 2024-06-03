@@ -478,4 +478,13 @@ class RiskProfileAPIController extends RiskProfileResourceController
 
         return $this->respond($response);
     }
+
+    public function sebaran_risiko(Request $request)
+    {
+        $filter = $request->get('q');
+        $response = $this->model->sebaran_risiko($filter);
+
+
+        return $this->respond($response);
+    }
 }
