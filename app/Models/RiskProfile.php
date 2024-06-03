@@ -136,15 +136,15 @@ class RiskProfile extends BaseModel
         // var_dump($params);
 
 
-        if(isset($params['id_assessment_type']) && $params["id_assessment_type"] != 'null'){
+        if (isset($params['id_assessment_type']) && $params["id_assessment_type"] != 'null') {
             $where .= " and rr.id_assessment_type = ?";
             $paramarr[] = $params['id_assessment_type'];
         }
-        if(isset($params['id_kelompok_bisnis']) && $params["id_kelompok_bisnis"] != 'null'){
+        if (isset($params['id_kelompok_bisnis']) && $params["id_kelompok_bisnis"] != 'null') {
             $where .= " and rr.id_kelompok_bisnis = ?";
             $paramarr[] = $params['id_kelompok_bisnis'];
         }
-        if(isset($params['id_unit']) && $params["id_unit"] != 'null'){
+        if (isset($params['id_unit']) && $params["id_unit"] != 'null') {
             $where .= " and rr.id_unit = ?";
             $paramarr[] = $params['id_unit'];
         }
@@ -157,7 +157,7 @@ class RiskProfile extends BaseModel
             $paramarr[] = $params['tahun'];
         }
 
-    
+
         // DB::enableQueryLog();
         $sql = "select rp.*, 
         mts.nama sasaran_nama,
@@ -417,89 +417,93 @@ class RiskProfile extends BaseModel
             $paramarr[] = $params['tahun'];
     }
 
-    public function top_risk($filter = []){
+    public function top_risk($filter = [])
+    {
 
         $where = '';
         $params = [];
-        if (isset($filter['bulan']) && $filter['bulan'] != 'null' && isset($filter['tahun']) && $filter['tahun'] != 'null' ){
+        if (isset($filter['bulan']) && $filter['bulan'] != 'null' && isset($filter['tahun']) && $filter['tahun'] != 'null') {
             $periode_realisasi = $filter['tahun'] . $filter['bulan'];
-            if($filter['bulan'] <= 3){
+            if ($filter['bulan'] <= 3) {
                 $periode = 'q1';
-            }elseif($filter['bulan'] <= 6){
+            } elseif ($filter['bulan'] <= 6) {
                 $periode = 'q2';
-            }elseif($filter['bulan'] <= 9){
+            } elseif ($filter['bulan'] <= 9) {
                 $periode = 'q3';
-            }elseif($filter['bulan'] <= 12){
+            } elseif ($filter['bulan'] <= 12) {
                 $periode = 'q4';
             }
             $periode_target = (string)$filter['tahun'] . $periode;
         }
 
-        if(isset($filter['jenis']) && $filter['jenis'] != 'null'){
+        if (isset($filter['jenis']) && $filter['jenis'] != 'null') {
             $where .= ' and rp.jenis = ?';
             $params[] = $filter['jenis'];
         }
 
-       if(isset($filter['id_register']) && $filter['id_register'] != 'null'){
-        $where .= ' and rp.id_register = ?';  
-        $params[] = $filter['id_register'];
-       }
+        if (isset($filter['id_register']) && $filter['id_register'] != 'null') {
+            $where .= ' and rp.id_register = ?';
+            $params[] = $filter['id_register'];
+        }
 
-       if(isset($filter['id_unit']) && $filter['id_unit'] != 'null'){
-        $where .= ' and rr.id_unit = ?';  
-        $params[] = $filter['id_unit'];
-       }
+        if (isset($filter['id_unit']) && $filter['id_unit'] != 'null') {
+            $where .= ' and rr.id_unit = ?';
+            $params[] = $filter['id_unit'];
+        }
 
-       if(isset($filter['id_jenis_risiko']) && $filter['id_jenis_risiko'] != 'null'){
-        $where .= ' and rp.id_jenis_risiko = ? ';
-        $params[] = $filter['id_jenis_risiko'];
-       }
+        if (isset($filter['id_jenis_risiko']) && $filter['id_jenis_risiko'] != 'null') {
+            $where .= ' and rp.id_jenis_risiko = ? ';
+            $params[] = $filter['id_jenis_risiko'];
+        }
 
-       if(isset($filter['urutan']) && $filter['urutan'] != 'null'){
-        $order = $filter['urutan'];
-       }else{
-        $order = 'skala_inheren'; 
-       }
+        if (isset($filter['urutan']) && $filter['urutan'] != 'null') {
+            $order = $filter['urutan'];
+        } else {
+            $order = 'skala_inheren';
+        }
 
-       if(isset($filter['id_tingkat_agregasi_risiko']) && $filter['id_tingkat_agregasi_risiko'] != 'null'){
-        $id_tingkat_agregasi_risiko = $filter['id_tingkat_agregasi_risiko'];
-       }
+        if (isset($filter['id_tingkat_agregasi_risiko']) && $filter['id_tingkat_agregasi_risiko'] != 'null') {
+            $id_tingkat_agregasi_risiko = $filter['id_tingkat_agregasi_risiko'];
+        }
 
-       if(isset($filter['top']) && $filter['top'] != 'null'){
-        $limit = $filter['top'];
-       }else{
-        $limit = 10;
-       }
+        if (isset($filter['top']) && $filter['top'] != 'null') {
+            $limit = $filter['top'];
+        } else {
+            $limit = 10;
+        }
 
-       
 
-    //    echo '<pre>';
-    //    var_dump($params);
 
-    //     $sql = "
-    //     SELECT RP.*,
-    //     msj.nama as risk_owner,
-    //     MRM.SKALA AS SKALA_INHEREN,
-    //         MRM1.SKALA AS SKALA_TARGET,
-    //         MRM2.SKALA AS SKALA_REALISASI,
-    //         mrm.id_tingkat as id_tingkat_inheren,
-	// mrm1.id_tingkat as id_tingkat_target,
-	// mrm2.id_tingkat as id_tingkat_realisasi
-    //     FROM RISK_PROFILE RP 
-    //     left join risk_register rr on rp.id_register = rr.id_register
-    //     left join mt_sdm_jabatan msj on rr.id_owner = msj.id_jabatan
-    //     LEFT JOIN RISK_PROFILE_TARGET_RESIDUAL RPTS ON RP.ID_RISK_PROFILE = RPTS.ID_RISK_PROFILE
-    //     AND RPTS.PERIODE = '2024q2'
-    //     LEFT JOIN RISK_PROFILE_REALISASI_RESIDUAL RPRR ON RP.ID_RISK_PROFILE = RPRR.ID_RISK_PROFILE
-    //     AND RPRR.PERIODE = '20243'
-    //     LEFT JOIN MT_RISK_MATRIX MRM ON RP.ID_DAMPAK_INHEREN = MRM.ID_DAMPAK
-    //     AND RP.ID_KEMUNGKINAN_INHEREN = MRM.ID_KEMUNGKINAN
-    //     LEFT JOIN MT_RISK_MATRIX MRM1 ON RPTS.ID_DAMPAK = MRM1.ID_DAMPAK
-    //     AND RPTS.ID_KEMUNGKINAN = MRM1.ID_KEMUNGKINAN
-    //     LEFT JOIN MT_RISK_MATRIX MRM2 ON RPTS.ID_DAMPAK = MRM2.ID_DAMPAK
-    //     AND RPTS.ID_KEMUNGKINAN = MRM2.ID_KEMUNGKINAN
-    //     WHERE RP.DELETED_AT IS NULL " . $where . " order by " . $order . " desc limit " . $limit ;
-    $sql = "
+
+        $response = [];
+
+        //    echo '<pre>';
+        //    var_dump($params);
+
+        //     $sql = "
+        //     SELECT RP.*,
+        //     msj.nama as risk_owner,
+        //     MRM.SKALA AS SKALA_INHEREN,
+        //         MRM1.SKALA AS SKALA_TARGET,
+        //         MRM2.SKALA AS SKALA_REALISASI,
+        //         mrm.id_tingkat as id_tingkat_inheren,
+        // mrm1.id_tingkat as id_tingkat_target,
+        // mrm2.id_tingkat as id_tingkat_realisasi
+        //     FROM RISK_PROFILE RP 
+        //     left join risk_register rr on rp.id_register = rr.id_register
+        //     left join mt_sdm_jabatan msj on rr.id_owner = msj.id_jabatan
+        //     LEFT JOIN RISK_PROFILE_TARGET_RESIDUAL RPTS ON RP.ID_RISK_PROFILE = RPTS.ID_RISK_PROFILE
+        //     AND RPTS.PERIODE = '2024q2'
+        //     LEFT JOIN RISK_PROFILE_REALISASI_RESIDUAL RPRR ON RP.ID_RISK_PROFILE = RPRR.ID_RISK_PROFILE
+        //     AND RPRR.PERIODE = '20243'
+        //     LEFT JOIN MT_RISK_MATRIX MRM ON RP.ID_DAMPAK_INHEREN = MRM.ID_DAMPAK
+        //     AND RP.ID_KEMUNGKINAN_INHEREN = MRM.ID_KEMUNGKINAN
+        //     LEFT JOIN MT_RISK_MATRIX MRM1 ON RPTS.ID_DAMPAK = MRM1.ID_DAMPAK
+        //     AND RPTS.ID_KEMUNGKINAN = MRM1.ID_KEMUNGKINAN
+        //     LEFT JOIN MT_RISK_MATRIX MRM2 ON RPTS.ID_DAMPAK = MRM2.ID_DAMPAK
+        //     AND RPTS.ID_KEMUNGKINAN = MRM2.ID_KEMUNGKINAN
+        //     WHERE RP.DELETED_AT IS NULL " . $where . " order by " . $order . " desc limit " . $limit ;
+        $sql = "
     SELECT RP.nama,
 	MSJ.NAMA AS RISK_OWNER,
 	MRM.SKALA AS SKALA_INHEREN,
@@ -518,16 +522,16 @@ FROM RISK_PROFILE RP
 LEFT JOIN RISK_REGISTER RR ON RP.ID_REGISTER = RR.ID_REGISTER
 LEFT JOIN MT_SDM_JABATAN MSJ ON RR.ID_OWNER = MSJ.ID_JABATAN
 LEFT JOIN RISK_PROFILE_TARGET_RESIDUAL RPTS ON RP.ID_RISK_PROFILE = RPTS.ID_RISK_PROFILE
-AND RPTS.PERIODE = '".$periode_target."'
+AND RPTS.PERIODE = '" . $periode_target . "'
 LEFT JOIN RISK_PROFILE_REALISASI_RESIDUAL RPRR ON RP.ID_RISK_PROFILE = RPRR.ID_RISK_PROFILE
-AND RPRR.PERIODE = '".$periode_realisasi."'
+AND RPRR.PERIODE = '" . $periode_realisasi . "'
 LEFT JOIN MT_RISK_MATRIX MRM ON LEVEL_DAMPAK(RP.NILAI_DAMPAK_INHEREN,
 
 		COALESCE(RP.NILAI_SASARAN,
 
 			RISK_LIMIT(RR.ID_TINGKAT_AGREGASI_RISIKO,
 
-				".$id_tingkat_agregasi_risiko.",
+				" . $id_tingkat_agregasi_risiko . ",
 				RR.ID_UNIT,
 				TO_CHAR(RP.TGL_RISIKO,
 
@@ -540,7 +544,7 @@ LEFT JOIN MT_RISK_MATRIX MRM1 ON LEVEL_DAMPAK(rpts.id_dampak ,
 
 			RISK_LIMIT(RR.ID_TINGKAT_AGREGASI_RISIKO,
 
-            ".$id_tingkat_agregasi_risiko.",
+            " . $id_tingkat_agregasi_risiko . ",
 				RR.ID_UNIT,
 				TO_CHAR(RP.TGL_RISIKO,
 
@@ -554,7 +558,7 @@ AND LEVEL_DAMPAK(RPrr.id_dampak,
 
 			RISK_LIMIT(RR.ID_TINGKAT_AGREGASI_RISIKO,
 
-            ".$id_tingkat_agregasi_risiko.",
+            " . $id_tingkat_agregasi_risiko . ",
 				RR.ID_UNIT,
 				TO_CHAR(RP.TGL_RISIKO,
 
@@ -562,9 +566,8 @@ AND LEVEL_DAMPAK(RPrr.id_dampak,
 				RR.ID_REGISTER))) = MRM2.ID_KEMUNGKINAN
 WHERE RP.DELETED_AT IS NULL and is_kuantitatif is not null " . $where . " order by " . $order . " desc limit " . $limit;
         $rows_kuantitatif = DB::select($sql, $params);
-        $response = [];
 
-             $sql = "
+        $sql = "
         SELECT RP.nama,
         msj.nama as risk_owner,
         MRM.SKALA AS SKALA_INHEREN,
@@ -592,14 +595,205 @@ WHERE RP.DELETED_AT IS NULL and is_kuantitatif is not null " . $where . " order 
         AND RPTS.ID_KEMUNGKINAN = MRM1.ID_KEMUNGKINAN
         LEFT JOIN MT_RISK_MATRIX MRM2 ON RPTS.ID_DAMPAK = MRM2.ID_DAMPAK
         AND RPTS.ID_KEMUNGKINAN = MRM2.ID_KEMUNGKINAN
-        WHERE RP.DELETED_AT IS NULL and is_kuantitatif is null or is_kuantitatif = 0 " . $where . " order by " . $order . " desc limit " . $limit ;
-        $rows_kualitatif = DB::select($sql,$params);
-        
-                $response['kuantitatif'] = $rows_kuantitatif;
-                $response['kualitatif'] = $rows_kualitatif;
-           
-        
+        WHERE RP.DELETED_AT IS NULL and is_kuantitatif is null or is_kuantitatif = 0 " . $where . " order by " . $order . " desc limit " . $limit;
+        $rows_kualitatif = DB::select($sql, $params);
+
+        $response['kuantitatif'] = $rows_kuantitatif;
+        $response['kualitatif'] = $rows_kualitatif;
+
+
         return $response;
     }
 
+    public function sebaran_risiko($filter = [])
+    {
+
+        $where = '';
+        $periode1 = '';
+        $periode2 = '';
+        $params = [];
+        if (isset($filter['bulan']) && $filter['bulan'] != 'null' && isset($filter['tahun']) && $filter['tahun'] != 'null') {
+            if ($filter['bulan'] <= 3) {
+                $periode = 'q1';
+            } elseif ($filter['bulan'] <= 6) {
+                $periode = 'q2';
+            } elseif ($filter['bulan'] <= 9) {
+                $periode = 'q3';
+            } elseif ($filter['bulan'] <= 12) {
+                $periode = 'q4';
+            }
+            $periode1 = (string)$filter['tahun'] . $periode;
+            $periode2 = $filter['tahun'] . $filter['bulan'];
+
+            $blnthn = $blnthn1 = $filter['tahun'] . $filter['bulan'];
+
+            $where .= " and to_char(coalesce(rp.tgl_risiko,to_date(?,'YYYYMM')),'YYYYMM') <= ? and to_char(coalesce(rp.tgl_close,to_date(?,'YYYYMM')),'YYYYMM') >= ?";
+
+            $params[] = $blnthn;
+            $params[] = $blnthn;
+            $params[] = $blnthn1;
+            $params[] = $blnthn1;
+
+            $where .= " and to_char(coalesce(rr.periode_mulai,to_date(?,'YYYYMM')),'YYYYMM') <= ? and to_char(coalesce(rr.periode_selesai,to_date(?,'YYYYMM')),'YYYYMM') >= ?";
+
+            $params[] = $blnthn;
+            $params[] = $blnthn;
+            $params[] = $blnthn1;
+            $params[] = $blnthn1;
+        }
+
+        if (isset($filter['jenis']) && $filter['jenis'] != 'null') {
+            $where .= ' and rp.jenis = ?';
+            $params[] = $filter['jenis'];
+        }
+
+        if (isset($filter['id_register']) && $filter['id_register'] != 'null') {
+            $where .= ' and rp.id_register = ?';
+            $params[] = $filter['id_register'];
+        }
+
+        if (isset($filter['id_unit']) && $filter['id_unit'] != 'null') {
+            $where .= " and rr.id_unit = ?";
+            $params[] = $filter['id_unit'];
+        }
+
+        $select = "mskb.nama as nama_kelompok_bisnis,";
+        $group = "mskb.id_kelompok_bisnis,";
+        if (isset($filter['id_kelompok_bisnis']) && $filter['id_kelompok_bisnis'] != 'null') {
+            $where .= " and rr.id_kelompok_bisnis = ?";
+            $params[] = $filter['id_kelompok_bisnis'];
+
+
+            $select = "mrt.nama as nama_taksonomi,";
+            $group = "mrt.id_taksonomi,";
+        }
+
+        if (isset($filter['id_assessment_type']) && $filter['id_assessment_type'] != 'null') {
+            $where .= " and rr.id_assessment_type = ?";
+            $params[] = $filter['id_assessment_type'];
+        }
+
+        $sql = "select 
+        $select
+        mrmi.id_tingkat id_tingkat_inheren, 
+        mrmt.id_tingkat id_tingkat_target, 
+        mrmr.id_tingkat id_tingkat_real, 
+        count(mrmi.id_tingkat) tot_tingkat_inheren, 
+        count(mrmt.id_tingkat) tot_tingkat_target, 
+        count(mrmr.id_tingkat) tot_tingkat_real
+        from
+        risk_profile rp 
+        join risk_register rr on rp.id_register = rr.id_register and rr.deleted_at is null
+        left join risk_profile_target_residual rpts on rp.id_risk_profile = rpts.id_risk_profile
+        and rpts.periode = " . DB::escape($periode1) . " and rpts.deleted_at is null
+        left join risk_profile_realisasi_residual rprr on rp.id_risk_profile = rprr.id_risk_profile
+        and rprr.periode = " . DB::escape($periode2) . " and rprr.deleted_at is null
+        left join mt_risk_matrix mrmi on rp.id_dampak_inheren = mrmi.id_dampak 
+        and rp.id_kemungkinan_inheren = mrmi.id_kemungkinan 
+        and mrmi.deleted_at is null
+        left join mt_risk_matrix mrmt on rpts.id_dampak = mrmt.id_dampak 
+        and rpts.id_kemungkinan = mrmt.id_kemungkinan
+        and mrmt.deleted_at is null
+        left join mt_risk_matrix mrmr on rprr.id_dampak = mrmr.id_dampak 
+        and rpts.id_kemungkinan = mrmr.id_kemungkinan 
+        and mrmr.deleted_at is null 
+        left join mt_sdm_kelompok_bisnis mskb on rr.id_kelompok_bisnis = mskb.id_kelompok_bisnis and mskb.deleted_at is null
+        left join mt_risk_taksonomi mrt on rp.id_taksonomi = mrt.id_taksonomi and mrt.deleted_at is null
+        where 1=1 $where
+        group by $group 
+        mrmi.id_tingkat, 
+        mrmt.id_tingkat, 
+        mrmr.id_tingkat";
+        // echo ($sql);
+        // print_r($params);
+        $rows = DB::select($sql, $params);
+
+        return $rows;
+    }
+
+    public function progress_efektifitas($filter = [])
+    {
+
+        $where = '';
+        $params = [];
+        if (isset($filter['bulan']) && $filter['bulan'] != 'null' && isset($filter['tahun']) && $filter['tahun'] != 'null') {
+
+            $blnthn = $blnthn1 = $filter['tahun'] . $filter['bulan'];
+
+            $where .= " and rpma.periode <= ?";
+            $params[] = $blnthn;
+
+            $where .= " and to_char(coalesce(rp.tgl_risiko,to_date(?,'YYYYMM')),'YYYYMM') <= ? 
+			and to_char(coalesce(rp.tgl_close,to_date(?,'YYYYMM')),'YYYYMM') >= ?";
+            $params[] = $blnthn;
+            $params[] = $blnthn;
+            $params[] = $blnthn1;
+            $params[] = $blnthn1;
+
+            $where .= " and to_char(coalesce(rr.periode_mulai,to_date(?,'YYYYMM')),'YYYYMM') <= ? 
+			and to_char(coalesce(rr.periode_selesai,to_date(?,'YYYYMM')),'YYYYMM') >= ?";
+            $params[] = $blnthn;
+            $params[] = $blnthn;
+            $params[] = $blnthn1;
+            $params[] = $blnthn1;
+            // $params[] = $filter['tahun'] . $filter['bulan'];
+        }
+
+        if (isset($filter['jenis']) && $filter['jenis'] != 'null') {
+            $where .= ' and rp.jenis = ?';
+            $params[] = $filter['jenis'];
+        }
+
+        if (isset($filter['id_register']) && $filter['id_register'] != 'null') {
+            $where .= ' and rp.id_register = ?';
+            $params[] = $filter['id_register'];
+        }
+
+        if (isset($filter['id_unit']) && $filter['id_unit'] != 'null') {
+            $where .= " and rr.id_unit = ?";
+            $params[] = $filter['id_unit'];
+        }
+
+        if (isset($filter['id_kelompok_bisnis']) && $filter['id_kelompok_bisnis'] != 'null') {
+            $where .= ' and rr.id_kelompok_bisnis = ?';
+            $params[] = $filter['id_kelompok_bisnis'];
+        }
+
+        if (isset($filter['id_assessment_type']) && $filter['id_assessment_type'] != 'null') {
+            $where .= ' and rr.id_assessment_type = ?';
+            $params[] = $filter['id_assessment_type'];
+        }
+
+        $progress = DB::select("select avg(progress) as progress
+        from (select 
+        max(progress) as progress
+        from risk_profile_mitigasi_realisasi rpma
+        join risk_profile_mitigasi rpm on rpma.id_mitigasi = rpm.id_mitigasi and rpm.deleted_at is null
+        join risk_profile rp on rpm.id_risk_profile = rp.id_risk_profile and rp.deleted_at is null
+        join risk_register rr on rr.id_register = rp.id_register and rr.deleted_at is null
+        where 1=1 
+        $where 
+        and rpma.deleted_at is null
+        group by rpm.id_mitigasi)", $params)[0]->progress;
+
+
+        $efektifitas = DB::select("select   
+        count(case when efektifitas='Efektif' then 1 else null end) as efektif, 
+        count(case when efektifitas='Efektif' then null else 1 end) as tidak_efektif 
+        from (select 
+        case when mrm.skala <= mrm1.skala then 'Efektif' else 'Tidak Efektif' end as efektifitas
+        from risk_profile_target_residual rptr
+        join risk_profile_realisasi_residual rprr on rptr.id_risk_profile = rprr.id_risk_profile 
+        and substring(rptr.periode from 0 for 4)||((replace(rptr.periode,substring(rptr.periode from 0 for 4)||'q','')::int)*3)::text >= rprr.periode
+        join risk_profile rp on rprr.id_risk_profile = rp.id_risk_profile and rp.deleted_at is null
+        join risk_register rr on rr.id_register = rp.id_register and rr.deleted_at is null
+        join mt_risk_matrix mrm on rptr.id_kemungkinan = mrm.id_kemungkinan 
+        and rptr.id_dampak = mrm.id_dampak and mrm.deleted_at is null
+        join mt_risk_matrix mrm1 on rprr.id_kemungkinan = mrm1.id_kemungkinan 
+        and rprr.id_dampak = mrm1.id_dampak and mrm1.deleted_at is null
+        where 1=1 " . str_replace("rpma.", "rprr.", $where) . " 
+        and rptr.deleted_at is null ) a", $params)[0];
+
+        return ["progress" => $progress, "efektifitas" => $efektifitas];
+    }
 }

@@ -487,4 +487,13 @@ class RiskProfileAPIController extends RiskProfileResourceController
 
         return $this->respond($response);
     }
+
+    public function progress_efektifitas(Request $request)
+    {
+        $filter = $request->get('q');
+        $response = $this->model->progress_efektifitas($filter);
+
+
+        return $this->respond($response);
+    }
 }
