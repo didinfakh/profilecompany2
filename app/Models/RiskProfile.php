@@ -501,6 +501,7 @@ class RiskProfile extends BaseModel
     //     WHERE RP.DELETED_AT IS NULL " . $where . " order by " . $order . " desc limit " . $limit ;
     $sql = "
     SELECT RP.nama,
+    RP.jenis,
 	MSJ.NAMA AS RISK_OWNER,
 	MRM.SKALA AS SKALA_INHEREN,
 	mrm1.skala as skala_target,
@@ -533,7 +534,7 @@ LEFT JOIN MT_RISK_MATRIX MRM ON LEVEL_DAMPAK(RP.NILAI_DAMPAK_INHEREN,
 
 					'YYYY')::int,
 				RR.ID_REGISTER))) = MRM.ID_DAMPAK
-AND RP.ID_KEMUNGKINAN_INHEREN = MRM.ID_KEMUNGKINAN
+AND RP.ID_KEMUNGKINAN_INHEREN = MRM.ID_KEMUNGKINAN and rp.jenis = mrm.jenis
 LEFT JOIN MT_RISK_MATRIX MRM1 ON LEVEL_DAMPAK(rpts.id_dampak ,
 
 		COALESCE(RP.NILAI_SASARAN,
@@ -546,20 +547,20 @@ LEFT JOIN MT_RISK_MATRIX MRM1 ON LEVEL_DAMPAK(rpts.id_dampak ,
 
 					'YYYY')::int,
 				RR.ID_REGISTER))) = MRM1.ID_DAMPAK
-AND RPTS.ID_KEMUNGKINAN = MRM1.ID_KEMUNGKINAN
-LEFT JOIN MT_RISK_MATRIX MRM2 ON ID_DAMPAK_INHEREN = MRM2.ID_DAMPAK
-AND LEVEL_DAMPAK(RPrr.id_dampak,
+AND RPTS.ID_KEMUNGKINAN = MRM1.ID_KEMUNGKINAN and rp.jenis = mrm1.jenis
+LEFT JOIN MT_RISK_MATRIX MRM2 ON LEVEL_DAMPAK(RPrr.id_dampak,
 
-		COALESCE(RP.NILAI_SASARAN,
+COALESCE(RP.NILAI_SASARAN,
 
-			RISK_LIMIT(RR.ID_TINGKAT_AGREGASI_RISIKO,
+    RISK_LIMIT(RR.ID_TINGKAT_AGREGASI_RISIKO,
 
-            ".$id_tingkat_agregasi_risiko.",
-				RR.ID_UNIT,
-				TO_CHAR(RP.TGL_RISIKO,
+    ".$id_tingkat_agregasi_risiko.",
+        RR.ID_UNIT,
+        TO_CHAR(RP.TGL_RISIKO,
 
-					'YYYY')::int,
-				RR.ID_REGISTER))) = MRM2.ID_KEMUNGKINAN
+            'YYYY')::int,
+        RR.ID_REGISTER))) = MRM2.ID_DAMPAK
+AND rprr.id_kemungkinan = MRM2.ID_KEMUNGKINAN and rp.jenis = mrm2.jenis
 WHERE RP.DELETED_AT IS NULL and is_kuantitatif is not null " . $where . " order by " . $order . " desc limit " . $limit;
         $rows_kuantitatif = DB::select($sql, $params);
         $response = [];
@@ -587,11 +588,11 @@ WHERE RP.DELETED_AT IS NULL and is_kuantitatif is not null " . $where . " order 
         LEFT JOIN RISK_PROFILE_REALISASI_RESIDUAL RPRR ON RP.ID_RISK_PROFILE = RPRR.ID_RISK_PROFILE
         AND RPRR.PERIODE = '20243'
         LEFT JOIN MT_RISK_MATRIX MRM ON RP.ID_DAMPAK_INHEREN = MRM.ID_DAMPAK
-        AND RP.ID_KEMUNGKINAN_INHEREN = MRM.ID_KEMUNGKINAN
+        AND RP.ID_KEMUNGKINAN_INHEREN = MRM.ID_KEMUNGKINAN and rp.jenis = mrm.jenis
         LEFT JOIN MT_RISK_MATRIX MRM1 ON RPTS.ID_DAMPAK = MRM1.ID_DAMPAK
-        AND RPTS.ID_KEMUNGKINAN = MRM1.ID_KEMUNGKINAN
+        AND RPTS.ID_KEMUNGKINAN = MRM1.ID_KEMUNGKINAN and rp.jenis = mrm1.jenis
         LEFT JOIN MT_RISK_MATRIX MRM2 ON RPTS.ID_DAMPAK = MRM2.ID_DAMPAK
-        AND RPTS.ID_KEMUNGKINAN = MRM2.ID_KEMUNGKINAN
+        AND RPTS.ID_KEMUNGKINAN = MRM2.ID_KEMUNGKINAN and rp.jenis = mrm2.jenis
         WHERE RP.DELETED_AT IS NULL and is_kuantitatif is null or is_kuantitatif = 0 " . $where . " order by " . $order . " desc limit " . $limit ;
         $rows_kualitatif = DB::select($sql,$params);
         
