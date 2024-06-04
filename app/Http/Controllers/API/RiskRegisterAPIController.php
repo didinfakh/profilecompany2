@@ -105,12 +105,22 @@ class RiskRegisterAPIController extends BaseResourceController
         // 	'totalPage' => $this->model->pager->getPageCount(),
         // ];
         // dd($data->items);
+  
+        $assesment = [];
+        $getAssessment = DB::select("select id_assessment_type, nama from mt_assessment_type where deleted_at is null");
+        foreach($getAssessment as $dataAssesment){
+            $assesment[$dataAssesment->id_assessment_type] = $dataAssesment->nama;
+        }
         $rows = $data->items();
         $data1 = $this->GenerateTreeEasyUi(
             $rows,
             "id_parent_register",
             "id_register",
             "nama",
+            null,
+            0,
+            array(),
+            $assesment,
         );
 
         // $data1 = $rows;

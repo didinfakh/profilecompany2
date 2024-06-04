@@ -188,6 +188,7 @@ class BaseResourceController extends ResourceController
         $valparent = null,
         $level = 0,
         $idarr = array(),
+        $assessment = array(),
 
     ) {
 
@@ -202,8 +203,11 @@ class BaseResourceController extends ResourceController
         foreach ($row as $idkey => $value) {
             # code...
 
-
-                $value->text = $value->{$collabel};
+                if(isset($assessment[$value->id_assessment_type])){
+                    $value->text = $value->{$collabel} . ' ('.$assessment[$value->id_assessment_type].')';
+                }else{
+                    $value->text = $value->{$collabel};
+                }
                 $value->id = $value->{$colid};
 
             if (trim($value->{$colparent}) == trim($valparent) && ($value->{$colparent} or $valparent === null)) {
@@ -215,8 +219,12 @@ class BaseResourceController extends ResourceController
 
                 $val = $value;
                 $val->id = $value->{$colid};
-                $val->text = $value->{$collabel};
-                $children = $this->GenerateTreeEasyUi($row, $colparent, $colid, $collabel, $value->{$colid}, $level, $idarr);
+                if(isset($assessment[$value->id_assessment_type])){
+                    $value->text = $value->{$collabel} . ' ('.$assessment[$value->id_assessment_type].')';
+                }else{
+                    $value->text = $value->{$collabel};
+                }
+                $children = $this->GenerateTreeEasyUi($row, $colparent, $colid, $collabel, $value->{$colid}, $level, $idarr,$assessment);
                 $val->children = $children;
                 $return[$i] = $val;
                 $i++;
