@@ -131,7 +131,7 @@ class BaseResourceController extends ResourceController
     {
         $request->validate($this->model->rules);
 
-        if (!$this->model->find($id)) {
+        if (!$data_before = $this->model->find($id)) {
             return $this->failNotFound(sprintf(
                 'item with id %d not found',
                 $id
@@ -141,7 +141,7 @@ class BaseResourceController extends ResourceController
         // $data       = $request->getRawInput();		
         // $updateData = array_filter($data);
         $updateData = $request->all();
-        $ret = $this->model->update($id, $updateData);
+        $ret = $this->model->update($id, $updateData, $data_before);
         // if (!$ret) {
         //     return $this->fail($this->model->errors());
         // }
@@ -203,8 +203,8 @@ class BaseResourceController extends ResourceController
             # code...
 
 
-                $value->text = $value->{$collabel};
-                $value->id = $value->{$colid};
+            $value->text = $value->{$collabel};
+            $value->id = $value->{$colid};
 
             if (trim($value->{$colparent}) == trim($valparent) && ($value->{$colparent} or $valparent === null)) {
 

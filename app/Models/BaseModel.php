@@ -234,8 +234,14 @@ class BaseModel extends Model
     //  * @return boolean
     //  * @throws \ReflectionException
     //  */
-    public function update($id = null, $data = null): bool
+    public function update($id = null, $data = null, $data_before = []): bool
     {
+
+        if (!$data_before) {
+            $data_before = $this->find($id);
+            if (!$data_before)
+                return false;
+        }
 
         // if ($this->informationSchemas['updated_by']) {
         $data['updated_by'] = (auth()->user() ? auth()->user()->id_user : null);
@@ -252,7 +258,7 @@ class BaseModel extends Model
                 array(
                     "action" => "update",
                     "table_name" => $this->table,
-                    "activity" => $data
+                    "activity" => ["before" => $data_before, "after" => $data]
                 )
             );
         }

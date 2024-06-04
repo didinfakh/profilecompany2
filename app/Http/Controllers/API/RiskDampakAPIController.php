@@ -18,7 +18,7 @@ class RiskDampakAPIController extends BaseResourceController
 
     public function approve($id = null, Request $request): JsonResponse
     {
-        if (!$this->model->find($id)) {
+        if (!$data_before = $this->model->find($id)) {
             return $this->failNotFound(sprintf(
                 'item with id %d not found',
                 $id
@@ -27,7 +27,7 @@ class RiskDampakAPIController extends BaseResourceController
 
         $updateData = [];
         $updateData['status'] = 'Aktif';
-        $ret = $this->model->update($id, $updateData);
+        $ret = $this->model->update($id, $updateData, $data_before);
 
         return $this->respond($updateData, 200, 'data updated');
     }
