@@ -404,6 +404,9 @@ Route::resource('mt_risk_agregasi_risiko', App\Http\Controllers\API\MtRiskAgrega
 Route::resource('mt_assessment_type', App\Http\Controllers\API\MtAssessmentTypeAPIController::class)
     ->except(['create', 'edit']);
 
+Route::resource('mt_kategori_dokumen', App\Http\Controllers\API\MtKategoriDokumenAPIController::class)
+->except(['create', 'edit']);
+
 Route::resource('internal_control_testing', App\Http\Controllers\API\InternalControlTestingAPIController::class)
     ->except(['create', 'edit']);
 
@@ -458,3 +461,4 @@ Route::resource('dokumen', App\Http\Controllers\API\DokumenAPIController::class)
 
 Route::resource('risk_msg', App\Http\Controllers\API\RiskMsgAPIController::class)
     ->except(['create', 'edit']);
+
