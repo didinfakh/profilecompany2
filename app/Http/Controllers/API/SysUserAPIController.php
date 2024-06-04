@@ -51,7 +51,7 @@ class SysUserAPIController extends BaseResourceController
         $this->model->rules['password'] = 'string|max:255';
         $request->validate($this->model->rules);
 
-        if (!$this->model->find($id)) {
+        if (!$data_before = $this->model->find($id)) {
             return $this->failNotFound(sprintf(
                 'item with id %d not found',
                 $id
@@ -64,7 +64,7 @@ class SysUserAPIController extends BaseResourceController
         if($request->password){
         $updateData['password'] = Hash::make($request->password);}
 
-        $ret = $this->model->update($id, $updateData);
+        $ret = $this->model->update($id, $updateData, $data_before);
         // if (!$ret) {
         //     return $this->fail($this->model->errors());
         // }

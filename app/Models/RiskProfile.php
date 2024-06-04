@@ -473,7 +473,7 @@ class RiskProfile extends BaseModel
                 $where .= ' and rp.is_kuantitatif = ? ';
                 $params[] = $filter['is_kuantitatif'];
             } else {
-                $where .= ' and (rp.is_kuantitatif is null or rp.is_kuantitatif = 1) ';
+                $where .= ' and (rp.is_kuantitatif is null or rp.is_kuantitatif = 0) ';
             }
         }
 

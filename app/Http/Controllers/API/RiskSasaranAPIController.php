@@ -159,7 +159,7 @@ class RiskSasaranAPIController extends RiskProfileResourceController
 
         $this->_beforeDetail($id_register);
 
-        if (!$this->model->where("id_register", $id_register)->find($id)) {
+        if (!$data_before = $this->model->where("id_register", $id_register)->find($id)) {
             return $this->failNotFound(sprintf(
                 'item with id %d not found',
                 $id
@@ -168,7 +168,7 @@ class RiskSasaranAPIController extends RiskProfileResourceController
 
         $updateData = [];
         $updateData['is_accept'] = $jenis;
-        $ret = $this->model->update($id, $updateData);
+        $ret = $this->model->update($id, $updateData, $data_before);
 
         if ($ret)
             return $this->respond($updateData, 200, 'data updated');

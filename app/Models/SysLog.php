@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class SysLog extends BaseModel
+class SysLog extends Model
 {
     public $table = 'sys_log';
 

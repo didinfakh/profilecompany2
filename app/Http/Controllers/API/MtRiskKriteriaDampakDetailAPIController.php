@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\API;
+
 use App\Http\Controllers\BaseResourceController;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -21,18 +22,16 @@ class MtRiskKriteriaDampakDetailAPIController extends BaseResourceController
 
         $updateData = $request->all();
 
-        if (!$this->model->where([['id_kriteria_dampak','=', $id_kriteria],['id_dampak','=',$request->input('id_dampak')]])->get()) {
-            return $this->respond($updateData,200,'not found');
+        if (!$this->model->where([['id_kriteria_dampak', '=', $id_kriteria], ['id_dampak', '=', $request->input('id_dampak')]])->get()) {
+            return $this->respond($updateData, 200, 'not found');
         }
 
         // $data       = $request->getRawInput();		
         // $updateData = array_filter($data);
-        $ret = $this->model->where([['id_kriteria_dampak','=', $id_kriteria],['id_dampak','=',$request->input('id_dampak')]])->update( $updateData);
+        $ret = $this->model->where([['id_kriteria_dampak', '=', $id_kriteria], ['id_dampak', '=', $request->input('id_dampak')]])->update($updateData);
         // if (!$ret) {
         //     return $this->fail($this->model->errors());
         // }
         return $this->respond($updateData, 200, 'data updated');
     }
-
-
 }
