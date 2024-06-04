@@ -448,3 +448,13 @@ Route::resource('mt_assessment_type', App\Http\Controllers\API\MtAssessmentTypeA
 
 Route::resource('mt_risk_agregasi_risiko_sasaran', App\Http\Controllers\API\MtRiskAgregasiRisikoSasaranAPIController::class)
     ->except(['create', 'edit']);
+
+
+Route::resource('mt_kategori_dokumen', App\Http\Controllers\API\MtKategoriDokumenAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('dokumen', App\Http\Controllers\API\DokumenAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('risk_msg', App\Http\Controllers\API\RiskMsgAPIController::class)
+    ->except(['create', 'edit']);

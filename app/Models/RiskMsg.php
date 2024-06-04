@@ -21,7 +21,9 @@ class RiskMsg extends BaseModel
         'deleted_by_desc',
         'id_register',
         'id_status_pengajuan',
-        'id_group'
+        'id_group',
+        'id_kri_hasil',
+        'id_lost_event'
     ];
 
     protected $casts = [
@@ -46,7 +48,9 @@ class RiskMsg extends BaseModel
         'deleted_by_desc' => 'nullable|string|max:200',
         'id_register' => 'nullable',
         'id_status_pengajuan' => 'nullable',
-        'id_group' => 'nullable'
+        'id_group' => 'nullable',
+        'id_kri_hasil' => 'nullable',
+        'id_lost_event' => 'nullable'
     ];
 
     public function idRegister(): \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -62,5 +66,15 @@ class RiskMsg extends BaseModel
     public function idGroup(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(\App\Models\SysGroup::class, 'id_group');
+    }
+
+    public function idKriHasil(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(\App\Models\RiskProfileKriHasil::class, 'id_kri_hasil');
+    }
+
+    public function idLostEvent(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(\App\Models\LostEvent::class, 'id_lost_event');
     }
 }

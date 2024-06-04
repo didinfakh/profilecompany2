@@ -57,15 +57,17 @@ class BaseModel extends Model
         $rec['ip'] = $_SERVER["REMOTE_ADDR"];
         $rec['activity_time'] = date("Y-m-d H:i:s");
 
-        $user_desc = "User";
-        $user_desc .= "#" . (auth()->user() ? auth()->user()->name : null);
+        // $user_desc = "User";
+        // $user_desc .= "#" . (auth()->user() ? auth()->user()->name : null);
+
+        $user_desc = (auth()->user() ? auth()->user()->name : null);
         $rec['user_desc'] = $user_desc;
 
-        // $rec["activity"] = json_encode((array)$rec["activity"]);
-        $rec["activity"] = '';
+        $rec["activity"] = json_encode((array)$rec["activity"]);
+        // $rec["activity"] = '';
 
-        // $log = new \App\Models\SysLog();
-        // $log->insert($rec);
+        $log = new \App\Models\SysLog();
+        $log->insert($rec);
     }
 
     // /**
@@ -80,11 +82,17 @@ class BaseModel extends Model
     //  */
     public function insert($data = null)
     {
-        $this->formatData($data);
+        // $this->formatData($data);
         // $this->setValidationRulesCreated();
         // $this->db->debug = 1;
         // $ret = parent::insert($data, $returnID);
 
+        // if ($this->informationSchemas['created_by']) {
+        $data['created_by'] = (auth()->user() ? auth()->user()->id_user : null);
+        // }
+        // if ($this->informationSchemas['created_by_desc']) {
+        $data['created_by_desc'] = (auth()->user() ? auth()->user()->name : null);
+        // }
         $ret = $this->create($data)->{$this->primaryKey};
         // $query = $this->db->getLastQuery();
         // echo (string) $query;
@@ -109,7 +117,7 @@ class BaseModel extends Model
 
     private function formatData(&$data)
     {
-        // $temp = (array)$data;
+        $data = (array)$data;
         // $data = [];
         // foreach ($this->informationSchemas as $k => $v) {
         //     if (in_array($k, array_keys($temp))) {
@@ -153,32 +161,68 @@ class BaseModel extends Model
         //         }
         //     }
         // }
+
+        if ($data[$this->primaryKey]) {
+            // unset($data['created_date']);
+            // unset($data['created_by']);
+            // unset($data['created_by_desc']);
+            // if ($this->informationSchemas['updated_date']) {
+            //     $data['updated_date'] = date("Y-m-d H:i:s");
+            // }
+            if ($this->informationSchemas['updated_by']) {
+                $data['updated_by'] = (auth()->user() ? auth()->user()->id_user : null);
+            }
+            if ($this->informationSchemas['updated_by_desc']) {
+                $data['updated_by_desc'] = (auth()->user() ? auth()->user()->name : null);
+            }
+        } else {
+            // unset($data['updated_date']);
+            // unset($data['updated_by']);
+            // unset($data['updated_by_desc']);
+            // if ($this->informationSchemas['created_date']) {
+            //     $data['created_date'] = date("Y-m-d H:i:s");
+            // }
+            if ($this->informationSchemas['created_by']) {
+                $data['created_by'] = (auth()->user() ? auth()->user()->id_user : null);
+            }
+            if ($this->informationSchemas['created_by_desc']) {
+                $data['created_by_desc'] = (auth()->user() ? auth()->user()->name : null);
+            }
+        }
     }
 
-    // public function delete($id = null, bool $purge = false)
-    // {
-    //     $data = $this->find($id);
-    //     if (!$data)
-    //         return false;
+    public function delete($id = null, bool $purge = false)
+    {
+        $data = $this->find($id);
+        if (!$data)
+            return false;
 
-    //     $ret = parent::delete($id, $purge);
-    //     if ($ret) {
-    //         if (is_array($data))
-    //             $data[$this->primaryKey] = $id;
-    //         else
-    //             $data->{$this->primaryKey} = $id;
+        // if ($this->informationSchemas['created_by']) {
+        $data['deleted_by'] = (auth()->user() ? auth()->user()->id_user : null);
+        // }
+        // if ($this->informationSchemas['created_by_desc']) {
+        $data['deleted_by_desc'] = (auth()->user() ? auth()->user()->name : null);
+        // }
 
-    //         $this->logging(
-    //             array(
-    //                 "action" => "delete",
-    //                 "table_name" => $this->table,
-    //                 "activity" => $data
-    //             )
-    //         );
-    //     }
+        // $this->formatData($data);
+        $ret = parent::delete($id, $purge);
+        if ($ret) {
+            if (is_array($data))
+                $data[$this->primaryKey] = $id;
+            else
+                $data->{$this->primaryKey} = $id;
 
-    //     return $ret;
-    // }
+            $this->logging(
+                array(
+                    "action" => "delete",
+                    "table_name" => $this->table,
+                    "activity" => $data
+                )
+            );
+        }
+
+        return $ret;
+    }
 
     // /**
     //  * Updates a single record in $this->table. If an object is provided,
@@ -192,7 +236,14 @@ class BaseModel extends Model
     //  */
     public function update($id = null, $data = null): bool
     {
-        $this->formatData($data);
+
+        // if ($this->informationSchemas['updated_by']) {
+        $data['updated_by'] = (auth()->user() ? auth()->user()->id_user : null);
+        // }
+        // if ($this->informationSchemas['updated_by_desc']) {
+        $data['updated_by_desc'] = (auth()->user() ? auth()->user()->name : null);
+        // }
+        // $this->formatData($data);
         // $this->setValidationRulesUpdated($data);
         $ret = $this->where($this->primaryKey, $id)->update($data);
 
