@@ -99,11 +99,13 @@ class AuthenticatedSessionController extends AppBaseController
 
         $rows = DB::select("select * from sys_action 
         where exists (select 1 
-        from sys_group_action where exists (
-            select 1 from sys_group_menu 
-            where sys_group_action.id_group_menu = sys_group_menu.id_group_menu
-            and id_group = " . DB::escape($id_group) . "
-        ))");
+        from sys_group_action 
+        where exists (
+                select 1 from sys_group_menu 
+                where sys_group_action.id_group_menu = sys_group_menu.id_group_menu
+                and id_group = " . DB::escape($id_group) . "
+            ) and sys_action.id_action = sys_group_action.id_action
+        )");
 
         foreach ($rows as $r) {
             if (!empty($menuarr[$r->id_menu]) && !empty($r->nama)) {
