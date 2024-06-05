@@ -181,7 +181,7 @@ class RisikoResourceController extends ResourceController
      */
     public function destroy($id_risk_profile = null, $id = null): JsonResponse
     {
-        if (!$model = $this->model->where("id_risk_profile", $id_risk_profile)->find($id)) {
+        if (!$data = $model = $this->model->where("id_risk_profile", $id_risk_profile)->find($id)) {
             return $this->failNotFound(sprintf(
                 'item with id %d not found',
                 $id
@@ -195,6 +195,15 @@ class RisikoResourceController extends ResourceController
                 $id
             ));
         }
+
+        $this->model->logging(
+            array(
+                "action" => "delete",
+                "table_name" => $this->model->table,
+                "activity" => "Menghapus data",
+                "data" => $data->get()->toArray()[0]
+            )
+        );
 
         return $this->respondDeleted(['id' => $id], 'data deleted');
     }

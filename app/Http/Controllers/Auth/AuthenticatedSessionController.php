@@ -29,7 +29,9 @@ class AuthenticatedSessionController extends AppBaseController
         $groups = DB::select("select a.*, b.nama 
         from sys_user_group a 
         join sys_group b on a.id_group = b.id_group
-        where a.id_user = ?", [$user->id_user]);
+        where a.id_user = ? 
+        and a.deleted_at is null 
+        and b.deleted_at is null", [$user->id_user]);
 
         if (!count($groups))
             return $this->failValidationError("Username atau password salah !");
