@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Arr;
 
 class BaseResourceController extends ResourceController
 {
@@ -56,7 +56,7 @@ class BaseResourceController extends ResourceController
                 $exp = array($exp);
 
             foreach ($exp as $v)
-                $db = $db->orderBy(trim($v));
+                $db = $db->orderByRaw(trim($v));
         } else if ($this->model->primaryKey) {
             $db = $db->orderBy($this->model->primaryKey);
         }
@@ -113,6 +113,7 @@ class BaseResourceController extends ResourceController
         $request->validate($this->model->rules);
 
         $data = $request->all();
+
         $id = $this->model->insert($data);
         // if (!$id) {
         //     return $this->fail($this->model->errors());
@@ -155,7 +156,7 @@ class BaseResourceController extends ResourceController
      */
     public function destroy($id = null): JsonResponse
     {
-        if (!$model = $this->model->find($id)) {
+        if (!$data = $model = $this->model->find($id)) {
             return $this->failNotFound(sprintf(
                 'item with id %d not found',
                 $id
@@ -169,6 +170,15 @@ class BaseResourceController extends ResourceController
                 $id
             ));
         }
+
+        $this->model->logging(
+            array(
+                "action" => "delete",
+                "table_name" => $this->model->table,
+                "activity" => "Menghapus data",
+                "data" => $data->get()->toArray()[0]
+            )
+        );
 
         return $this->respondDeleted(['id' => $id], 'data deleted');
     }
@@ -203,12 +213,12 @@ class BaseResourceController extends ResourceController
         foreach ($row as $idkey => $value) {
             # code...
 
-                if(isset($assessment[$value->id_assessment_type])){
-                    $value->text = $value->{$collabel} . ' ('.$assessment[$value->id_assessment_type].')';
-                }else{
-                    $value->text = $value->{$collabel};
-                }
-                $value->id = $value->{$colid};
+            if (isset($assessment[$value->id_assessment_type])) {
+                $value->text = $value->{$collabel} . ' (' . $assessment[$value->id_assessment_type] . ')';
+            } else {
+                $value->text = $value->{$collabel};
+            }
+            $value->id = $value->{$colid};
 
             if (trim($value->{$colparent}) == trim($valparent) && ($value->{$colparent} or $valparent === null)) {
 
@@ -219,12 +229,12 @@ class BaseResourceController extends ResourceController
 
                 $val = $value;
                 $val->id = $value->{$colid};
-                if(isset($assessment[$value->id_assessment_type])){
-                    $value->text = $value->{$collabel} . ' ('.$assessment[$value->id_assessment_type].')';
-                }else{
+                if (isset($assessment[$value->id_assessment_type])) {
+                    $value->text = $value->{$collabel} . ' (' . $assessment[$value->id_assessment_type] . ')';
+                } else {
                     $value->text = $value->{$collabel};
                 }
-                $children = $this->GenerateTreeEasyUi($row, $colparent, $colid, $collabel, $value->{$colid}, $level, $idarr,$assessment);
+                $children = $this->GenerateTreeEasyUi($row, $colparent, $colid, $collabel, $value->{$colid}, $level, $idarr, $assessment);
                 $val->children = $children;
                 $return[$i] = $val;
                 $i++;

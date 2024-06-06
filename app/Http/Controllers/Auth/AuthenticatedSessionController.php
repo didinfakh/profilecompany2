@@ -29,7 +29,9 @@ class AuthenticatedSessionController extends AppBaseController
         $groups = DB::select("select a.*, b.nama 
         from sys_user_group a 
         join sys_group b on a.id_group = b.id_group
-        where a.id_user = ?", [$user->id_user]);
+        where a.id_user = ? 
+        and a.deleted_at is null 
+        and b.deleted_at is null", [$user->id_user]);
 
         if (!count($groups))
             return $this->failValidationError("Username atau password salah !");
@@ -97,11 +99,13 @@ class AuthenticatedSessionController extends AppBaseController
 
         $rows = DB::select("select * from sys_action 
         where exists (select 1 
-        from sys_group_action where exists (
-            select 1 from sys_group_menu 
-            where sys_group_action.id_group_menu = sys_group_menu.id_group_menu
-            and id_group = " . DB::escape($id_group) . "
-        ))");
+        from sys_group_action 
+        where exists (
+                select 1 from sys_group_menu 
+                where sys_group_action.id_group_menu = sys_group_menu.id_group_menu
+                and id_group = " . DB::escape($id_group) . "
+            ) and sys_action.id_action = sys_group_action.id_action
+        )");
 
         foreach ($rows as $r) {
             if (!empty($menuarr[$r->id_menu]) && !empty($r->nama)) {

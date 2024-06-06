@@ -28,7 +28,6 @@ Route::resource('sys_group', App\Http\Controllers\API\SysGroupAPIController::cla
     ->except(['create', 'edit']);
 
 Route::put('sys_group/setmenu/{id_group}', [App\Http\Controllers\API\SysGroupAPIController::class, 'setmenu']);
-
 Route::get('sys_group/getmenu/{id_group}', [App\Http\Controllers\API\SysGroupAPIController::class, 'getmenu']);
 
 Route::post('sys_user/create', [App\Http\Controllers\API\SysUserAPIController::class, 'create']);
@@ -404,6 +403,9 @@ Route::resource('mt_risk_agregasi_risiko', App\Http\Controllers\API\MtRiskAgrega
 Route::resource('mt_assessment_type', App\Http\Controllers\API\MtAssessmentTypeAPIController::class)
     ->except(['create', 'edit']);
 
+Route::resource('mt_kategori_dokumen', App\Http\Controllers\API\MtKategoriDokumenAPIController::class)
+    ->except(['create', 'edit']);
+
 Route::resource('internal_control_testing', App\Http\Controllers\API\InternalControlTestingAPIController::class)
     ->except(['create', 'edit']);
 
@@ -456,5 +458,13 @@ Route::resource('mt_kategori_dokumen', App\Http\Controllers\API\MtKategoriDokume
 Route::resource('dokumen', App\Http\Controllers\API\DokumenAPIController::class)
     ->except(['create', 'edit']);
 
+Route::get('getfile/{file_name}/{client_name}', [App\Http\Controllers\API\DokumenAPIController::class, 'getfile']);
+
 Route::resource('risk_msg', App\Http\Controllers\API\RiskMsgAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('sys_log', App\Http\Controllers\API\SysLogAPIController::class)
+    ->except(['create', 'edit']);
+
+Route::resource('sys_setting', App\Http\Controllers\API\SysSettingAPIController::class)
     ->except(['create', 'edit']);

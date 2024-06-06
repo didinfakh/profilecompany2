@@ -482,7 +482,7 @@ class RiskProfile extends BaseModel
         } else {
             $order = 'skala_inheren';
         }
-        $params[] = $order;
+        // $params[] = $order;
 
         $id_tingkat_agregasi_risiko = null;
         if (isset($filter['id_tingkat_agregasi_risiko']) && $filter['id_tingkat_agregasi_risiko'] != 'null') {
@@ -576,7 +576,7 @@ class RiskProfile extends BaseModel
         and rp.jenis = mrm2.jenis
         and mrm2.deleted_at is null
 
-        where rp.deleted_at is null" . $where . " order by ? desc limit ?";
+        where rp.deleted_at is null" . $where . " order by " . $order . " desc  nulls last limit ?";
 
         $response = DB::select($sql, $params);
 
@@ -637,7 +637,7 @@ class RiskProfile extends BaseModel
                 $where .= ' and rp.is_kuantitatif = ? ';
                 $params[] = $filter['is_kuantitatif'];
             } else {
-                $where .= ' and (rp.is_kuantitatif is null or rp.is_kuantitatif = 1) ';
+                $where .= ' and (rp.is_kuantitatif is null or rp.is_kuantitatif = 0) ';
             }
         }
 
@@ -646,7 +646,7 @@ class RiskProfile extends BaseModel
         } else {
             $order = 'skala_inheren';
         }
-        $params[] = $order;
+        // $params[] = $order;
 
         if (isset($filter['top']) && $filter['top'] != 'null') {
             $limit = $filter['top'];
@@ -777,7 +777,7 @@ class RiskProfile extends BaseModel
                                     floor(avg(rprr.id_dampak)) as id_dampak_kualitatif_real
                                 from
                                     risk_profile rp
-                                    join risk_register rr on rp.id_risk_tegister = rr.id_risk_tegister and rr.deleted_at is null
+                                    join risk_register rr on rp.id_register = rr.id_register and rr.deleted_at is null
                                     left join risk_profile_target_residual rpts on rp.id_risk_profile = rpts.id_risk_profile
                                     and rpts.periode = " . DB::escape($periode_target) . " and rpts.deleted_at is null
                                     left join risk_profile_realisasi_residual rprr on rp.id_risk_profile = rprr.id_risk_profile
@@ -794,7 +794,7 @@ class RiskProfile extends BaseModel
                             left join mt_risk_agregasi_risiko_sasaran mras on mra.id_risk_agregasi_risiko = mras.id_risk_agregasi_risiko
                             and mras.tahun = rp.tahun
                     ) a
-                    join mt_risk_dampak mrd on (
+                    left join mt_risk_dampak mrd on (
                         persen_dampak_inheren >= mrd.mulai
                         or mrd.id_dampak = 1
                     )
@@ -802,7 +802,7 @@ class RiskProfile extends BaseModel
                         persen_dampak_inheren < mrd.sampai
                         or mrd.id_dampak = 5
                     )
-                    join mt_risk_kemungkinan mrk on (
+                    left join mt_risk_kemungkinan mrk on (
                         nilai_kemungkinan_inheren >= mrk.persentase_mulai
                         or mrk.id_kemungkinan = 1
                     )
@@ -810,7 +810,7 @@ class RiskProfile extends BaseModel
                         nilai_kemungkinan_inheren < mrk.persentase_sampai
                         or mrk.id_kemungkinan = 5
                     )
-                    join mt_risk_dampak mrdt on (
+                    left join mt_risk_dampak mrdt on (
                         persen_dampak_target >= mrdt.mulai
                         or mrdt.id_dampak = 1
                     )
@@ -818,7 +818,7 @@ class RiskProfile extends BaseModel
                         persen_dampak_target < mrdt.sampai
                         or mrdt.id_dampak = 5
                     )
-                    join mt_risk_kemungkinan mrkt on (
+                    left join mt_risk_kemungkinan mrkt on (
                         nilai_kemungkinan_target >= mrkt.persentase_mulai
                         or mrkt.id_kemungkinan = 1
                     )
@@ -826,7 +826,7 @@ class RiskProfile extends BaseModel
                         nilai_kemungkinan_target < mrkt.persentase_sampai
                         or mrkt.id_kemungkinan = 5
                     )
-                    join mt_risk_dampak mrdr on (
+                    left join mt_risk_dampak mrdr on (
                         persen_dampak_real >= mrdr.mulai
                         or mrdr.id_dampak = 1
                     )
@@ -834,7 +834,7 @@ class RiskProfile extends BaseModel
                         persen_dampak_real < mrdr.sampai
                         or mrdr.id_dampak = 5
                     )
-                    join mt_risk_kemungkinan mrkr on (
+                    left join mt_risk_kemungkinan mrkr on (
                         nilai_kemungkinan_real >= mrkr.persentase_mulai
                         or mrkr.id_kemungkinan = 1
                     )
@@ -843,19 +843,24 @@ class RiskProfile extends BaseModel
                         or mrkr.id_kemungkinan = 5
                     )
             ) a
-            join mt_risk_matrix mrm on a.id_dampak_inheren = mrm.id_dampak
+            left join mt_risk_matrix mrm on a.id_dampak_inheren = mrm.id_dampak
             and a.id_kemungkinan_inheren = mrm.id_kemungkinan
             and a.jenis = mrm.jenis
-            join mt_risk_matrix mrmt on a.id_dampak_target = mrmt.id_dampak
+            left join mt_risk_matrix mrmt on a.id_dampak_target = mrmt.id_dampak
             and a.id_kemungkinan_target = mrmt.id_kemungkinan
             and a.jenis = mrmt.jenis
-            join mt_risk_matrix mrmr on a.id_dampak_real = mrmr.id_dampak
+            left join mt_risk_matrix mrmr on a.id_dampak_real = mrmr.id_dampak
             and a.id_kemungkinan_real = mrmr.id_kemungkinan
             and a.jenis = mrmr.jenis
-        order by ? desc limit ?";
+        order by " . $order . " desc nulls last limit ?";
 
+        // echo $sql;
+        // print_r($params);
+        // return null;
         $response = DB::select($sql, $params);
 
+        // print_r($response);
+        // return;
         return $response;
     }
 
@@ -1020,8 +1025,9 @@ class RiskProfile extends BaseModel
             $params[] = $filter['id_assessment_type'];
         }
 
-        $progress = DB::select("select avg(progress) as progress
-        from (select 
+        $progress = DB::select("select 
+        rpm.id_mitigasi, rpm.nama as nama_mitigasi, 
+        rp.id_risk_profile,
         max(progress) as progress
         from risk_profile_mitigasi_realisasi rpma
         join risk_profile_mitigasi rpm on rpma.id_mitigasi = rpm.id_mitigasi and rpm.deleted_at is null
@@ -1030,17 +1036,24 @@ class RiskProfile extends BaseModel
         where 1=1 
         $where 
         and rpma.deleted_at is null
-        group by rpm.id_mitigasi)", $params)[0]->progress;
+        group by rpm.id_mitigasi, rp.id_risk_profile, rpm.nama", $params);
 
+        $temp = [];
+        foreach ($progress as $r) {
+            $temp[$r->id_risk_profile][$r->id_mitigasi] = $r;
+        }
 
-        $efektifitas = DB::select("select   
-        count(case when efektifitas='Efektif' then 1 else null end) as efektif, 
-        count(case when efektifitas='Efektif' then null else 1 end) as tidak_efektif 
-        from (select 
+        $ret = DB::select("select 
+        rp.*,
+        rr.nama_owner,
+        mrm.skala as skala_target,
+        mrm1.skala as skala_realisasi,
+        mrm.id_tingkat as id_tingkat_target,
+        mrm1.id_tingkat as id_tingkat_realisasi,
         case when mrm.skala <= mrm1.skala then 'Efektif' else 'Tidak Efektif' end as efektifitas
         from risk_profile_target_residual rptr
         join risk_profile_realisasi_residual rprr on rptr.id_risk_profile = rprr.id_risk_profile 
-        and substring(rptr.periode from 0 for 4)||((replace(rptr.periode,substring(rptr.periode from 0 for 4)||'q','')::int)*3)::text >= rprr.periode
+        and substring(rptr.periode from 1 for 4)||((replace(rptr.periode,substring(rptr.periode from 1 for 4)||'q','')::int)*3)::text >= rprr.periode
         join risk_profile rp on rprr.id_risk_profile = rp.id_risk_profile and rp.deleted_at is null
         join risk_register rr on rr.id_register = rp.id_register and rr.deleted_at is null
         join mt_risk_matrix mrm on rptr.id_kemungkinan = mrm.id_kemungkinan 
@@ -1050,9 +1063,14 @@ class RiskProfile extends BaseModel
         and rprr.id_dampak = mrm1.id_dampak and mrm1.deleted_at is null
         and mrm1.jenis = rp.jenis
         where 1=1 " . str_replace("rpma.", "rprr.", $where) . " 
-        and rptr.deleted_at is null ) a", $params)[0];
-
-        return ["progress" => $progress, "efektifitas" => $efektifitas];
+        and rptr.deleted_at is null", $params);
+        $res = [];
+        foreach ($ret as $r) {
+            if (!empty($temp[$r->id_risk_profile]))
+                $r->progress = $temp[$r->id_risk_profile];
+            $res[] = $r;
+        }
+        return $res;
     }
 
 

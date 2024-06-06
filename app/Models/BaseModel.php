@@ -51,7 +51,12 @@ class BaseModel extends Model
     // /**
     //  * Rec : action, table_name, activity
     //  */
-    protected function logging($rec = array())
+
+    public function log($aktivitas)
+    {
+        $this->logging(["activity" => $aktivitas]);
+    }
+    public function logging($rec = array())
     {
         $rec['page'] = URL::current();
         $rec['ip'] = $_SERVER["REMOTE_ADDR"];
@@ -63,7 +68,7 @@ class BaseModel extends Model
         $user_desc = (auth()->user() ? auth()->user()->name : null);
         $rec['user_desc'] = $user_desc;
 
-        $rec["activity"] = json_encode((array)$rec["activity"]);
+        $rec["data"] = json_encode((array)$rec["data"]);
         // $rec["activity"] = '';
 
         $log = new \App\Models\SysLog();
@@ -106,7 +111,8 @@ class BaseModel extends Model
                 array(
                     "action" => "insert",
                     "table_name" => $this->table,
-                    "activity" => $data
+                    'activity' => 'Menambah data',
+                    "data" => $data
                 )
             );
         }
@@ -191,37 +197,67 @@ class BaseModel extends Model
         }
     }
 
-    public function delete($id = null, bool $purge = false)
+    public function delete($id = null, bool $purge = false, $data = [])
     {
-        $data = $this->find($id);
-        if (!$data)
-            return false;
-
-        // if ($this->informationSchemas['created_by']) {
-        $data['deleted_by'] = (auth()->user() ? auth()->user()->id_user : null);
+        // if (!$data) {
+        //     $data = $this->find($id);
+        //     if (!$data)
+        //         return false;
         // }
-        // if ($this->informationSchemas['created_by_desc']) {
-        $data['deleted_by_desc'] = (auth()->user() ? auth()->user()->name : null);
+
+
+        // // if ($this->informationSchemas['created_by']) {
+        // $data['deleted_by'] = (auth()->user() ? auth()->user()->id_user : null);
+        // // }
+        // // if ($this->informationSchemas['created_by_desc']) {
+        // $data['deleted_by_desc'] = (auth()->user() ? auth()->user()->name : null);
         // }
 
         // $this->formatData($data);
         $ret = parent::delete($id, $purge);
+        // var_dump($ret);
         if ($ret) {
-            if (is_array($data))
-                $data[$this->primaryKey] = $id;
-            else
-                $data->{$this->primaryKey} = $id;
+            // if (is_array($data))
+            //     $data[$this->primaryKey] = $id;
+            // else
+            //     $data->{$this->primaryKey} = $id;
 
-            $this->logging(
-                array(
-                    "action" => "delete",
-                    "table_name" => $this->table,
-                    "activity" => $data
-                )
-            );
+            // $this->logging(
+            //     array(
+            //         "action" => "delete",
+            //         "table_name" => $this->table,
+            //         "activity" => $data
+            //     )
+            // );
         }
 
         return $ret;
+    }
+
+    protected function runSoftDelete()
+    {
+        $query = $this->setKeysForSaveQuery($this->newModelQuery());
+
+        $time = $this->freshTimestamp();
+
+        $columns = [$this->getDeletedAtColumn() => $this->fromDateTime($time)];
+
+        $this->{$this->getDeletedAtColumn()} = $time;
+
+        if ($this->usesTimestamps() && !is_null($this->getUpdatedAtColumn())) {
+            $this->{$this->getUpdatedAtColumn()} = $time;
+
+            $columns[$this->getUpdatedAtColumn()] = $this->fromDateTime($time);
+        }
+
+        $columns['deleted_by'] = (auth()->user() ? auth()->user()->id_user : null);
+        $columns['deleted_by_desc'] = (auth()->user() ? auth()->user()->name : null);
+
+        $query->update($columns);
+
+        $this->syncOriginalAttributes(array_keys($columns));
+
+        $this->fireModelEvent('trashed', false);
     }
 
     // /**
@@ -238,7 +274,7 @@ class BaseModel extends Model
     {
 
         if (!$data_before) {
-            $data_before = $this->find($id);
+            $data_before = $this->find($id)->get()->toArray()[0];
             if (!$data_before)
                 return false;
         }
@@ -258,7 +294,11 @@ class BaseModel extends Model
                 array(
                     "action" => "update",
                     "table_name" => $this->table,
-                    "activity" => ["before" => $data_before, "after" => $data]
+                    'activity' => 'Mengubah data',
+                    "data" => [
+                        "before" => $data_before,
+                        "after" => $data
+                    ]
                 )
             );
         }

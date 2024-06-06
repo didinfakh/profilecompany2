@@ -153,9 +153,10 @@ class SysGroupAPIController extends BaseResourceController
             case when sys_group_action.id_action is not null then 1 
             else 0 end as selected 
             from sys_action 
-            left join sys_group_action on sys_group_action.id_action = sys_action.id_action and 
+            left join sys_group_action on sys_group_action.deleted_at is null and 
+            sys_group_action.id_action = sys_action.id_action and 
             sys_group_action.id_group_menu = coalesce(" . DB::escape($groupmenu['id_group_menu']) . ", 0)
-            where id_menu = " . DB::escape($idmenu));
+            where sys_action.deleted_at is null and id_menu = " . DB::escape($idmenu));
 
 
             if ($r['id_parent_menu'] == $idparent) {
@@ -190,9 +191,10 @@ class SysGroupAPIController extends BaseResourceController
             case when sys_group_action.id_action is not null then 1 
             else 0 end as selected 
             from sys_action 
-            left join sys_group_action on sys_group_action.id_action = sys_action.id_action and 
+            left join sys_group_action 
+            on sys_group_action.deleted_at is null and sys_group_action.id_action = sys_action.id_action and 
             sys_group_action.id_group_menu = coalesce(" . DB::escape($groupmenu['id_group_menu']) . ", 0)
-            where id_menu = " . DB::escape($idmenu));
+            where sys_action.deleted_at is null and id_menu = " . DB::escape($idmenu));
 
                 $menu[] = [
                     "page" => $r['url'],
