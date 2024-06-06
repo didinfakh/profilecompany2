@@ -487,4 +487,27 @@ if(isset($data['id_register']) && $data['id_register'] != 'null'){
         }
         return view('api/laporanbkrisikoprint', $this->data);
     }
+
+    public function printinternal_control_testing(Request $request){
+        $data = $request->all();
+
+        $this->data['title'] = 'Internal Control Testing';
+        $this->data['tahun'] =  'Tahun ' . $data['tahun'];
+
+        $this->data['header'] = [[
+            "sasaran_bumn" => ["label" => "Sasaran BUMN"],
+            "business_process" => ["label" => "Business Process"],
+            "key_control" => ["label" => "Key Control"],
+            "metode_pengujian" => ["label" => "Metode Pengujian"],
+            "kelemahan_kontrol" => ["label" => "Kelemahan Kontrol"],
+            "rencana_tindak_lanjut" => ["label" => "Rencana Tindak Lanjut"],
+            "due_date" => ["label" => "Due Date"],
+            "id_pic" => ["label"=> "PIC"],
+            "status_tindak_lanjut" => ["label" => "Status Tindak Lanjut"]
+        ]];
+        $this->data['cols'] = array_keys($this->data['header'][0]);
+        $this->data['rows'] = \App\Models\InternalControlTesting::laporan($data);
+        return view('api/laporanbkrisikoprint', $this->data);
+    }
+
 }

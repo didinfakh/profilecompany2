@@ -50,10 +50,10 @@ class RiskCapacityLimit extends BaseModel
         'deleted_at' => 'nullable',
         'created_by_desc' => 'nullable|string|max:200',
         'modified_by_desc' => 'nullable|string|max:200',
-        'total_realisasi_eksposur_risiko_residual' => 'nullable|numeric',
+        'total_realisasi_eksposur_risiko_residual' => 'required|numeric',
         'id_register' => 'nullable',
         'deleted_by' => 'nullable',
-        'deleted_by_desc' => 'nullable|string|max:200'
+        'deleted_by_desc' => 'nullable|string|max:200',
     ];
 
     public function idRegister(): \Illuminate\Database\Eloquent\Relations\BelongsTo

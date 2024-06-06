@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class InternalControlTesting extends BaseModel
 {
@@ -65,6 +66,38 @@ class InternalControlTesting extends BaseModel
         'deleted_by_desc' => 'nullable|string|max:200'
     ];
 
+    public static function laporan($params= []){
+        $paramarr = [];
+        $where = '';
+
+        if(isset($params['id_kelompok_bisnis']) && $params['id_kelompok_bisnis'] != 'null'){
+            $where .= ' and rr.id_kelompok_bisnis = ? ';
+            $paramarr[] = $params['id_kelompok_bisnis'];
+        } 
+        if(isset($params['id_assessment_type']) && $params['id_assessment_type'] != 'null'){
+            $where .= ' and rr.id_assessment_type = ? ';
+            $paramarr[] = $params['id_assessment_type'];
+        } 
+
+        if(isset($params['id_unit']) && $params['id_unit'] != 'null'){
+            $where .= ' and rr.id_unit = ? ';
+            $paramarr[] = $params['id_unit'];
+        } 
+        if(isset($params['id_register']) && $params['id_register'] != 'null'){
+            $where .= ' and ict.id_register = ? ';
+            $paramarr[] = $params['id_register'];
+        } 
+
+        $sql = '
+        SELECT ICT.*
+        FROM INTERNAL_CONTROL_TESTING ICT
+        LEFT JOIN RISK_REGISTER RR ON ICT.ID_REGISTER = RR.ID_REGISTER 
+        where ict.deleted_at is null 
+        ';
+        // $response = DB::select($sql,$paramarr);
+        $response = DB::select($sql);
+        return $response;
+    }
     public function idPic(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(\App\Models\MtSdmJabatan::class, 'id_pic');
