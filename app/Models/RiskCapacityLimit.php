@@ -67,6 +67,8 @@ class RiskCapacityLimit extends BaseModel
         if ($params["id_register"] && $params["id_register"] != 'null') {
             $where .= " and rs.id_register = ?";
             $paramarr[] = $params['id_register'];
+        } else {
+            $where .= "1<>1";
         }
         if ($params["tahun"]) {
             $where .= " and tahun = ?";

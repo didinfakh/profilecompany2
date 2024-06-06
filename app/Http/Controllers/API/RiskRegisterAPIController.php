@@ -72,6 +72,14 @@ class RiskRegisterAPIController extends BaseResourceController
             and 
             coalesce(periode_selesai,TO_DATE(?,'YYYYMMDD'))", [$tgl_efektif, $tgl_efektif, $tgl_efektif]);
         }
+
+        // return $this->respond(session('access'));
+
+        if (empty(session('access')["dashboard"]["view_all"])) {
+            $db = $db->where("id_unit", [session('id_unit')]);
+            $db = $db->where("id_kelompok_bisnis", [session('id_kelompok_bisnis')]);
+        }
+
         $orderby = $request->get('order');
         if ($orderby) {
             $orderby = explode(",", $orderby);
@@ -105,10 +113,10 @@ class RiskRegisterAPIController extends BaseResourceController
         // 	'totalPage' => $this->model->pager->getPageCount(),
         // ];
         // dd($data->items);
-  
+
         $assesment = [];
         $getAssessment = DB::select("select id_assessment_type, nama from mt_assessment_type where deleted_at is null");
-        foreach($getAssessment as $dataAssesment){
+        foreach ($getAssessment as $dataAssesment) {
             $assesment[$dataAssesment->id_assessment_type] = $dataAssesment->nama;
         }
         $rows = $data->items();
@@ -143,7 +151,15 @@ class RiskRegisterAPIController extends BaseResourceController
 
     public function tree(): JsonResponse
     {
-        $rows = $this->model->get();
+        $db = $this->model;
+
+        if (empty(session('access')["dashboard"]["view_all"])) {
+            $db = $db->where("id_unit", [session('id_unit')]);
+            $db = $db->where("id_kelompok_bisnis", [session('id_kelompok_bisnis')]);
+        }
+
+        $rows = $db->get();
+
         $data = $this->GenerateTreeEasyUi(
             $rows,
             "id_parent_register",
@@ -374,9 +390,9 @@ class RiskRegisterAPIController extends BaseResourceController
             and a.deleted_at is null
             and 
                 (
-                    (c.url = 'risk_register' and e.nama = 'view_all') 
+                    (c.url = 'dashboard' and e.nama = 'view_all') 
                     or 
-                    (c.url = 'risk_register' and e.nama = 'view_unit' and exists(
+                    (exists(
                             select 1 from mt_sdm_jabatan f 
                             where f.id_jabatan = a.id_jabatan
                             and f.deleted_at is null

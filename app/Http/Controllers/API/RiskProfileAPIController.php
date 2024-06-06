@@ -46,6 +46,18 @@ class RiskProfileAPIController extends RiskProfileResourceController
             $db = $db->whereRaw("to_char(coalesce(tgl_risiko,to_date(?,'YYYYMM')),'YYYYMM') <= ? 
 			and to_char(coalesce(tgl_close,to_date(?,'YYYYMM')),'YYYYMM') >= ?", [$blnthn1, $blnthn1, $blnthn, $blnthn]);
         }
+
+        if (empty(session('access')["dashboard"]["view_all"])) {
+            $db = $db->whereRaw("exists (
+                select 1 from risk_register 
+                where risk_register.id_register = risk_profile.id_register 
+                and risk_register.id_unit = ? 
+                and risk_register.id_kelompok_bisnis = ?)", [
+                session('id_unit'),
+                session('id_kelompok_bisnis')
+            ]);
+        }
+
         $orderby = $request->get('order');
         if ($orderby) {
             $orderby = explode(",", $orderby);

@@ -139,15 +139,15 @@ class LostEvent extends BaseModel
     {
         $paramarr = [];
         $where = "";
-        if(isset($params['id_assessment_type']) && $params["id_assessment_type"] != 'null'){
+        if (isset($params['id_assessment_type']) && $params["id_assessment_type"] != 'null') {
             $where .= " and rr.id_assessment_type = ?";
             $paramarr[] = $params['id_assessment_type'];
         }
-        if(isset($params['id_kelompok_bisnis']) && $params["id_kelompok_bisnis"] != 'null'){
+        if (isset($params['id_kelompok_bisnis']) && $params["id_kelompok_bisnis"] != 'null') {
             $where .= " and rr.id_kelompok_bisnis = ?";
             $paramarr[] = $params['id_kelompok_bisnis'];
         }
-        if(isset($params['id_unit']) && $params["id_unit"] != 'null'){
+        if (isset($params['id_unit']) && $params["id_unit"] != 'null') {
             $where .= " and rr.id_unit = ?";
             $paramarr[] = $params['id_unit'];
         }
@@ -165,7 +165,14 @@ class LostEvent extends BaseModel
             }
         }
 
-                // DB::enableQueryLog();
+        if (empty(session('access')["dashboard"]["view_all"])) {
+            $where .= " and rr.id_unit = ?";
+            $paramarr[] = [session('id_unit')];
+            $where .= " and rr.id_kelompok_bisnis = ?";
+            $paramarr[] = [session('id_kelompok_bisnis')];
+        }
+
+        // DB::enableQueryLog();
         $sql = "select rs.*, 
         mlek.nama as namalost_event_kategori,
         mlespk.nama as namalost_event_penyebab_kejadian,

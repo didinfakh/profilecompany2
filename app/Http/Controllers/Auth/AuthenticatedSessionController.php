@@ -17,7 +17,7 @@ class AuthenticatedSessionController extends AppBaseController
      */
     public function store(LoginRequest $request)
     {
-        
+
         $request->authenticate();
 
         $user = $request->user();
@@ -26,9 +26,11 @@ class AuthenticatedSessionController extends AppBaseController
             "user" => $user
         ];
 
-        $groups = DB::select("select a.*, b.nama 
+        $groups = DB::select("select d.id_kelompok_bisnis, c.id_jabatan, c.id_unit, a.*, b.nama 
         from sys_user_group a 
-        join sys_group b on a.id_group = b.id_group
+        join sys_group b on a.id_group = b.id_group and b.deleted_at is null
+        left join mt_sdm_jabatan c on a.id_jabatan = c.id_jabatan and c.deleted_at is null
+        left join mt_sdm_unit d on d.id_unit = c.id_unit and d.deleted_at is null
         where a.id_user = ? 
         and a.deleted_at is null 
         and b.deleted_at is null", [$user->id_user]);
@@ -40,21 +42,42 @@ class AuthenticatedSessionController extends AppBaseController
             $response['groups'] = $groups;
         } else {
             $id_group = $groups[0]->id_group;
-            $request->session()->put("id_group", $id_group);
+            $id_jabatan = $groups[0]->id_jabatan;
+            $id_unit = $groups[0]->id_unit;
+            $id_kelompok_bisnis = $groups[0]->id_kelompok_bisnis;
             list($access, $menu, $accessmethod) = $this->_getAccessMenu($id_group);
             $response['access'] = $access;
             $response['menu'] = $menu;
             $response['id_group'] = $id_group;
             $response['accessmethod'] = $accessmethod;
-            $request->session()->regenerate();
-
+            $request->session()->put("id_group", $id_group);
+            $request->session()->put("id_jabatan", $id_jabatan);
+            $request->session()->put("id_unit", $id_unit);
+            $request->session()->put("id_kelompok_bisnis", $id_kelompok_bisnis);
+            $request->session()->put("access", $accessmethod);
         }
+
+        $request->session()->regenerate();
         return $this->respond($response, 200, 'success');
     }
 
     public function choseGroup(Request $request)
     {
         $id_group = $request->get("id_group");
+
+
+        $groups = DB::select("select d.id_kelompok_bisnis, c.id_jabatan, c.id_unit, a.*, b.nama 
+        from sys_user_group a 
+        join sys_group b on a.id_group = b.id_group and b.deleted_at is null
+        left join mt_sdm_jabatan c on a.id_jabatan = c.id_jabatan and c.deleted_at is null
+        left join mt_sdm_unit d on d.id_unit = c.id_unit and d.deleted_at is null
+        where a.id_user = ? 
+        and a.id_group = ?
+        and a.deleted_at is null 
+        and b.deleted_at is null", [$request->user()->id_user, $id_group]);
+
+        if (!count($groups))
+            return $this->failValidationError("Username atau password salah !");
 
         list($access, $menu, $accessmethod) = $this->_getAccessMenu($id_group);
 
@@ -63,7 +86,16 @@ class AuthenticatedSessionController extends AppBaseController
         $response['menu'] = $menu;
         $response['accessmethod'] = $accessmethod;
 
+        $id_group = $groups[0]->id_group;
+        $id_jabatan = $groups[0]->id_jabatan;
+        $id_unit = $groups[0]->id_unit;
+        $id_kelompok_bisnis = $groups[0]->id_kelompok_bisnis;
+
         $request->session()->put("id_group", $id_group);
+        $request->session()->put("id_jabatan", $id_jabatan);
+        $request->session()->put("id_unit", $id_unit);
+        $request->session()->put("id_kelompok_bisnis", $id_kelompok_bisnis);
+        $request->session()->put("access", $accessmethod);
         return $this->respond($response, 200, 'success');
     }
 
