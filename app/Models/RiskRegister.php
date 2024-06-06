@@ -32,7 +32,8 @@ class RiskRegister extends BaseModel
         'id_owner',
         'nama_owner',
         'deleted_by',
-        'deleted_by_desc'
+        'deleted_by_desc',
+        'id_tingkat_agregasi_risiko',
     ];
 
     protected $casts = [
@@ -50,7 +51,7 @@ class RiskRegister extends BaseModel
 
     public array $rules = [
         'nama' => 'required|string|max:300',
-        'scope' => 'nullable|string|max:4000',
+        'scope' => 'required|string|max:4000',
         'created_at' => 'nullable',
         'updated_at' => 'nullable',
         'deleted_at' => 'nullable',
@@ -58,17 +59,45 @@ class RiskRegister extends BaseModel
         'updated_by_desc' => 'nullable',
         'created_by' => 'nullable',
         'updated_by' => 'nullable',
-        'id_kajian_risiko' => 'nullable',
-        'id_unit' => 'nullable|string|max:18',
+        // 'id_kajian_risiko' => 'required',
+        'id_unit' => 'required|string|max:18',
         'id_parent_register' => 'nullable',
-        'navigasi' => 'nullable|string|max:1',
-        'is_kegiatan' => 'nullable|string|max:1',
-        'kode' => 'nullable|string|max:20',
-        'id_status_pengajuan' => 'nullable',
-        'id_owner' => 'nullable',
-        'nama_owner' => 'nullable|string|max:100',
+        'navigasi' => 'required|string|max:1',
+        // 'is_kegiatan' => 'required|string|max:1',
+        'kode' => 'required|string|max:20',
+        // 'id_status_pengajuan' => 'required',
+        'id_owner' => 'required',
+        'nama_owner' => 'required|string|max:100',
         'deleted_by' => 'nullable',
-        'deleted_by_desc' => 'nullable|string|max:50'
+        'deleted_by_desc' => 'nullable|string|max:50',
+        'id_kelompok_bisnis' => 'required',
+        'id_assessment_type' => 'required',
+        'id_tingkat_agregasi_risiko' => 'required'
+    ];
+
+    public array $rules_if_folder = [
+        'nama' => 'required|string|max:300',
+        // 'scope' => 'required|string|max:4000',
+        'created_at' => 'nullable',
+        'updated_at' => 'nullable',
+        'deleted_at' => 'nullable',
+        'created_by_desc' => 'nullable',
+        'updated_by_desc' => 'nullable',
+        'created_by' => 'nullable',
+        'updated_by' => 'nullable',
+        // 'id_kajian_risiko' => 'required',
+        // 'id_unit' => 'required|string|max:18',
+        'id_parent_register' => 'nullable',
+        'navigasi' => 'required|string|max:1',
+        // 'is_kegiatan' => 'required|string|max:1',
+        // 'kode' => 'required|string|max:20',
+        // 'id_status_pengajuan' => 'required',
+        // 'id_owner' => 'required',
+        // 'nama_owner' => 'required|string|max:100',
+        'deleted_by' => 'nullable',
+        // 'deleted_by_desc' => 'nullable|string|max:50',
+        // 'id_kelompok_bisnis' => 'required',
+        // 'id_assessment_type' => 'required'
     ];
 
     public function idStatusPengajuan(): \Illuminate\Database\Eloquent\Relations\BelongsTo

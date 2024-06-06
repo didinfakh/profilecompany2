@@ -318,6 +318,7 @@ Route::get('laporan_bk_risiko/print', [App\Http\Controllers\API\LaporanBkRisikoA
 Route::get('loss_event/print', [App\Http\Controllers\API\LaporanBkRisikoAPIController::class, 'printlossevent']);
 Route::get('laporan_matrik_strategi_risiko/print', [App\Http\Controllers\API\LaporanBkRisikoAPIController::class, 'printmatrik']);
 Route::get('laporan_sasaran_strategi_bisnis/print', [App\Http\Controllers\API\LaporanBkRisikoAPIController::class, 'printsasaran']);
+Route::get('laporan_internal_control_testing/print', [App\Http\Controllers\API\LaporanBkRisikoAPIController::class, 'printinternal_control_testing']);
 
 Route::resource('laporan_bk_risiko', App\Http\Controllers\API\LaporanBkRisikoAPIController::class)
     ->except(['create', 'edit']);

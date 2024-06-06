@@ -167,6 +167,17 @@ class RiskProfileAPIController extends RiskProfileResourceController
 
     public function store($id_register = null, Request $request): JsonResponse
     {
+        // if($request->get('jenis') != '-1'){
+        //     unset($this->model->rules['kri_new']);
+        //     unset($this->model->rules['control']);
+        // }
+        if(!empty($request->get('kri_kualitatif')) || !empty($request->get('kri_kuantitatif'))){
+            $request->request->add(['kri_new'=>'true']);
+        }
+        
+        // if($request->get('page') == 'analisa_risiko_inheren'){
+        //     $request->validate([])
+        // }
         $request->validate($this->model->rules);
 
         $this->_beforeDetail($id_register);
@@ -181,6 +192,9 @@ class RiskProfileAPIController extends RiskProfileResourceController
 
     public function update($id_register = null, $id = null, Request $request): JsonResponse
     {
+        if(!empty($request->get('kri_kualitatif')) || !empty($request->get('kri_kuantitatif'))){
+            $request->request->add(['kri_new'=>'true']);
+        }
         $request->validate($this->model->rules);
 
         $this->_beforeDetail($id_register);
@@ -397,6 +411,9 @@ class RiskProfileAPIController extends RiskProfileResourceController
         $krim = new \App\Models\RiskProfileKri();
         $record['kri_kuantitatif'] = $krim->where('id_risk_profile', $id)->where('is_kuantitatif', 1)->get();
         $record['kri_kualitatif'] = $krim->where('id_risk_profile', $id)->where('is_kuantitatif', 0)->get();
+        // if(!empty($record['kri_kuantitatif']) || !empty($record['kri_kualitatif'])){
+        //     $record['kri_new'] = 'true';
+        // }
         $controlm = new \App\Models\RiskProfileControl();
         $record['control'] = $controlm->where('id_risk_profile', $id)->get();
         $dampakm = new \App\Models\RiskProfileDampak();

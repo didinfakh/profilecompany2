@@ -149,6 +149,53 @@ class RiskRegisterAPIController extends BaseResourceController
         // ]);
     }
 
+    public function store(Request $request): JsonResponse
+    {
+        if($request->navigasi != '0'){
+            $request->validate($this->model->rules);
+        }else{
+            $request->validate($this->model->rules_if_folder);
+        }
+
+        $data = $request->all();
+
+        $id = $this->model->insert($data);
+        // if (!$id) {
+        //     return $this->fail($this->model->errors());
+        // }
+        $data[$this->model->primaryKey] = $id;
+
+
+        return $this->respondCreated($data, 'data created');
+    }
+
+    public function update($id = null, Request $request): JsonResponse
+    {
+
+        if($request->navigasi != '0'){
+            $request->validate($this->model->rules);
+        }else{
+            $request->validate($this->model->rules_if_folder);
+        }
+        // $request->validate($this->model->rules);
+
+        if (!$data_before = $this->model->find($id)) {
+            return $this->failNotFound(sprintf(
+                'item with id %d not found',
+                $id
+            ));
+        }
+
+        // $data       = $request->getRawInput();		
+        // $updateData = array_filter($data);
+        $updateData = $request->all();
+        $ret = $this->model->update($id, $updateData, $data_before);
+        // if (!$ret) {
+        //     return $this->fail($this->model->errors());
+        // }
+        return $this->respond($updateData, 200, 'data updated');
+    }
+
     public function tree(): JsonResponse
     {
         $db = $this->model;
