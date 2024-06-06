@@ -177,6 +177,13 @@ class RiskProfile extends BaseModel
             $paramarr[] = $params['tahun'];
         }
 
+        if (empty(session('access')["dashboard"]["view_all"])) {
+            $where .= " and rr.id_unit = ?";
+            $paramarr[] = [session('id_unit')];
+            $where .= " and rr.id_kelompok_bisnis = ?";
+            $paramarr[] = [session('id_kelompok_bisnis')];
+        }
+
 
         // DB::enableQueryLog();
         $sql = "select rp.*, 
@@ -497,6 +504,13 @@ class RiskProfile extends BaseModel
             }
         }
 
+        if (empty(session('access')["dashboard"]["view_all"])) {
+            $where .= " and rr.id_unit = ?";
+            $params[] = [session('id_unit')];
+            $where .= " and rr.id_kelompok_bisnis = ?";
+            $params[] = [session('id_kelompok_bisnis')];
+        }
+
         if (isset($filter['urutan']) && $filter['urutan'] != 'null') {
             $order = $filter['urutan'];
         } else {
@@ -659,6 +673,13 @@ class RiskProfile extends BaseModel
             } else {
                 $where .= ' and (rp.is_kuantitatif is null or rp.is_kuantitatif = 0) ';
             }
+        }
+
+        if (empty(session('access')["dashboard"]["view_all"])) {
+            $where .= " and rr.id_unit = ?";
+            $params[] = [session('id_unit')];
+            $where .= " and rr.id_kelompok_bisnis = ?";
+            $params[] = [session('id_kelompok_bisnis')];
         }
 
         if (isset($filter['urutan']) && $filter['urutan'] != 'null') {
@@ -936,6 +957,13 @@ class RiskProfile extends BaseModel
             $params[] = $filter['id_unit'];
         }
 
+        if (empty(session('access')["dashboard"]["view_all"])) {
+            $where .= " and rr.id_unit = ?";
+            $params[] = [session('id_unit')];
+            $where .= " and rr.id_kelompok_bisnis = ?";
+            $params[] = [session('id_kelompok_bisnis')];
+        }
+
         $select = "mskb.nama as nama_kelompok_bisnis,";
         $group = "mskb.id_kelompok_bisnis,";
         if (isset($filter['id_kelompok_bisnis']) && $filter['id_kelompok_bisnis'] != 'null') {
@@ -1043,6 +1071,13 @@ class RiskProfile extends BaseModel
         if (isset($filter['id_assessment_type']) && $filter['id_assessment_type'] != 'null') {
             $where .= ' and rr.id_assessment_type = ?';
             $params[] = $filter['id_assessment_type'];
+        }
+
+        if (empty(session('access')["dashboard"]["view_all"])) {
+            $where .= " and rr.id_unit = ?";
+            $params[] = [session('id_unit')];
+            $where .= " and rr.id_kelompok_bisnis = ?";
+            $params[] = [session('id_kelompok_bisnis')];
         }
 
         $progress = DB::select("select 
@@ -1162,6 +1197,13 @@ class RiskProfile extends BaseModel
         if (isset($filter['id_assessment_type']) && $filter['id_assessment_type'] != 'null') {
             $where .= " and rr.id_assessment_type = ?";
             $params[] = $filter['id_assessment_type'];
+        }
+
+        if (empty(session('access')["dashboard"]["view_all"])) {
+            $where .= " and rr.id_unit = ?";
+            $params[] = [session('id_unit')];
+            $where .= " and rr.id_kelompok_bisnis = ?";
+            $params[] = [session('id_kelompok_bisnis')];
         }
 
         $sql = "select 

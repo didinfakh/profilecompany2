@@ -65,6 +65,7 @@ class RiskSasaran extends BaseModel
     {
         return $this->hasMany(\App\Models\RiskSasaranStrategi::class, 'id_sasaran');
     }
+
     public static function laporan($params = [])
     {
         $paramarr = [];
@@ -72,6 +73,8 @@ class RiskSasaran extends BaseModel
         if ($params["id_register"] && $params["id_register"] != 'null') {
             $where .= " and rs.id_register = ?";
             $paramarr[] = $params['id_register'];
+        } else {
+            $where .= "1<>1";
         }
         if ($params["tahun"]) {
             $where .= " and tahun = ?";
@@ -91,7 +94,7 @@ class RiskSasaran extends BaseModel
 
         $no = 0;
         foreach ($rows as &$r) {
-            $r->keputusan_penetapan = $r->is_accept? 'Accept' : 'Avoid';
+            $r->keputusan_penetapan = $r->is_accept ? 'Accept' : 'Avoid';
             $rows1 = DB::select("select strategi as nama_strategi from risk_sasaran_strategi where deleted_at is null and id_sasaran = ?", [$r->id_sasaran]);
             // $arr = [];
             // foreach ($rows1 as $r1) {
