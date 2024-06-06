@@ -155,8 +155,8 @@ class LostEvent extends BaseModel
             $where .= " and rs.id_register = ?";
             $paramarr[] = $params['id_register'];
         }
-        if ($params["tahun"]) {
-            if ($params["bulan"]) {
+        if (isset($params["tahun"])) {
+            if (isset($params["bulan"])) {
                 $where .= " and to_char(tgl_loss_event,'YYYYMM') = ?";
                 $paramarr[] = $params['tahun'] . str_pad($params['bulan'], 2, '0', STR_PAD_LEFT);
             } else {
@@ -167,9 +167,9 @@ class LostEvent extends BaseModel
 
         if (empty(session('access')["dashboard"]["view_all"])) {
             $where .= " and rr.id_unit = ?";
-            $paramarr[] = [session('id_unit')];
+            $paramarr[] = session('id_unit');
             $where .= " and rr.id_kelompok_bisnis = ?";
-            $paramarr[] = [session('id_kelompok_bisnis')];
+            $paramarr[] = session('id_kelompok_bisnis');
         }
 
         // DB::enableQueryLog();

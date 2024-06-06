@@ -210,6 +210,7 @@ class RiskProfileMitigasiRealisasiAPIController extends RiskProfileResourceContr
 
                 $id_mitigasi_realisasi = $id_mitigasiarr[$r["id_mitigasi"]];
                 unset($r["nama"]);
+                unset($r["penyebab"]);
                 unset($r["id_mitigasi_realisasi"]);
                 $rec = $r;
                 $rec['periode'] = $periode;

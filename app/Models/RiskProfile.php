@@ -159,9 +159,9 @@ class RiskProfile extends BaseModel
 
         if (empty(session('access')["dashboard"]["view_all"])) {
             $where .= " and rr.id_unit = ?";
-            $paramarr[] = [session('id_unit')];
+            $paramarr[] = session('id_unit');
             $where .= " and rr.id_kelompok_bisnis = ?";
-            $paramarr[] = [session('id_kelompok_bisnis')];
+            $paramarr[] = session('id_kelompok_bisnis');
         }
 
 
@@ -486,9 +486,9 @@ class RiskProfile extends BaseModel
 
         if (empty(session('access')["dashboard"]["view_all"])) {
             $where .= " and rr.id_unit = ?";
-            $params[] = [session('id_unit')];
+            $params[] = session('id_unit');
             $where .= " and rr.id_kelompok_bisnis = ?";
-            $params[] = [session('id_kelompok_bisnis')];
+            $params[] = session('id_kelompok_bisnis');
         }
 
         if (isset($filter['urutan']) && $filter['urutan'] != 'null') {
@@ -657,9 +657,9 @@ class RiskProfile extends BaseModel
 
         if (empty(session('access')["dashboard"]["view_all"])) {
             $where .= " and rr.id_unit = ?";
-            $params[] = [session('id_unit')];
+            $params[] = session('id_unit');
             $where .= " and rr.id_kelompok_bisnis = ?";
-            $params[] = [session('id_kelompok_bisnis')];
+            $params[] = session('id_kelompok_bisnis');
         }
 
         if (isset($filter['urutan']) && $filter['urutan'] != 'null') {
@@ -939,9 +939,9 @@ class RiskProfile extends BaseModel
 
         if (empty(session('access')["dashboard"]["view_all"])) {
             $where .= " and rr.id_unit = ?";
-            $params[] = [session('id_unit')];
+            $params[] = session('id_unit');
             $where .= " and rr.id_kelompok_bisnis = ?";
-            $params[] = [session('id_kelompok_bisnis')];
+            $params[] = session('id_kelompok_bisnis');
         }
 
         $select = "mskb.nama as nama_kelompok_bisnis,";
@@ -1055,9 +1055,9 @@ class RiskProfile extends BaseModel
 
         if (empty(session('access')["dashboard"]["view_all"])) {
             $where .= " and rr.id_unit = ?";
-            $params[] = [session('id_unit')];
+            $params[] = session('id_unit');
             $where .= " and rr.id_kelompok_bisnis = ?";
-            $params[] = [session('id_kelompok_bisnis')];
+            $params[] = session('id_kelompok_bisnis');
         }
 
         $progress = DB::select("select 
@@ -1181,9 +1181,9 @@ class RiskProfile extends BaseModel
 
         if (empty(session('access')["dashboard"]["view_all"])) {
             $where .= " and rr.id_unit = ?";
-            $params[] = [session('id_unit')];
+            $params[] = session('id_unit');
             $where .= " and rr.id_kelompok_bisnis = ?";
-            $params[] = [session('id_kelompok_bisnis')];
+            $params[] = session('id_kelompok_bisnis');
         }
 
         $sql = "select 
