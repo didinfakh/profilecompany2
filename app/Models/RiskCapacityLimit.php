@@ -85,14 +85,14 @@ class RiskCapacityLimit extends BaseModel
         $no = 0;
         foreach ($rows as &$r) {
             $avg = DB::select("select 
-            avg(total_realisasi_eksposur_risiko_residual/kapasitas_risiko*100) total
+            avg(case when kapasitas_risiko is not null and kapasitas_risiko <> 0 then total_realisasi_eksposur_risiko_residual/kapasitas_risiko*100 else 0 end) total
             from risk_capacity_limit 
             where deleted_at is null and id_register = ? and tahun <= ?", [$r->id_register, $r->tahun])[0]->total;
 
             $r->risk_appetite = $r->kapasitas_risiko * ceil($avg) / 100;
             $r->risk_tolerance = $r->risk_appetite * ((100 + $r->persentase_toleran) / 100);
 
-            $r->risk_residual = DB::select("select sum((nilai_kemungkinan/100)*nilai_dampak)/1000000000 total
+            $r->risk_residual = DB::select("select sum((nilai_kemungkinan/100)*nilai_dampak) total
             from risk_profile_target_residual a 
             where exists(select 1 from risk_profile b where b.deleted_at is null 
             and a.id_risk_profile = b.id_risk_profile and b.id_register = ?) 

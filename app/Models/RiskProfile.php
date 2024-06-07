@@ -560,15 +560,16 @@ class RiskProfile extends BaseModel
         left join mt_risk_matrix mrm 
         on (case when is_kuantitatif = 1 then 
             level_dampak(rp.nilai_dampak_inheren,
-                coalesce(rp.nilai_sasaran,
-                    risk_limit(
+                    " . ($id_tingkat_agregasi_risiko == '0' ? "coalesce(rp.nilai_sasaran,0)" : "
+            case when rr.id_tingkat_agregasi_risiko is not null and rr.id_tingkat_agregasi_risiko <> '0' then 
+            risk_limit(
                         rr.id_tingkat_agregasi_risiko,
                         coalesce(" . DB::escape($id_tingkat_agregasi_risiko) . ",rr.id_tingkat_agregasi_risiko), 
                         rr.id_unit, 
                         to_char(rp.tgl_risiko,'YYYY')::int,
                         rr.id_register
                     )
-                )
+                    else coalesce(rp.nilai_sasaran,0) end") . "
             )
         else rp.id_dampak_inheren end) = mrm.id_dampak
         and rp.id_kemungkinan_inheren = mrm.id_kemungkinan 
@@ -579,7 +580,8 @@ class RiskProfile extends BaseModel
         left join mt_risk_matrix mrm1 
         on (case when is_kuantitatif = 1 then 
             level_dampak(rpts.nilai_dampak, 
-                coalesce(rp.nilai_sasaran,
+            " . ($id_tingkat_agregasi_risiko == '0' ? "coalesce(rp.nilai_sasaran,0)" : "
+            case when rr.id_tingkat_agregasi_risiko is not null and rr.id_tingkat_agregasi_risiko <> '0' then 
 			        risk_limit(
                         rr.id_tingkat_agregasi_risiko,
                         coalesce(" . DB::escape($id_tingkat_agregasi_risiko) . ",rr.id_tingkat_agregasi_risiko),
@@ -587,7 +589,8 @@ class RiskProfile extends BaseModel
 				        to_char(rp.tgl_risiko,'YYYY')::int,
 				        rr.id_register
                     )
-                )
+                    else coalesce(rp.nilai_sasaran,0) end
+                ") . "
             ) else rpts.id_dampak end) = mrm1.id_dampak
         and rpts.id_kemungkinan = mrm1.id_kemungkinan 
         and rp.jenis = mrm1.jenis
@@ -597,14 +600,16 @@ class RiskProfile extends BaseModel
         left join mt_risk_matrix mrm2 
         on (case when is_kuantitatif = 1 then 
             level_dampak(rprr.nilai_dampak,
-                coalesce(rp.nilai_sasaran,
-                    risk_limit(rr.id_tingkat_agregasi_risiko,
-                    coalesce(" . DB::escape($id_tingkat_agregasi_risiko) . ",rr.id_tingkat_agregasi_risiko),
-                    rr.id_unit,
-                    to_char(rp.tgl_risiko,'YYYY')::int,
-                    rr.id_register
-                )
-            )
+            " . ($id_tingkat_agregasi_risiko == '0' ? "coalesce(rp.nilai_sasaran,0)" : "
+                    case when rr.id_tingkat_agregasi_risiko is not null and rr.id_tingkat_agregasi_risiko <> '0' then 
+                        risk_limit(rr.id_tingkat_agregasi_risiko,
+                            coalesce(" . DB::escape($id_tingkat_agregasi_risiko) . ",rr.id_tingkat_agregasi_risiko),
+                            rr.id_unit,
+                            to_char(rp.tgl_risiko,'YYYY')::int,
+                            rr.id_register
+                        ) 
+                    else coalesce(rp.nilai_sasaran,0) end
+                ") . "
         ) else rprr.id_dampak end) = mrm2.id_dampak
         and rprr.id_kemungkinan = mrm2.id_kemungkinan 
         and rp.jenis = mrm2.jenis
