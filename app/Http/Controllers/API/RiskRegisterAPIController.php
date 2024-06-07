@@ -151,13 +151,18 @@ class RiskRegisterAPIController extends BaseResourceController
 
     public function store(Request $request): JsonResponse
     {
-        if($request->navigasi != '0'){
+        if ($request->navigasi != '0') {
             $request->validate($this->model->rules);
-        }else{
+        } else {
             $request->validate($this->model->rules_if_folder);
         }
 
         $data = $request->all();
+
+        if (!$data['id_tingkat_agregasi_risiko'])
+            $data['id_status_pengajuan'] = 6;
+        else
+            $data['id_status_pengajuan'] = 1;
 
         $id = $this->model->insert($data);
         // if (!$id) {
@@ -172,9 +177,9 @@ class RiskRegisterAPIController extends BaseResourceController
     public function update($id = null, Request $request): JsonResponse
     {
 
-        if($request->navigasi != '0'){
+        if ($request->navigasi != '0') {
             $request->validate($this->model->rules);
-        }else{
+        } else {
             $request->validate($this->model->rules_if_folder);
         }
         // $request->validate($this->model->rules);
