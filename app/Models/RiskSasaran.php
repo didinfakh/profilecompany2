@@ -37,11 +37,11 @@ class RiskSasaran extends BaseModel
     ];
 
     public array $rules = [
-        'id_sasaran' => 'required',
+        // 'id_sasaran' => 'required',
         'nama' => 'required|string|max:1000',
         'hasil_yang_diharapkan' => 'required|string|max:1000',
         'nilai_risiko' => 'required|string|max:1000',
-        'strategi' => 'required',
+        // 'strategi' => 'required',
         'nilai_limit' => 'nullable|string|max:1000',
         'is_accept' => 'nullable',
         'created_at' => 'nullable',

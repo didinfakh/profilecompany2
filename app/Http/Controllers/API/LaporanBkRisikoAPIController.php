@@ -297,19 +297,23 @@ class LaporanBkRisikoAPIController extends BaseResourceController
 
 
 
-    private function levelRows($rows, &$ret = [], $level = 0, $cols)
+    private function levelRows($rows, &$ret = [], $level = 0, $cols,$cols_color = [])
     {
         $rows = (array)$rows;
         foreach ($rows as $k => $r) {
             if (is_array($r)) {
                 $levela = $level;
                 foreach ($r as $rws) {
-                    $this->levelRows($rws, $ret, $levela, $cols);
+                    $this->levelRows($rws, $ret, $levela, $cols,$cols_color);
                     $levela++;
                 }
             } else {
-                if (in_array($k, $cols))
+                if (in_array($k, $cols)){
                     $ret[$level][$k] = $r;
+                }
+                if(in_array($k,$cols_color)){
+                    $ret[$level][$k] = $r;
+                }
             }
         }
         $level++;
@@ -367,9 +371,25 @@ class LaporanBkRisikoAPIController extends BaseResourceController
      
         $this->data['rows'] = [];
         // $rws = [$rows[0]];
+        $this->data['cols_color'] = $cols_color = [
+            "skala_dampak_warna",
+            "level_risiko_warna",
+            "res_skala_dampakq1_warna",
+            "res_skala_dampakq2_warna",
+            "res_skala_dampakq3_warna",
+            "res_skala_dampakq4_warna",
+            "res_skala_probabilitasq1_warna",
+            "res_skala_probabilitasq2_warna",
+            "res_skala_probabilitasq3_warna",
+            "res_skala_probabilitasq4_warna",
+            "res_level_risikoq1_warna",
+            "res_level_risikoq2_warna",
+            "res_level_risikoq3_warna",
+            "res_level_risikoq4_warna"
+        ];
         foreach ($rows as $rw) {
             $r = [];
-            $this->levelRows($rw, $r, 0, $this->data['cols']);
+            $this->levelRows($rw, $r, 0, $this->data['cols'],$cols_color);
             $this->data['rows'][] = $r;
         }
         return view('api/laporanbkrisikoprint', $this->data);
@@ -493,6 +513,7 @@ if(isset($data['id_register']) && $data['id_register'] != 'null'){
 
         $this->data['title'] = 'Internal Control Testing';
         $this->data['tahun'] =  'Tahun ' . $data['tahun'];
+        $this->data['cols_color'] = [];
 
         $this->data['header'] = [[
             "sasaran_bumn" => ["label" => "Sasaran BUMN"],
@@ -506,7 +527,12 @@ if(isset($data['id_register']) && $data['id_register'] != 'null'){
             "status_tindak_lanjut" => ["label" => "Status Tindak Lanjut"]
         ]];
         $this->data['cols'] = array_keys($this->data['header'][0]);
-        $this->data['rows'] = \App\Models\InternalControlTesting::laporan($data);
+        $this->data['rows1'] = $rows= \App\Models\InternalControlTesting::laporan($data);
+        foreach ($rows as $rw) {
+            $r = [];
+            $this->levelRows($rw, $r, 0, $this->data['cols']);
+            $this->data['rows'][] = $r;
+        }
         return view('api/laporanbkrisikoprint', $this->data);
     }
 

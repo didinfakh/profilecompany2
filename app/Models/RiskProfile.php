@@ -57,46 +57,46 @@ class RiskProfile extends BaseModel
     ];
 
     public array $rules = [
-        'sasaran' => 'string',
-        // 'sasaran' => 'required|string|max:1000',
-        // 'id_sasaran' => 'required',
-        // 'nama' => 'required',
-        // // 'jenis' => 'required',
-        // // 'nilai_sasaran' => 'required',
-        // 'penyebab' => 'required',
-        // 'penyebab.*.nama' => 'required',
-        // 'dampak' => 'required',
-        // 'dampak.*.nama' => 'required',
-        // 'id_jenis_risiko' => 'nullable',
-        // 'id_taksonomi' => 'required',
-        // 'id_risiko' => 'required',
-        // 'deskripsi' => 'required|string',
-        // // 'id_register' => 'required',
-        // 'is_kuantitatif' => 'required',
-        // 'penjelasan_dampak' => 'nullable|string|max:2000',
-        // // 'nilai_dampak_inheren' => 'required|numeric',
-        // // 'nilai_kemungkinan' => 'required|numeric',
-        // // 'id_kemungkinan_inheren' => 'required',
-        // 'created_at' => 'nullable',
-        // 'updated_at' => 'nullable',
-        // 'created_by' => 'nullable',
-        // 'updated_by' => 'nullable',
-        // 'deleted_by' => 'nullable',
-        // 'deleted_at' => 'nullable',
-        // 'created_by_desc' => 'nullable|string|max:200',
-        // 'updated_by_desc' => 'nullable|string|max:200',
-        // 'deleted_by_desc' => 'nullable|string|max:200',
-        // 'id_jenis_risiko' => 'required',
-        // // 'id_penyebab' => 'required',
-        // // 'id_dampak' => 'required',
-        // 'tgl_risiko' => 'required',
-        // 'id_kriteria_dampak' => 'required',
-        // // 'id_risk_agregasi_risiko' => 'required',
-        // // 'kri_new' => 'required',
-        // // 'kri_new.*.kri_kualitatif' => 'required',
+        // 'sasaran' => 'string',
+        'sasaran' => 'required|string|max:1000',
+        'id_sasaran' => 'required',
+        'nama' => 'required',
+        // 'jenis' => 'required',
+        // 'nilai_sasaran' => 'required',
+        'penyebab' => 'required',
+        'penyebab.*.nama' => 'required',
+        'dampak' => 'required',
+        'dampak.*.nama' => 'required',
+        'id_jenis_risiko' => 'nullable',
+        'id_taksonomi' => 'required',
+        'id_risiko' => 'required',
+        'deskripsi' => 'required|string',
+        // 'id_register' => 'required',
+        'is_kuantitatif' => 'required',
+        'penjelasan_dampak' => 'nullable|string|max:2000',
+        // 'nilai_dampak_inheren' => 'required|numeric',
+        // 'nilai_kemungkinan' => 'required|numeric',
+        // 'id_kemungkinan_inheren' => 'required',
+        'created_at' => 'nullable',
+        'updated_at' => 'nullable',
+        'created_by' => 'nullable',
+        'updated_by' => 'nullable',
+        'deleted_by' => 'nullable',
+        'deleted_at' => 'nullable',
+        'created_by_desc' => 'nullable|string|max:200',
+        'updated_by_desc' => 'nullable|string|max:200',
+        'deleted_by_desc' => 'nullable|string|max:200',
+        'id_jenis_risiko' => 'required',
+        // 'id_penyebab' => 'required',
+        // 'id_dampak' => 'required',
+        'tgl_risiko' => 'required',
+        'id_kriteria_dampak' => 'required',
+        // 'id_risk_agregasi_risiko' => 'required',
         // 'kri_new' => 'required',
-        // 'control' => 'required',
-        // 'control.*.nama' => 'required'
+        // 'kri_new.*.kri_kualitatif' => 'required',
+        'kri_new' => 'required',
+        'control' => 'required',
+        'control.*.nama' => 'required'
 
     ];
 
@@ -191,10 +191,12 @@ class RiskProfile extends BaseModel
         mrjr.nama jenis_risiko_nama,
         mrt.nama taksonomi_nama,
         mrd.nama skala_dampak,
+        mrd.warna as skala_dampak_warna,
         mrk.nama skala_probabilitas,
         coalesce(rp.nilai_dampak_inheren,0)*coalesce(rp.nilai_kemungkinan,0)/100 as eksposur_risiko,
         mrm.skala as skala_risiko,
-        mrtk.nama as level_risiko
+        mrtk.nama as level_risiko,
+        mrtk.warna as level_risiko_warna
         from risk_profile rp 
         left join risk_register rr on rp.id_register = rr.id_register
         left join mt_risk_sasaran mts on rp.id_sasaran = mts.id_sasaran
@@ -373,10 +375,13 @@ class RiskProfile extends BaseModel
             ) {
                 $rows1 = DB::select("select rptr.*, 
                 mrd.nama as skala_dampak,
+                mrd.warna as skala_dampak_warna,
                 mrk.nama as skala_probabilitas,
+                mrk.warna as skala_probabilitas_warna,
                 coalesce(rptr.nilai_dampak,0)*coalesce(rptr.nilai_kemungkinan,0)/100 as eksposur_risiko,
                 mrm.skala as skala_risiko,
-                mrtk.nama as level_risiko
+                mrtk.nama as level_risiko,
+                mrtk.warna as level_risiko_warna
                 from risk_profile_target_residual rptr 
                 left join mt_risk_dampak mrd on rptr.id_dampak = mrd.id_dampak
                 left join mt_risk_kemungkinan mrk on rptr.id_kemungkinan = mrk.id_kemungkinan
@@ -389,11 +394,14 @@ class RiskProfile extends BaseModel
                     $periode = str_replace(date("Y", strtotime($r->tgl_risiko)), "", $r1->periode);
                     $r->{"res_nilai_dampak" . $periode} = $r1->nilai_dampak;
                     $r->{"res_skala_dampak" . $periode} = $r1->skala_dampak;
+                    $r->{"res_skala_dampak" . $periode . "_warna"} = $r1->skala_dampak_warna;
                     $r->{"res_nilai_probabilitas" . $periode} = $r1->nilai_kemungkinan;
                     $r->{"res_skala_probabilitas" . $periode} = $r1->skala_probabilitas;
+                    $r->{"res_skala_probabilitas" .$periode . "_warna"} = $r1->skala_probabilitas_warna;
                     $r->{"res_eksposur_risiko" . $periode} = $r1->eksposur_risiko;
                     $r->{"res_skala_risiko" . $periode} = $r1->skala_risiko;
                     $r->{"res_level_risiko" . $periode} = $r1->level_risiko;
+                    $r->{"res_level_risiko" . $periode . "_warna"} = $r1->level_risiko_warna;
                 }
             }
 
@@ -451,7 +459,7 @@ class RiskProfile extends BaseModel
         $where = '';
         $params = [];
         if (isset($filter['bulan']) && $filter['bulan'] != 'null' && isset($filter['tahun']) && $filter['tahun'] != 'null') {
-            $periode_realisasi = $filter['tahun'] . $filter['bulan'];
+            $periode_realisasi = $filter['tahun'] . str_replace("0","",$filter['bulan']);
             if ($filter['bulan'] <= 3) {
                 $periode = 'q1';
             } elseif ($filter['bulan'] <= 6) {
@@ -531,6 +539,7 @@ class RiskProfile extends BaseModel
         $params[] = $limit;
 
 
+        //  DB::enableQueryLog();
         $response = [];
         $sql = "
         select rp.id_risk_profile, 
@@ -617,9 +626,10 @@ class RiskProfile extends BaseModel
         and rp.jenis = mrm2.jenis
         and mrm2.deleted_at is null
 
-        where rp.deleted_at is null" . $where . " order by " . $order . " desc  nulls last limit ?";
+        where rp.deleted_at is null and rpts.periode is not null and rprr.periode is not null " . $where . " order by " . $order . " desc  nulls last limit ?";
 
         $response = DB::select($sql, $params);
+        //  var_dump( DB::getQueryLog());
 
 
         return $response;
@@ -630,7 +640,7 @@ class RiskProfile extends BaseModel
         $where = '';
         $params = [];
         if (isset($filter['bulan']) && $filter['bulan'] != 'null' && isset($filter['tahun']) && $filter['tahun'] != 'null') {
-            $periode_realisasi = $filter['tahun'] . $filter['bulan'];
+            $periode_realisasi = $filter['tahun'] . str_replace("0","",$filter['bulan']);
             if ($filter['bulan'] <= 3) {
                 $periode = 'q1';
             } elseif ($filter['bulan'] <= 6) {
@@ -830,7 +840,7 @@ class RiskProfile extends BaseModel
                                     and rpts.periode = " . DB::escape($periode_target) . " and rpts.deleted_at is null
                                     left join risk_profile_realisasi_residual rprr on rp.id_risk_profile = rprr.id_risk_profile
                                     and rprr.periode = " . DB::escape($periode_realisasi) . " and rprr.deleted_at is null
-                                    where 1=1 " . $where . "
+                                    where 1=1 and rpts.periode is not null and rprr.periode is not null " . $where . "
                                 group by
                                     jenis,
                                 rp.id_kriteria_dampak,
