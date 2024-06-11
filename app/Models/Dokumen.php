@@ -12,6 +12,7 @@ class Dokumen extends BaseModel
 
     public $fillable = [
         'nomor_dokumen',
+        'tahun',
         'nama',
         'id_kategori_dokumen',
         'keterangan',

@@ -222,7 +222,7 @@ class RiskProfileResourceController extends ResourceController
         $rm = $mr->find($id_register);
         $id_status_pengajuan = $rm->id_status_pengajuan;
 
-        if (in_array($id_status_pengajuan, [5, 10, 15, 16, 17]) || !$id_status_pengajuan) {
+        if (in_array($id_status_pengajuan, [5, 10, 15, 16, 17,11]) || !$id_status_pengajuan) {
             $cekprofile = DB::select("select count(1) total 
                 from risk_profile_realisasi_residual a 
                 where deleted_at is null 
@@ -243,6 +243,8 @@ class RiskProfileResourceController extends ResourceController
 
             if ($cekprofile[0]->total)
                 $id_status_pengajuan = 6;
+
+            // print_r($cekprofile);
 
             if ($rm->id_tingkat_agregasi_risiko) {
                 $cekcapacity = DB::select("select count(1) total 

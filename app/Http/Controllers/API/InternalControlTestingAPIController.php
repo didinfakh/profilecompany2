@@ -1,12 +1,12 @@
 <?php
 
 namespace App\Http\Controllers\API;
-use App\Http\Controllers\BaseResourceController;
+use App\Http\Controllers\RiskProfileResourceController;
 
 /**
  * Class InternalControlTestingAPIController
  */
-class InternalControlTestingAPIController extends BaseResourceController
+class InternalControlTestingAPIController extends RiskProfileResourceController
 {
     public function __construct()
     {

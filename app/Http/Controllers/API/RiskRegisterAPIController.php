@@ -6,8 +6,10 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 use App\Http\Controllers\BaseResourceController;
+use App\Mail\Notif;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 /**
  * Class RiskRegisterAPIController
@@ -16,6 +18,7 @@ class RiskRegisterAPIController extends BaseResourceController
 {
     public function __construct()
     {
+
         $this->model = new \App\Models\RiskRegister;
     }
 
@@ -223,6 +226,11 @@ class RiskRegisterAPIController extends BaseResourceController
 
     public function getdetail($id = null, Request $request): JsonResponse
     {
+        // Mail::to(config('mail.to'))->send(new Notif([
+        //     "link" => "https://www.google.com",
+        //     "pesan" => "Test Email"
+        // ]));
+
         $record = $this->model->find($id);
         if (!$record) {
             return $this->failNotFound(sprintf(
@@ -261,10 +269,13 @@ class RiskRegisterAPIController extends BaseResourceController
             $record->warna = $rs[0]->warna;
         }
 
-        $record->history_pengajuan = DB::select("select * 
-        from risk_msg 
-        where id_register = ? and deleted_at is null 
-        order by id_msg", [$id]);
+        $record->history_pengajuan = DB::select("SELECT a.*, 
+        b.nama as nama_group, c.nama as status_pengajuan 
+        FROM public.risk_msg a
+        left join sys_group b on a.id_group = b.id_group 
+        left join mt_status_pengajuan c on a.id_status_pengajuan = c.id_status_pengajuan
+        where a.id_register = ? and a.deleted_at is null 
+        ORDER BY id_msg desc ", [$id]);
 
         $rows = DB::select("select page 
         from mt_status_pengajuan_page_disable 
@@ -275,16 +286,29 @@ class RiskRegisterAPIController extends BaseResourceController
         }
         $record->page_disable = $page_disable;
 
+        $id_group = $request->session()->get('id_group');
+
+        // $rows = DB::select("select page 
+        // from mt_status_pengajuan_read_only 
+        // where id_status_pengajuan = ? 
+        // and deleted_at is null 
+        // and id_group is null", [$record->id_status_pengajuan]);
+
+        $page_read_only = [];
+        // foreach ($rows as $r) {
+        //     $page_read_only[] = $r->page;
+        // }
+
         $rows = DB::select("select page 
         from mt_status_pengajuan_read_only 
-        where id_status_pengajuan = ? and deleted_at is null ", [$record->id_status_pengajuan]);
-        $page_read_only = [];
+        where id_status_pengajuan = ? 
+        and deleted_at is null 
+        and id_group = ?", [$record->id_status_pengajuan, $id_group]);
         foreach ($rows as $r) {
             $page_read_only[] = $r->page;
         }
-        $record->page_read_only = $page_read_only;
 
-        $id_group = $request->session()->get('id_group');
+        $record->page_read_only = $page_read_only;
 
         // return $this->respond("select b.nama as selanjutnya, c.nama as dikembalikan 
         // from mt_status_pengajuan_penerima a 
@@ -421,9 +445,10 @@ class RiskRegisterAPIController extends BaseResourceController
         ];
 
         $ret = $id_msg = $rm->insert($record);
+        // var_dump($id_msg);
         $id_jabatanarr = $this->idJabatanBawahan($rr->id_owner);
         $penerima = DB::select(
-            "select id_user 
+            "select distinct id_user, id_group
             from sys_user_group a 
 
             where exists (select 1 
@@ -454,7 +479,8 @@ class RiskRegisterAPIController extends BaseResourceController
                     or 
                     (c.url = 'risk_profile' and e.nama = 'add' and a.id_jabatan in (" . implode(",", $id_jabatanarr) . "))
                 )
-            )  and a.deleted_at is null",
+            )  and a.deleted_at is null 
+            and a.id_user is not null",
             [$rr->id_assessment_type, $id_status_pengajuan, $rr->id_unit]
         );
         // $penerima
@@ -465,6 +491,8 @@ class RiskRegisterAPIController extends BaseResourceController
             $record = [];
             $record["id_msg"] = $id_msg;
             $record["id_user"] = $r->id_user;
+            $record["id_group"] = $r->id_group;
+            // var_dump($record);
             $ret = $rmp->insert($record);
         }
 
@@ -480,6 +508,7 @@ class RiskRegisterAPIController extends BaseResourceController
                     $ret = $mrl->where("id_register", $rr->id_register)->update(["status" => "Aktif"]);
                 }
 
+                #realisasi disetujui koordinator
                 if ($id_status_pengajuan == 10 && $rr->id_status_pengajuan == 14 && $ret) {
                     $mrl = new \App\Models\RiskProfileRealisasiResidual();
                     $mrp = new \App\Models\RiskProfile();
@@ -488,7 +517,61 @@ class RiskRegisterAPIController extends BaseResourceController
                         if (!$ret)
                             break;
 
+                        $rmrls = $mrl->where("id_risk_profile", $r1->id_risk_profile)->where("status", "Draft")->get();
+                        foreach ($rmrls as $rmrr) {
+                            $rowskri = DB::select("select a.*, b.nama, c.jenis from risk_profile_kri_hasil a 
+                            join risk_profile_kri b on a.id_kri = b.id_kri and b.deleted_at is null
+                            join risk_profile c on c.id_risk_profile = b.id_risk_profile and c.deleted_at is null
+                            where deleted_at is null 
+                            and c.id_risk_profile = ? 
+                            and a.periode = ? 
+                            and (a.status = ? or a.status = ?)", [$rmrr->id_risk_profile, $rmrr->periode, "Bahaya", "Hati-hati"]);
+                            foreach ($rowskri as $rk) {
+                                $rcm = [
+                                    "id_kri" => $rk->id_kri,
+                                    "id_register" => $rr->id_register,
+                                    "url" => "risk_profile_realisasi_pelaksanaan_perlakuan_risiko_dan_biaya/" . $rr->id_register . "/detail/" . $rmrr->id_risk_profile . "/123/" . $rk->jenis,
+                                    "msg" => "Realisasi KRI \"" . $rk->nama . "\" periode " . [
+                                        1 => "Januari",
+                                        2 => "Februari",
+                                        3 => "Maret",
+                                        4 => "April",
+                                        5 => "Mei",
+                                        6 => "Juni",
+                                        7 => "Juli",
+                                        8 => "Agustus",
+                                        9 => "September",
+                                        10 => "Oktober",
+                                        11 => "November",
+                                        12 => "Desember",
+                                    ][substr($rk->periode, 4)] . " " . substr($rk->periode, 0, 4) . " dalam status \"" . $rk->status . "\"",
+                                ];
+                                $ret = $rm->insert($rcm);
+                            }
+                        }
+
                         $ret = $mrl->where("id_risk_profile", $r1->id_risk_profile)->update(["status" => "Aktif"]);
+                    }
+                }
+
+                #disetujui owner
+                if ($rr->id_status_pengajuan == 12 && ($id_status_pengajuan == 13 || $id_status_pengajuan == 14)) {
+                    $le = new \App\Models\LostEvent();
+                    $rowsn = $le->where("id_register", $rr->id_register)->where("status", "Draft")->get();
+                    foreach ($rowsn as $rn) {
+                        if (!$ret)
+                            break;
+
+                        $rcm = [
+                            "id_lost_event" => $rn->id_lost_event,
+                            "id_register" => $rr->id_register,
+                            "url" => "lost_event/" . $rr->id_register . '/detail/' . $rn->id_lost_event,
+                            "msg" => "Terjadi Lost Event \"" . $rr->nama_kejadian . "\"",
+                        ];
+                        $ret = $rm->insert($rcm);
+
+                        if ($ret)
+                            $ret = $le->where("id_lost_event", $rn->id_lost_event)->update(["status" => "Aktif"]);
                     }
                 }
             }
@@ -527,5 +610,22 @@ class RiskRegisterAPIController extends BaseResourceController
             return $this->respondCreated($data, 'data created');
         else
             return $this->fail("Failed");
+    }
+
+    public function notif(Request $request): JsonResponse
+    {
+        $respond = DB::select("SELECT a.*, 
+        b.nama as nama_group, c.nama as status_pengajuan 
+        FROM public.risk_msg a
+        left join sys_group b on a.id_group = b.id_group 
+        left join mt_status_pengajuan c on a.id_status_pengajuan = c.id_status_pengajuan
+        where a.deleted_at is null 
+        and exists(select 1 from risk_msg_penerima b where a.id_msg = b.id_msg 
+        and b.id_user = ? 
+        and (b.id_group = ? or b.id_group is null))
+        limit 10
+        ORDER BY id_msg desc", [$request->user()->id_user, session('id_group')]);
+
+        return $this->respond($respond);
     }
 }

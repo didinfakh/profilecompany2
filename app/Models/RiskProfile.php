@@ -542,7 +542,9 @@ class RiskProfile extends BaseModel
         //  DB::enableQueryLog();
         $response = [];
         $sql = "
-        select rp.nama,
+        select rp.id_risk_profile, 
+        rp.id_register,
+        rp.nama,
         rp.jenis,
         msj.nama as risk_owner,
         mrm.skala as skala_inheren,
@@ -1044,8 +1046,8 @@ class RiskProfile extends BaseModel
 
             $blnthn = $blnthn1 = $filter['tahun'] . $filter['bulan'];
 
-            $where .= " and rpma.periode <= ?";
-            $params[] = $blnthn;
+            // $where .= " and rpma.periode <= ?";
+            // $params[] = $blnthn;
 
             $where .= " and to_char(coalesce(rp.tgl_risiko,to_date(?,'YYYYMM')),'YYYYMM') <= ? 
 			and to_char(coalesce(rp.tgl_close,to_date(?,'YYYYMM')),'YYYYMM') >= ?";
