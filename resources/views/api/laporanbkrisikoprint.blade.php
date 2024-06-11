@@ -23,7 +23,7 @@ foreach ($header as $i => $r) {
 sort($retstr);
 // dump($cols);
 // echo "<pre>";
-// var_dump($header_type);
+// var_dump($rows);
 // return;
 ?>
 <style>
@@ -132,9 +132,9 @@ sort($retstr);
 
                             $rowspan = 1;
                             if (!isset($ck[$column])) { ?>
-                                <td style='border:1pt solid #333;' rowspan="<?= $rowspan > 1 ? $rowspan : null ?>">
+                                <!-- <td style='border:1pt solid #333;' rowspan="<?= $rowspan > 1 ? $rowspan : null ?>"> -->
                                     <!-- <i><?= $column ?></i> -->
-                                </td>
+                                <!-- </td> -->
                                 <?php } else {
                                 if ($ic[$column] == $ck[$column])
                                     $rowspan = $cr - $ck[$column];
@@ -146,7 +146,13 @@ sort($retstr);
                                         <td style='border:1pt solid #333; text-align:right;' rowspan="<?= $rowspan > 1 ? $rowspan : null ?>">
                                             <?= rupiah($r[$column]) ?>
                                         </td>
-                                    <?php } else { ?>
+                                    <?php } 
+                                    elseif(!empty($cols_color) && in_array($column . '_warna' , $cols_color) && isset($r[$column . '_warna'])){?>
+                                        <td style='border:1pt solid #333;background-color: <?= $r[$column . '_warna'] ?>;text-align: center;' rowspan="<?= $rowspan > 1 ? $rowspan : null ?>">
+                                            <?= $r[$column] ?>
+                                        </td>
+                                    <?php } 
+                                    else { ?>
                                         <td style='border:1pt solid #333;' rowspan="<?= $rowspan > 1 ? $rowspan : null ?>">
                                             <?= $r[$column] ?>
                                         </td>
