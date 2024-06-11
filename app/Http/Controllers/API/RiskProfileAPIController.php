@@ -232,6 +232,8 @@ class RiskProfileAPIController extends RiskProfileResourceController
 
         $penyebab = $data['penyebab'];
         unset($data['penyebab']);
+        unset($data['kri_new']);
+        unset($data['page']);
         unset($data['id_risiko_induk']);
         $kri_kualitatif = $data['kri_kualitatif'];
         unset($data['kri_kualitatif']);

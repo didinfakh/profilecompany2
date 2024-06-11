@@ -13,7 +13,7 @@ class RiskMsgPenerima extends BaseModel
     public $fillable = [
         'is_read',
         'id_user',
-        'id_msg_penerima',
+        'id_msg',
         'created_by',
         'updated_by',
         'deleted_by',
@@ -32,7 +32,7 @@ class RiskMsgPenerima extends BaseModel
     public array $rules = [
         'is_read' => 'nullable|string|max:1',
         'id_user' => 'required',
-        'id_msg_penerima' => 'required',
+        'id_msg' => 'required',
         'created_at' => 'nullable',
         'updated_at' => 'nullable',
         'created_by' => 'nullable',

@@ -33,17 +33,28 @@ return [
     |
     */
 
+    'to' => 'official@aksima.co.id', //Dev
     'mailers' => [
         'smtp' => [
             'transport' => 'smtp',
-            'host' => env('MAIL_HOST', 'smtp.mailgun.org'),
-            'port' => env('MAIL_PORT', 587),
-            'encryption' => env('MAIL_ENCRYPTION', 'tls'),
-            'username' => env('MAIL_USERNAME'),
-            'password' => env('MAIL_PASSWORD'),
+            'host' => 'mail.erbalab.my.id',
+            'port' => 465,
+            'encryption' => 'ssl',
+            'username' => 'smtp@erbalab.my.id',
+            'password' => 'smtp@erbalab.my.id',
             'timeout' => null,
             'local_domain' => env('MAIL_EHLO_DOMAIN'),
         ],
+        // 'smtp' => [
+        //     'transport' => 'smtp',
+        //     'host' => 'smtp-mail.outlook.com',
+        //     'port' => 587,
+        //     'encryption' => 'tls',
+        //     'username' => 'aksima@hutamakarya.com',
+        //     'password' => '5akBxjD7$J8Uh6',
+        //     'timeout' => null,
+        //     'local_domain' => env('MAIL_EHLO_DOMAIN'),
+        // ],
 
         'ses' => [
             'transport' => 'ses',

@@ -12,6 +12,7 @@ class LostEvent extends BaseModel
     public $primaryKey = 'id_lost_event';
 
     public $fillable = [
+        'id_register',
         'nama_kejadian',
         'identifikasi_kejadian',
         'id_lost_event_kategori',

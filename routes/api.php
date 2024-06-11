@@ -159,7 +159,8 @@ Route::get('risk_register/tree', [App\Http\Controllers\API\RiskRegisterAPIContro
 
 Route::get('risk_register/getdetail/{id}', [App\Http\Controllers\API\RiskRegisterAPIController::class, 'getdetail']);
 Route::post('risk_register/ajukan/{jenis}', [App\Http\Controllers\API\RiskRegisterAPIController::class, 'ajukan']);
-Route::post('risk_register/readmsg', [App\Http\Controllers\API\RiskRegisterAPIController::class, 'readmsg']);
+Route::post('readnotif', [App\Http\Controllers\API\RiskRegisterAPIController::class, 'readmsg']);
+Route::post('notifikasi', [App\Http\Controllers\API\RiskRegisterAPIController::class, 'notif']);
 
 Route::resource('risk_register', App\Http\Controllers\API\RiskRegisterAPIController::class)
     ->except(['create', 'edit']);
@@ -226,7 +227,11 @@ routeRiskRegister('risk_profile', App\Http\Controllers\API\RiskProfileAPIControl
 routeRiskRegister('risk_sasaran', App\Http\Controllers\API\RiskSasaranAPIController::class);
 routeRiskRegister('risk_capacity_limit', App\Http\Controllers\API\RiskCapacityLimitAPIController::class);
 routeRiskRegister('lost_event', App\Http\Controllers\API\LostEventAPIController::class);
+routeRiskRegister('internal_control_testing', App\Http\Controllers\API\InternalControlTestingAPIController::class);
 
+
+// Route::resource('internal_control_testing', App\Http\Controllers\API\InternalControlTestingAPIController::class)
+    // ->except(['create', 'edit']);
 
 // Route::resource('lost_event', App\Http\Controllers\API\LostEventAPIController::class)
 //     ->except(['create', 'edit']);
@@ -405,9 +410,6 @@ Route::resource('mt_assessment_type', App\Http\Controllers\API\MtAssessmentTypeA
     ->except(['create', 'edit']);
 
 Route::resource('mt_kategori_dokumen', App\Http\Controllers\API\MtKategoriDokumenAPIController::class)
-    ->except(['create', 'edit']);
-
-Route::resource('internal_control_testing', App\Http\Controllers\API\InternalControlTestingAPIController::class)
     ->except(['create', 'edit']);
 
 Route::resource('mt_sdm_pegawai', App\Http\Controllers\API\MtSdmPegawaiAPIController::class)
