@@ -430,11 +430,11 @@ class RiskRegisterAPIController extends BaseResourceController
         DB::beginTransaction();
         $url = "";
         if (in_array($id_status_pengajuan, [1, 2, 3, 4, 15])) {
-            $url = "risk_capacity_limit/" . $rr->id_register;
+            $url = "/risk_capacity_limit/" . $rr->id_register;
         } elseif (in_array($id_status_pengajuan, [5, 6, 7, 8, 9, 16]) || !$id_status_pengajuan) {
-            $url = "risk_profile/" . $rr->id_register;
+            $url = "/risk_profile/" . $rr->id_register;
         } else {
-            $url = "risk_profile_realisasi_risiko_residual/" . $rr->id_register;
+            $url = "/risk_profile_realisasi_risiko_residual/" . $rr->id_register;
         }
         $record = [
             "id_register" => $rr->id_register,
@@ -530,7 +530,7 @@ class RiskRegisterAPIController extends BaseResourceController
                                 $rcm = [
                                     "id_kri" => $rk->id_kri,
                                     "id_register" => $rr->id_register,
-                                    "url" => "risk_profile_realisasi_pelaksanaan_perlakuan_risiko_dan_biaya/" . $rr->id_register . "/detail/" . $rmrr->id_risk_profile . "/123/" . $rk->jenis,
+                                    "url" => "/risk_profile_realisasi_pelaksanaan_perlakuan_risiko_dan_biaya/" . $rr->id_register . "/detail/" . $rmrr->id_risk_profile . "/123/" . $rk->jenis,
                                     "msg" => "Realisasi KRI \"" . $rk->nama . "\" periode " . [
                                         1 => "Januari",
                                         2 => "Februari",
@@ -565,7 +565,7 @@ class RiskRegisterAPIController extends BaseResourceController
                         $rcm = [
                             "id_lost_event" => $rn->id_lost_event,
                             "id_register" => $rr->id_register,
-                            "url" => "lost_event/" . $rr->id_register . '/detail/' . $rn->id_lost_event,
+                            "url" => "/lost_event/" . $rr->id_register . '/detail/' . $rn->id_lost_event,
                             "msg" => "Terjadi Lost Event \"" . $rr->nama_kejadian . "\"",
                         ];
                         $ret = $rm->insert($rcm);

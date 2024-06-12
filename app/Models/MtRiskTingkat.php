@@ -13,6 +13,8 @@ class MtRiskTingkat extends BaseModel
     public $fillable = [
         'nama',
         'warna',
+        'kode',
+        'warna',
         'penanganan',
         'jenis',
         'created_by',

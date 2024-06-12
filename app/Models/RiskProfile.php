@@ -458,19 +458,22 @@ class RiskProfile extends BaseModel
     {
         $where = '';
         $params = [];
-        if (isset($filter['bulan']) && $filter['bulan'] != 'null' && isset($filter['tahun']) && $filter['tahun'] != 'null') {
-            $periode_realisasi = $filter['tahun'] . str_replace("0", "", $filter['bulan']);
-            if ($filter['bulan'] <= 3) {
-                $periode = 'q1';
-            } elseif ($filter['bulan'] <= 6) {
-                $periode = 'q2';
-            } elseif ($filter['bulan'] <= 9) {
-                $periode = 'q3';
-            } elseif ($filter['bulan'] <= 12) {
-                $periode = 'q4';
-            }
-            $periode_target = (string)$filter['tahun'] . $periode;
+        if (!(isset($filter['bulan']) && $filter['bulan'] != 'null' && isset($filter['tahun']) && $filter['tahun'] != 'null')) {
+            $filter['tahun'] = date("Y");
+            $filter['bulan'] = date("m");
         }
+
+        $periode_realisasi = $filter['tahun'] . (int)$filter['bulan'];
+        if ($filter['bulan'] <= 3) {
+            $periode = 'q1';
+        } elseif ($filter['bulan'] <= 6) {
+            $periode = 'q2';
+        } elseif ($filter['bulan'] <= 9) {
+            $periode = 'q3';
+        } elseif ($filter['bulan'] <= 12) {
+            $periode = 'q4';
+        }
+        $periode_target = (string)$filter['tahun'] . $periode;
 
         if (isset($filter['jenis']) && $filter['jenis'] != 'null') {
             $where .= ' and rp.jenis = ?';
@@ -639,7 +642,7 @@ class RiskProfile extends BaseModel
         and rp.jenis = mrm2.jenis
         and mrm2.deleted_at is null
 
-        where rp.deleted_at is null and rpts.periode is not null and rprr.periode is not null " . $where . " order by " . $order . " desc  nulls last limit ?";
+        where rp.deleted_at is null /*and rpts.periode is not null and rprr.periode is not null*/ " . $where . " order by " . $order . " desc  nulls last limit ?";
 
         $response = DB::select($sql, $params);
         //  var_dump( DB::getQueryLog());
@@ -652,19 +655,22 @@ class RiskProfile extends BaseModel
     {
         $where = '';
         $params = [];
-        if (isset($filter['bulan']) && $filter['bulan'] != 'null' && isset($filter['tahun']) && $filter['tahun'] != 'null') {
-            $periode_realisasi = $filter['tahun'] . str_replace("0", "", $filter['bulan']);
-            if ($filter['bulan'] <= 3) {
-                $periode = 'q1';
-            } elseif ($filter['bulan'] <= 6) {
-                $periode = 'q2';
-            } elseif ($filter['bulan'] <= 9) {
-                $periode = 'q3';
-            } elseif ($filter['bulan'] <= 12) {
-                $periode = 'q4';
-            }
-            $periode_target = (string)$filter['tahun'] . $periode;
+        if (!(isset($filter['bulan']) && $filter['bulan'] != 'null' && isset($filter['tahun']) && $filter['tahun'] != 'null')) {
+            $filter['tahun'] = date("Y");
+            $filter['bulan'] = date("m");
         }
+
+        $periode_realisasi = $filter['tahun'] . (int)$filter['bulan'];
+        if ($filter['bulan'] <= 3) {
+            $periode = 'q1';
+        } elseif ($filter['bulan'] <= 6) {
+            $periode = 'q2';
+        } elseif ($filter['bulan'] <= 9) {
+            $periode = 'q3';
+        } elseif ($filter['bulan'] <= 12) {
+            $periode = 'q4';
+        }
+        $periode_target = (string)$filter['tahun'] . $periode;
 
         if (isset($filter['jenis']) && $filter['jenis'] != 'null') {
             $where .= ' and rp.jenis = ?';
