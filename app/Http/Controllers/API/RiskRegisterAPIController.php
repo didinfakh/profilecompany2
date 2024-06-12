@@ -614,6 +614,17 @@ class RiskRegisterAPIController extends BaseResourceController
 
     public function notif(Request $request): JsonResponse
     {
+        $total = DB::select(
+            "SELECT count(1) total FROM public.risk_msg a
+        left join sys_group b on a.id_group = b.id_group 
+        left join mt_status_pengajuan c on a.id_status_pengajuan = c.id_status_pengajuan
+        where a.deleted_at is null 
+        and exists(select 1 from risk_msg_penerima b where a.id_msg = b.id_msg 
+        and b.id_user = ? 
+        and (b.id_group = ? or b.id_group is null))",
+            [$request->user()->id_user, session('id_group')]
+        )[0]->total;
+
         $respond = DB::select("SELECT a.*, 
         b.nama as nama_group, c.nama as status_pengajuan 
         FROM public.risk_msg a
@@ -626,6 +637,6 @@ class RiskRegisterAPIController extends BaseResourceController
         limit 10
         ORDER BY id_msg desc", [$request->user()->id_user, session('id_group')]);
 
-        return $this->respond($respond);
+        return $this->respond(["data" => $respond, "total" => $total]);
     }
 }
