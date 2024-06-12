@@ -558,7 +558,16 @@ class RiskProfile extends BaseModel
         mrm2.id_kemungkinan as id_kemungkinan_realisasi,
         mrm.id_tingkat as id_tingkat_inheren,
         mrm1.id_tingkat as id_tingkat_target,
-        mrm2.id_tingkat as id_tingkat_realisasi
+        mrm2.id_tingkat as id_tingkat_realisasi,
+        rp.nilai_dampak_inheren as nilai_dampak_inheren,
+        rpts.nilai_dampak as nilai_dampak_target,
+        rprr.nilai_dampak as nilai_dampak_realisasi,
+        rp.nilai_kemungkinan as nilai_kemungkinan_inheren,
+        rpts.nilai_kemungkinan as nilai_kemungkinan_target,
+        rprr.nilai_kemungkinan as nilai_kemungkinan_realisasi,
+        coalesce(rp.nilai_dampak_inheren,0)*coalesce(rp.nilai_kemungkinan,0)/100 as nilai_eksposur_inheren,
+        coalesce(rpts.nilai_dampak,0)*coalesce(rpts.nilai_kemungkinan,0)/100 as nilai_eksposur_target,
+        coalesce(rprr.nilai_dampak,0)*coalesce(rprr.nilai_kemungkinan,0)/100 as nilai_eksposur_realisasi
         from risk_profile rp
         left join risk_register rr on rp.id_register = rr.id_register and rr.deleted_at is null
         left join mt_sdm_jabatan msj on rr.id_owner = msj.id_jabatan and msj.deleted_at is null
