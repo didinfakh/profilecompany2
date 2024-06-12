@@ -542,11 +542,12 @@ class RiskProfile extends BaseModel
         //  DB::enableQueryLog();
         $response = [];
         $sql = "
-        select rp.id_risk_profile, 
-        rp.id_register,
-        rp.nama,
-        rp.jenis,
+        select rp.*,
         msj.nama as risk_owner,
+        rpts.nilai_dampak as nilai_dampak_target,
+        rpts.nilai_kemungkinan as nilai_kemungkinan_target,
+        rprr.nilai_dampak as nilai_dampak_realisasi,
+        rprr.nilai_kemungkinan as nilai_kemungkinan_realisasi,
         mrm.skala as skala_inheren,
         mrm1.skala as skala_target,
         mrm2.skala as skala_realisasi,
