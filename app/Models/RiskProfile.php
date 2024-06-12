@@ -566,11 +566,14 @@ class RiskProfile extends BaseModel
         rp.nilai_kemungkinan as nilai_kemungkinan_inheren,
         rpts.nilai_kemungkinan as nilai_kemungkinan_target,
         rprr.nilai_kemungkinan as nilai_kemungkinan_realisasi,
+        rp.id_kriteria_dampak,
+        mrkd.nama as nama_kriteria_dampak,
         coalesce(rp.nilai_dampak_inheren,0)*coalesce(rp.nilai_kemungkinan,0)/100 as nilai_eksposur_inheren,
         coalesce(rpts.nilai_dampak,0)*coalesce(rpts.nilai_kemungkinan,0)/100 as nilai_eksposur_target,
         coalesce(rprr.nilai_dampak,0)*coalesce(rprr.nilai_kemungkinan,0)/100 as nilai_eksposur_realisasi
         from risk_profile rp
         left join risk_register rr on rp.id_register = rr.id_register and rr.deleted_at is null
+        left join mt_risk_kriteria_dampak mrkd on rp.id_kriteria_dampak = mrkd.id_kriteria_dampak and mrkd.deleted_at is null
         left join mt_sdm_jabatan msj on rr.id_owner = msj.id_jabatan and msj.deleted_at is null
         left join risk_profile_target_residual rpts on rp.id_risk_profile = rpts.id_risk_profile
         and rpts.periode = " . DB::escape($periode_target) . "  and rpts.deleted_at is null
