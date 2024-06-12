@@ -167,17 +167,26 @@ class RiskProfileAPIController extends RiskProfileResourceController
 
     public function store($id_register = null, Request $request): JsonResponse
     {
-        // if($request->get('jenis') != '-1'){
-        //     unset($this->model->rules['kri_new']);
-        //     unset($this->model->rules['control']);
-        // }
+        if($request->get('jenis') != '-1'){
+            unset($this->model->rules['kri_new']);
+            unset($this->model->rules['control']);
+        }
         if(!empty($request->get('kri_kualitatif')) || !empty($request->get('kri_kuantitatif'))){
             $request->request->add(['kri_new'=>'true']);
         }
         
         // if($request->get('page') == 'analisa_risiko_inheren'){
-        //     $request->validate([])
+        //     // $request->validate([])
         // }
+
+        // if($request->get('page') == 'rencana_perlakuan_risiko'){
+        //     unset($this->model->rules);
+        //     $this->model->rules = [
+        //         'nama' => 'true',
+
+        //     ];
+        // }
+
         $request->validate($this->model->rules);
 
         $this->_beforeDetail($id_register);

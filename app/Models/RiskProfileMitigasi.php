@@ -38,14 +38,16 @@ class RiskProfileMitigasi extends BaseModel
     ];
 
     public array $rules = [
-        'id_risk_profile' => 'nullable',
-        'id_profile_penyebab' => 'nullable',
-        'id_perlakuan' => 'nullable',
-        'nama' => 'nullable|string|max:2000',
-        'output_perlakuan' => 'nullable|string|max:2000',
-        'biaya' => 'nullable|numeric',
-        'id_jenis_program_rkap' => 'nullable',
-        'id_pic' => 'nullable',
+        'id_profile_penyebab' => 'required',
+        'id_perlakuan' => 'required',
+        'nama' => 'required|string|max:2000',
+        'output_perlakuan' => 'required|string|max:2000',
+        'biaya' => 'required|numeric',
+        'id_jenis_program_rkap' => 'required',
+        'id_pic' => 'required',
+        'Timeline' => 'required',
+        'id_jenis_perlakuan' => 'required',
+        'id_jenis_perlakuan.*' => 'required',
         'created_at' => 'nullable',
         'updated_at' => 'nullable',
         'created_by' => 'nullable',
@@ -56,6 +58,7 @@ class RiskProfileMitigasi extends BaseModel
         'updated_by_desc' => 'nullable|string|max:200',
         'deleted_by_desc' => 'nullable|string|max:200'
     ];
+
 
     public function idRiskProfile(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {

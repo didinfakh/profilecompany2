@@ -156,6 +156,55 @@ class RiskProfileMitigasiAPIController extends RisikoResourceController
         // ]);
     }
 
+    public function store($id_risk_profile = null, Request $request): JsonResponse
+    {
+        $timeline = $request->get('timeline');
+        $request->request->add(['Timeline'=>'']);
+        foreach($timeline as $v){
+            if($v != ''){
+                $request->request->add(['Timeline'=>'true']);
+            }
+        }
+        $request->validate($this->model->rules);
+
+        $this->_beforeDetail($id_risk_profile);
+
+        $data = $request->all();
+        $ret = $this->upsert(null, $data);
+        if ($ret)
+            return $this->respondCreated($data, 'data created');
+        else
+            return $this->fail("insert failed");
+    }
+
+    public function update($id_risk_profile = null, $id = null, Request $request): JsonResponse
+    {
+        $timeline = $request->get('timeline');
+        $request->request->add(['Timeline'=>'']);
+        foreach($timeline as $v){
+            if($v != ''){
+                $request->request->add(['Timeline'=>'true']);
+            }
+        }
+        $request->validate($this->model->rules);
+
+        $this->_beforeDetail($id_risk_profile);
+
+        if (!$this->model->where("id_risk_profile", $id_risk_profile)->find($id)) {
+            return $this->failNotFound(sprintf(
+                'item with id %d not found',
+                $id
+            ));
+        }
+
+        $data = $request->all();
+        $ret = $this->upsert($id, $data);
+        if ($ret)
+            return $this->respond($data, 200, 'data updated');
+        else
+            return $this->fail("update failed");
+    }
+
 
 
     protected function upsert($id, &$data)
