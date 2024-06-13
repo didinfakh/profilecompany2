@@ -159,7 +159,7 @@ Route::get('risk_register/tree', [App\Http\Controllers\API\RiskRegisterAPIContro
 
 Route::get('risk_register/getdetail/{id}', [App\Http\Controllers\API\RiskRegisterAPIController::class, 'getdetail']);
 Route::post('risk_register/ajukan/{jenis}', [App\Http\Controllers\API\RiskRegisterAPIController::class, 'ajukan']);
-Route::post('readnotif', [App\Http\Controllers\API\RiskRegisterAPIController::class, 'readmsg']);
+Route::post('readnotif/{id}', [App\Http\Controllers\API\RiskRegisterAPIController::class, 'readmsg']);
 Route::get('notifikasi', [App\Http\Controllers\API\RiskRegisterAPIController::class, 'notif']);
 
 Route::resource('risk_register', App\Http\Controllers\API\RiskRegisterAPIController::class)

@@ -591,7 +591,7 @@ class RiskRegisterAPIController extends BaseResourceController
         }
     }
 
-    public function readmsg(Request $request): JsonResponse
+    public function readmsg($id_msg = null, Request $request): JsonResponse
     {
         /**
          * [
@@ -600,8 +600,8 @@ class RiskRegisterAPIController extends BaseResourceController
          */
         $rmp = new \App\Models\RiskMsgPenerima();
         $data = $request->all();
-        $id_msg_penerima = $rmp->where("id_msg", $data['id_msg'])
-            ->where("id_user", $data['id_user'])
+        $id_msg_penerima = $rmp->where("id_msg", $id_msg)
+            ->where("id_user", $request->user()->id_user)
             ->first()->id_msg_penerima;
 
         $ret = $rmp->update($id_msg_penerima, ["is_read" => 1]);
@@ -615,26 +615,26 @@ class RiskRegisterAPIController extends BaseResourceController
     public function notif(Request $request): JsonResponse
     {
         $total = DB::select(
-            "SELECT count(1) total FROM public.risk_msg a
-        left join sys_group b on a.id_group = b.id_group 
-        left join mt_status_pengajuan c on a.id_status_pengajuan = c.id_status_pengajuan
+            "SELECT count(1) total 
+        FROM public.risk_msg a
+        left join sys_group b on a.id_group = b.id_group and b.deleted_at is null 
+        left join mt_status_pengajuan c on a.id_status_pengajuan = c.id_status_pengajuan and c.deleted_at is null
+        join risk_msg_penerima d on a.id_msg = d.id_msg and d.deleted_at is null
         where a.deleted_at is null 
-        and exists(select 1 from risk_msg_penerima b where a.id_msg = b.id_msg 
-        and b.id_user = ? 
-        and (b.is_read is null or b.is_read = '0')
-        and (b.id_group = ? or b.id_group is null))",
+        and d.id_user = ? 
+        and (d.id_group = ? or d.id_group is null)",
             [$request->user()->id_user, session('id_group')]
         )[0]->total;
 
         $respond = DB::select("SELECT a.*, 
-        b.nama as nama_group, c.nama as status_pengajuan 
+        b.nama as nama_group, c.nama as status_pengajuan, d.is_read 
         FROM public.risk_msg a
-        left join sys_group b on a.id_group = b.id_group 
-        left join mt_status_pengajuan c on a.id_status_pengajuan = c.id_status_pengajuan
+        left join sys_group b on a.id_group = b.id_group and b.deleted_at is null 
+        left join mt_status_pengajuan c on a.id_status_pengajuan = c.id_status_pengajuan and c.deleted_at is null
+        join risk_msg_penerima d on a.id_msg = d.id_msg and d.deleted_at is null
         where a.deleted_at is null 
-        and exists(select 1 from risk_msg_penerima b where a.id_msg = b.id_msg 
-        and b.id_user = ? 
-        and (b.id_group = ? or b.id_group is null))
+        and d.id_user = ? 
+        and (d.id_group = ? or d.id_group is null)
         ORDER BY id_msg desc
         limit 10
         ", [$request->user()->id_user, session('id_group')]);
