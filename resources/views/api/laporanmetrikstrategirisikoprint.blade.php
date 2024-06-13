@@ -7,11 +7,10 @@
         font-family:aptos;
     }
 </style>
-<div>
 <h4 style="text-align: center; margin-bottom: 0px;">Metrik Strategi Risiko</h5>
 <h4 style="text-align: center; margin-top: 0px;">Tahun&nbsp;<?= $tahun?></h4>
-</div>
 <table>
+
     <thead>
         <tr>
             <th style='background-color:blue;border:1pt solid #333;' colspan="2">Nilai Kapasitas Risiko Perusahaan</th>
@@ -30,8 +29,10 @@
             </tr>
         <?php } ?>
     </tbody>
-    <tr><td>&nbsp;</td></tr>
-    <tr><td>&nbsp;</td></tr>
+</table>
+<tr><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td></tr>
+<table>
     <thead>
         <tr>
             <th style='background-color:blue;border:1pt solid #333;'>No</th>
