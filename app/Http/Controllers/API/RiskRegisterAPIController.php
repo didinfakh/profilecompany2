@@ -621,6 +621,7 @@ class RiskRegisterAPIController extends BaseResourceController
         where a.deleted_at is null 
         and exists(select 1 from risk_msg_penerima b where a.id_msg = b.id_msg 
         and b.id_user = ? 
+        and (b.is_read is null or b.is_read = '0')
         and (b.id_group = ? or b.id_group is null))",
             [$request->user()->id_user, session('id_group')]
         )[0]->total;
@@ -634,8 +635,9 @@ class RiskRegisterAPIController extends BaseResourceController
         and exists(select 1 from risk_msg_penerima b where a.id_msg = b.id_msg 
         and b.id_user = ? 
         and (b.id_group = ? or b.id_group is null))
+        ORDER BY id_msg desc
         limit 10
-        ORDER BY id_msg desc", [$request->user()->id_user, session('id_group')]);
+        ", [$request->user()->id_user, session('id_group')]);
 
         return $this->respond(["data" => $respond, "total" => $total]);
     }
