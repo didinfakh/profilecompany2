@@ -599,7 +599,6 @@ class RiskRegisterAPIController extends BaseResourceController
          * ]
          */
         $rmp = new \App\Models\RiskMsgPenerima();
-        $data = $request->all();
         $id_msg_penerima = $rmp->where("id_msg", $id_msg)
             ->where("id_user", $request->user()->id_user)
             ->first()->id_msg_penerima;
@@ -607,7 +606,7 @@ class RiskRegisterAPIController extends BaseResourceController
         $ret = $rmp->update($id_msg_penerima, ["is_read" => 1]);
 
         if ($ret)
-            return $this->respondCreated($data, 'data created');
+            return $this->respondCreated(["is_read" => 1], 'data created');
         else
             return $this->fail("Failed");
     }
