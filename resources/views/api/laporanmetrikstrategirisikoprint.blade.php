@@ -13,6 +13,7 @@
         <h4 style="text-align: center; margin-top: 0px;">Tahun&nbsp;<?= $tahun ?></h4>
 </div>
 <table>
+
     <thead>
         <tr>
             <th style='background-color:#e0ecff;border:1pt solid #333;' colspan="2">Nilai Kapasitas Risiko Perusahaan</th>
