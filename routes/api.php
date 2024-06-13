@@ -231,7 +231,7 @@ routeRiskRegister('internal_control_testing', App\Http\Controllers\API\InternalC
 
 
 // Route::resource('internal_control_testing', App\Http\Controllers\API\InternalControlTestingAPIController::class)
-    // ->except(['create', 'edit']);
+// ->except(['create', 'edit']);
 
 // Route::resource('lost_event', App\Http\Controllers\API\LostEventAPIController::class)
 //     ->except(['create', 'edit']);
@@ -423,6 +423,8 @@ Route::resource('sys_user_group', App\Http\Controllers\API\SysUserGroupAPIContro
 
 Route::resource('risk_msg', App\Http\Controllers\API\RiskMsgAPIController::class)
     ->except(['create', 'edit']);
+
+Route::get('risk_task', [App\Http\Controllers\API\RiskMsgAPIController::class, 'index_task']);
 
 Route::resource('risk_msg_penerima', App\Http\Controllers\API\RiskMsgPenerimaAPIController::class)
     ->except(['create', 'edit']);
