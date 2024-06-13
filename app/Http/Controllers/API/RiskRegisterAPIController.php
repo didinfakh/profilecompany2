@@ -430,11 +430,11 @@ class RiskRegisterAPIController extends BaseResourceController
         DB::beginTransaction();
         $url = "";
         if (in_array($id_status_pengajuan, [1, 2, 3, 4, 15])) {
-            $url = "risk_capacity_limit/" . $rr->id_register;
+            $url = "/risk_capacity_limit/" . $rr->id_register;
         } elseif (in_array($id_status_pengajuan, [5, 6, 7, 8, 9, 16]) || !$id_status_pengajuan) {
-            $url = "risk_profile/" . $rr->id_register;
+            $url = "/risk_profile/" . $rr->id_register;
         } else {
-            $url = "risk_profile_realisasi_risiko_residual/" . $rr->id_register;
+            $url = "/risk_profile_realisasi_risiko_residual/" . $rr->id_register;
         }
         $record = [
             "id_register" => $rr->id_register,
@@ -530,7 +530,7 @@ class RiskRegisterAPIController extends BaseResourceController
                                 $rcm = [
                                     "id_kri" => $rk->id_kri,
                                     "id_register" => $rr->id_register,
-                                    "url" => "risk_profile_realisasi_pelaksanaan_perlakuan_risiko_dan_biaya/" . $rr->id_register . "/detail/" . $rmrr->id_risk_profile . "/123/" . $rk->jenis,
+                                    "url" => "/risk_profile_realisasi_pelaksanaan_perlakuan_risiko_dan_biaya/" . $rr->id_register . "/detail/" . $rmrr->id_risk_profile . "/123/" . $rk->jenis,
                                     "msg" => "Realisasi KRI \"" . $rk->nama . "\" periode " . [
                                         1 => "Januari",
                                         2 => "Februari",
@@ -565,7 +565,7 @@ class RiskRegisterAPIController extends BaseResourceController
                         $rcm = [
                             "id_lost_event" => $rn->id_lost_event,
                             "id_register" => $rr->id_register,
-                            "url" => "lost_event/" . $rr->id_register . '/detail/' . $rn->id_lost_event,
+                            "url" => "/lost_event/" . $rr->id_register . '/detail/' . $rn->id_lost_event,
                             "msg" => "Terjadi Lost Event \"" . $rr->nama_kejadian . "\"",
                         ];
                         $ret = $rm->insert($rcm);
@@ -591,7 +591,7 @@ class RiskRegisterAPIController extends BaseResourceController
         }
     }
 
-    public function readmsg(Request $request): JsonResponse
+    public function readmsg($id_msg = null, Request $request): JsonResponse
     {
         /**
          * [
@@ -600,8 +600,8 @@ class RiskRegisterAPIController extends BaseResourceController
          */
         $rmp = new \App\Models\RiskMsgPenerima();
         $data = $request->all();
-        $id_msg_penerima = $rmp->where("id_msg", $data['id_msg'])
-            ->where("id_user", $data['id_user'])
+        $id_msg_penerima = $rmp->where("id_msg", $id_msg)
+            ->where("id_user", $request->user()->id_user)
             ->first()->id_msg_penerima;
 
         $ret = $rmp->update($id_msg_penerima, ["is_read" => 1]);
@@ -614,18 +614,31 @@ class RiskRegisterAPIController extends BaseResourceController
 
     public function notif(Request $request): JsonResponse
     {
-        $respond = DB::select("SELECT a.*, 
-        b.nama as nama_group, c.nama as status_pengajuan 
+        $total = DB::select(
+            "SELECT count(1) total 
         FROM public.risk_msg a
-        left join sys_group b on a.id_group = b.id_group 
-        left join mt_status_pengajuan c on a.id_status_pengajuan = c.id_status_pengajuan
+        left join sys_group b on a.id_group = b.id_group and b.deleted_at is null 
+        left join mt_status_pengajuan c on a.id_status_pengajuan = c.id_status_pengajuan and c.deleted_at is null
+        join risk_msg_penerima d on a.id_msg = d.id_msg and d.deleted_at is null
         where a.deleted_at is null 
-        and exists(select 1 from risk_msg_penerima b where a.id_msg = b.id_msg 
-        and b.id_user = ? 
-        and (b.id_group = ? or b.id_group is null))
-        limit 10
-        ORDER BY id_msg desc", [$request->user()->id_user, session('id_group')]);
+        and d.id_user = ? 
+        and (d.id_group = ? or d.id_group is null)",
+            [$request->user()->id_user, session('id_group')]
+        )[0]->total;
 
-        return $this->respond($respond);
+        $respond = DB::select("SELECT a.*, 
+        b.nama as nama_group, c.nama as status_pengajuan, d.is_read 
+        FROM public.risk_msg a
+        left join sys_group b on a.id_group = b.id_group and b.deleted_at is null 
+        left join mt_status_pengajuan c on a.id_status_pengajuan = c.id_status_pengajuan and c.deleted_at is null
+        join risk_msg_penerima d on a.id_msg = d.id_msg and d.deleted_at is null
+        where a.deleted_at is null 
+        and d.id_user = ? 
+        and (d.id_group = ? or d.id_group is null)
+        ORDER BY id_msg desc
+        limit 10
+        ", [$request->user()->id_user, session('id_group')]);
+
+        return $this->respond(["data" => $respond, "total" => $total]);
     }
 }

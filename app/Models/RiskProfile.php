@@ -397,7 +397,7 @@ class RiskProfile extends BaseModel
                     $r->{"res_skala_dampak" . $periode . "_warna"} = $r1->skala_dampak_warna;
                     $r->{"res_nilai_probabilitas" . $periode} = $r1->nilai_kemungkinan;
                     $r->{"res_skala_probabilitas" . $periode} = $r1->skala_probabilitas;
-                    $r->{"res_skala_probabilitas" .$periode . "_warna"} = $r1->skala_probabilitas_warna;
+                    $r->{"res_skala_probabilitas" . $periode . "_warna"} = $r1->skala_probabilitas_warna;
                     $r->{"res_eksposur_risiko" . $periode} = $r1->eksposur_risiko;
                     $r->{"res_skala_risiko" . $periode} = $r1->skala_risiko;
                     $r->{"res_level_risiko" . $periode} = $r1->level_risiko;
@@ -458,19 +458,22 @@ class RiskProfile extends BaseModel
     {
         $where = '';
         $params = [];
-        if (isset($filter['bulan']) && $filter['bulan'] != 'null' && isset($filter['tahun']) && $filter['tahun'] != 'null') {
-            $periode_realisasi = $filter['tahun'] . str_replace("0","",$filter['bulan']);
-            if ($filter['bulan'] <= 3) {
-                $periode = 'q1';
-            } elseif ($filter['bulan'] <= 6) {
-                $periode = 'q2';
-            } elseif ($filter['bulan'] <= 9) {
-                $periode = 'q3';
-            } elseif ($filter['bulan'] <= 12) {
-                $periode = 'q4';
-            }
-            $periode_target = (string)$filter['tahun'] . $periode;
+        if (!(isset($filter['bulan']) && $filter['bulan'] != 'null' && isset($filter['tahun']) && $filter['tahun'] != 'null')) {
+            $filter['tahun'] = date("Y");
+            $filter['bulan'] = date("m");
         }
+
+        $periode_realisasi = $filter['tahun'] . (int)$filter['bulan'];
+        if ($filter['bulan'] <= 3) {
+            $periode = 'q1';
+        } elseif ($filter['bulan'] <= 6) {
+            $periode = 'q2';
+        } elseif ($filter['bulan'] <= 9) {
+            $periode = 'q3';
+        } elseif ($filter['bulan'] <= 12) {
+            $periode = 'q4';
+        }
+        $periode_target = (string)$filter['tahun'] . $periode;
 
         if (isset($filter['jenis']) && $filter['jenis'] != 'null') {
             $where .= ' and rp.jenis = ?';
@@ -639,7 +642,7 @@ class RiskProfile extends BaseModel
         and rp.jenis = mrm2.jenis
         and mrm2.deleted_at is null
 
-        where rp.deleted_at is null and rpts.periode is not null and rprr.periode is not null " . $where . " order by " . $order . " desc  nulls last limit ?";
+        where rp.deleted_at is null /*and rpts.periode is not null and rprr.periode is not null*/ " . $where . " order by " . $order . " desc  nulls last limit ?";
 
         $response = DB::select($sql, $params);
         //  var_dump( DB::getQueryLog());
@@ -652,19 +655,22 @@ class RiskProfile extends BaseModel
     {
         $where = '';
         $params = [];
-        if (isset($filter['bulan']) && $filter['bulan'] != 'null' && isset($filter['tahun']) && $filter['tahun'] != 'null') {
-            $periode_realisasi = $filter['tahun'] . str_replace("0","",$filter['bulan']);
-            if ($filter['bulan'] <= 3) {
-                $periode = 'q1';
-            } elseif ($filter['bulan'] <= 6) {
-                $periode = 'q2';
-            } elseif ($filter['bulan'] <= 9) {
-                $periode = 'q3';
-            } elseif ($filter['bulan'] <= 12) {
-                $periode = 'q4';
-            }
-            $periode_target = (string)$filter['tahun'] . $periode;
+        if (!(isset($filter['bulan']) && $filter['bulan'] != 'null' && isset($filter['tahun']) && $filter['tahun'] != 'null')) {
+            $filter['tahun'] = date("Y");
+            $filter['bulan'] = date("m");
         }
+
+        $periode_realisasi = $filter['tahun'] . (int)$filter['bulan'];
+        if ($filter['bulan'] <= 3) {
+            $periode = 'q1';
+        } elseif ($filter['bulan'] <= 6) {
+            $periode = 'q2';
+        } elseif ($filter['bulan'] <= 9) {
+            $periode = 'q3';
+        } elseif ($filter['bulan'] <= 12) {
+            $periode = 'q4';
+        }
+        $periode_target = (string)$filter['tahun'] . $periode;
 
         if (isset($filter['jenis']) && $filter['jenis'] != 'null') {
             $where .= ' and rp.jenis = ?';
@@ -994,15 +1000,18 @@ class RiskProfile extends BaseModel
             $params[] = session('id_kelompok_bisnis');
         }
 
-        $select = "mskb.nama as nama_kelompok_bisnis,";
-        $group = "mskb.id_kelompok_bisnis,";
+        // $select = "mskb.nama as nama_kelompok_bisnis,";
+        $group = "id_kelompok_bisnis";
+        if (isset($filter['group']) && $filter['group'] != 'null') {
+            $group = str_replace(["'", '"'], "", $filter['group']);
+        }
         if (isset($filter['id_kelompok_bisnis']) && $filter['id_kelompok_bisnis'] != 'null') {
             $where .= " and rr.id_kelompok_bisnis = ?";
             $params[] = $filter['id_kelompok_bisnis'];
 
 
-            $select = "mrt.nama as nama_taksonomi,";
-            $group = "mrt.id_taksonomi,";
+            // $select = "mrt.nama as nama_taksonomi,";
+            // $group = "mrt.id_taksonomi,";
         }
 
         if (isset($filter['id_assessment_type']) && $filter['id_assessment_type'] != 'null') {
@@ -1011,7 +1020,7 @@ class RiskProfile extends BaseModel
         }
 
         $sql = "select 
-        $select
+        $group,
         mrmi.id_tingkat id_tingkat_inheren, 
         mrmt.id_tingkat id_tingkat_target, 
         mrmr.id_tingkat id_tingkat_real, 
@@ -1037,16 +1046,32 @@ class RiskProfile extends BaseModel
         and rpts.id_kemungkinan = mrmr.id_kemungkinan 
         and mrmr.deleted_at is null 
         and mrmr.jenis = rp.jenis
-        left join mt_sdm_kelompok_bisnis mskb on rr.id_kelompok_bisnis = mskb.id_kelompok_bisnis and mskb.deleted_at is null
-        left join mt_risk_taksonomi mrt on rp.id_taksonomi = mrt.id_taksonomi and mrt.deleted_at is null
         where 1=1 $where
-        group by $group 
+        group by $group, 
         mrmi.id_tingkat, 
         mrmt.id_tingkat, 
         mrmr.id_tingkat";
         // echo ($sql);
         // print_r($params);
         $rows = DB::select($sql, $params);
+        $tablearr = [];
+        $tablearr["id_taksonomi"] = "mt_risk_taksonomi";
+        $tablearr["id_sasaran"] = "mt_risk_sasaran";
+        $tablearr["id_jenis_risiko"] = "mt_risk_jenis_risiko";
+        $tablearr["id_unit"] = "mt_sdm_unit";
+        $tablearr["id_kelompok_bisnis"] = "mt_sdm_kelompok_bisnis";
+        $tablearr["id_assessment_type"] = "mt_assessment_type";
+        $tablearr["id_kriteria_dampak"] = "mt_risk_kriteria_dampak";
+        $tablearr["id_risk_agregasi_risiko"] = "mt_risk_agregasi_risiko";
+        foreach ($rows as &$r) {
+            if ($group == "is_kuantitatif") {
+                $r->nama_group = [1 => "Kuantitatis", 0 => "Kualitatif"];
+            } else {
+                $rs = DB::select("select nama from $tablearr[$group] where $group = ?", [$r->{$group}]);
+                if ($rs)
+                    $r->nama_group = $rs[0]->nama;
+            }
+        }
 
         return $rows;
     }
