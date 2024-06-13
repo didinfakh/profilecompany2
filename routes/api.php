@@ -162,6 +162,8 @@ Route::post('risk_register/ajukan/{jenis}', [App\Http\Controllers\API\RiskRegist
 Route::post('readnotif/{id}', [App\Http\Controllers\API\RiskRegisterAPIController::class, 'readmsg']);
 Route::get('notifikasi', [App\Http\Controllers\API\RiskRegisterAPIController::class, 'notif']);
 
+Route::get('search', [App\Http\Controllers\API\RiskProfileAPIController::class, 'search']);
+
 Route::resource('risk_register', App\Http\Controllers\API\RiskRegisterAPIController::class)
     ->except(['create', 'edit']);
 

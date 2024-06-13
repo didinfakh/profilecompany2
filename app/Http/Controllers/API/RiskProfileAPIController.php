@@ -97,8 +97,15 @@ class RiskProfileAPIController extends RiskProfileResourceController
             $rmt[$rm->id_kemungkinan][$rm->id_dampak] = $rm;
         }
 
+        $rrm = new \App\Models\RiskRegister();
+
         $items = [];
         foreach ($data->items() as $r) {
+            $rrg = $rrm->find($r->id_register);
+            $r->nama_risk_register = $rrg->nama;
+            $r->id_kelompok_bisnis = $rrg->id_kelompok_bisnis;
+            $r->id_unit = $rrg->id_unit;
+
             $tahun = date("Y", strtotime($r->tgl_risiko));
             $r->eksposur_risiko = $r->nilai_dampak_inheren * $r->nilai_kemungkinan / 100;
             if ($r->id_kemungkinan_inheren && $r->id_dampak_inheren)
@@ -159,6 +166,139 @@ class RiskProfileAPIController extends RiskProfileResourceController
         // ]);
     }
 
+    public function search(Request $request): JsonResponse
+    {
+        $search = $request->get('q');
+        if ($search) {
+            if (!empty($search['nama']))
+                $search['nama'] = "%" . $search['nama'] . "%";
+            if (!empty($search['kode']))
+                $search['kode'] = "%" . $search['kode'] . "%";
+        }
+        // $filter = $request->get('q');
+        $page = $request->get('page') ?? 1;
+        $limit = $request->get('pagesize') ?? $this->limit;
+        $db = $this->model->search($search);
+
+        if (empty(session('access')["dashboard"]["view_all"])) {
+            $db = $db->whereRaw("exists (
+                select 1 from risk_register 
+                where risk_register.id_register = risk_profile.id_register 
+                and risk_register.id_unit = ? 
+                and risk_register.id_kelompok_bisnis = ?)", [
+                session('id_unit'),
+                session('id_kelompok_bisnis')
+            ]);
+        }
+
+        $orderby = $request->get('order');
+        if ($orderby) {
+            $orderby = explode(",", $orderby);
+            if (!is_array($orderby))
+                $orderby = array($orderby);
+
+            foreach ($orderby as $v) {
+                $exp = explode(" ", $v);
+                $column = $exp[0];
+                if ($exp[1])
+                    $sc = $exp[1];
+
+                $db = $db->orderBy($column, $sc);
+            }
+        } else if ($this->model->orderDefault) {
+            $db = $db->orderBy($this->model->orderDefault);
+        } else if ($this->model->primaryKey) {
+            $db = $db->orderBy($this->model->primaryKey);
+        }
+
+        // if($filter)
+        // 	$db = $db->where($filter);
+        $data = $db->paginate($limit);
+        // $pagination = [
+        // 	'currentPage' => $this->model->pager->getCurrentPage(),
+        // 	'totalPage' => $this->model->pager->getPageCount(),
+        // ];
+        // dd($data->items);
+        $mts = DB::select("select a.id_kemungkinan, a.id_dampak, a.skala, b.nama, b.warna, b.penanganan 
+        from mt_risk_matrix a 
+        join mt_risk_tingkat b on a.id_tingkat = b.id_tingkat
+        where a.deleted_at is null 
+        and b.deleted_at is null 
+        and a.jenis = ?", [$search['jenis']]);
+        $rmt = [];
+        foreach ($mts as $rm) {
+            $rmt[$rm->id_kemungkinan][$rm->id_dampak] = $rm;
+        }
+
+        $items = [];
+        foreach ($data->items() as $r) {
+
+            $r->eksposur_risiko = $r->nilai_dampak_inheren * $r->nilai_kemungkinan / 100;
+            if ($r->id_kemungkinan_inheren && $r->id_dampak_inheren)
+                $r->level_inheren = $rmt[$r->id_kemungkinan_inheren][$r->id_dampak_inheren];
+
+            $rows1 = DB::select("select rptr.*, 
+            coalesce(rptr.nilai_dampak,0)*coalesce(rptr.nilai_kemungkinan,0)/100 as eksposur_risiko
+            from risk_profile_target_residual rptr 
+            where rptr.deleted_at is null 
+            and rptr.id_risk_profile = ?", [$r->id_risk_profile]);
+            foreach ($rows1 as $r1) {
+                $periode = str_replace(date("Y", strtotime($r->tgl_risiko)), "", $r1->periode);
+                $r->{"res_eksposur_risiko" . $periode} = $r1->eksposur_risiko;
+                $r->{"res_level" . $periode} = $rmt[$r1->id_kemungkinan][$r1->id_dampak];
+
+                $r->{"res_eksposur_risiko"} = $r1->eksposur_risiko;
+                $r->{"res_level"} = $rmt[$r1->id_kemungkinan][$r1->id_dampak];
+            }
+
+
+            $rows1 = DB::select("select rrtr.*, 
+            coalesce(rrtr.nilai_dampak,0)*coalesce(rrtr.nilai_kemungkinan,0)/100 as eksposur_risiko
+            from risk_profile_realisasi_residual rrtr 
+            where rrtr.deleted_at is null 
+            and rrtr.id_risk_profile = ?", [$r->id_risk_profile]);
+            foreach ($rows1 as $r1) {
+                $periode = str_replace(date("Y", strtotime($r->tgl_risiko)), "", $r1->periode);
+                if (in_array($periode, ['1', '2', '3']))
+                    $periode = 1;
+
+                if (in_array($periode, ['4', '5', '6']))
+                    $periode = 2;
+
+                if (in_array($periode, ['7', '8', '9']))
+                    $periode = 3;
+
+                if (in_array($periode, ['10', '11', '12']))
+                    $periode = 4;
+
+                $r->{"real_eksposur_risikoq" . $periode} = $r1->eksposur_risiko;
+                if ($r1->id_kemungkinan && $r1->id_dampak)
+                    $r->{"real_levelq" . $periode} = $rmt[$r1->id_kemungkinan][$r1->id_dampak];
+
+                $r->{"real_eksposur_risikoq"} = $r1->eksposur_risiko;
+                if ($r1->id_kemungkinan && $r1->id_dampak)
+                    $r->{"real_levelq"} = $rmt[$r1->id_kemungkinan][$r1->id_dampak];
+            }
+
+            $items[] = $r;
+        }
+
+        return $this->respond([
+            'page' => $data->currentPage(),
+            'page_size' => $data->perPage(),
+            'data' => $items,
+            'total_page' => ceil($data->total() / $limit),
+            'total_records' => $data->total()
+        ]);
+        // return $this->respond([
+        //     'page' => $this->model->pager->getCurrentPage(),
+        //     'page_size' => $limit,
+        //     'data' => $data,
+        //     'total_page' => $this->model->pager->getPageCount(),
+        //     'total_records' => $this->model->pager->getDataCount()
+        // ]);
+    }
+
     protected function _beforeDetail($id_register = null)
     {
         $rrm = new \App\Models\RiskRegister();
@@ -167,14 +307,14 @@ class RiskProfileAPIController extends RiskProfileResourceController
 
     public function store($id_register = null, Request $request): JsonResponse
     {
-        if($request->get('jenis') != '-1'){
+        if ($request->get('jenis') != '-1') {
             unset($this->model->rules['kri_new']);
             unset($this->model->rules['control']);
         }
-        if(!empty($request->get('kri_kualitatif')) || !empty($request->get('kri_kuantitatif'))){
-            $request->request->add(['kri_new'=>'true']);
+        if (!empty($request->get('kri_kualitatif')) || !empty($request->get('kri_kuantitatif'))) {
+            $request->request->add(['kri_new' => 'true']);
         }
-        
+
         // if($request->get('page') == 'analisa_risiko_inheren'){
         //     // $request->validate([])
         // }
@@ -201,8 +341,8 @@ class RiskProfileAPIController extends RiskProfileResourceController
 
     public function update($id_register = null, $id = null, Request $request): JsonResponse
     {
-        if(!empty($request->get('kri_kualitatif')) || !empty($request->get('kri_kuantitatif'))){
-            $request->request->add(['kri_new'=>'true']);
+        if (!empty($request->get('kri_kualitatif')) || !empty($request->get('kri_kuantitatif'))) {
+            $request->request->add(['kri_new' => 'true']);
         }
         $request->validate($this->model->rules);
 
