@@ -668,6 +668,7 @@ class RiskRegisterAPIController extends BaseResourceController
         where (a.id_kri_hasil is null and a.id_lost_event is null) 
         and a.deleted_at is null 
         and d.id_user = ? 
+        and is_read = '0'
         and (d.id_group = ? or d.id_group is null)",
             [$request->user()->id_user, session('id_group')]
         )[0]->total;
@@ -679,6 +680,7 @@ class RiskRegisterAPIController extends BaseResourceController
         where (a.id_kri_hasil is not null or a.id_lost_event is not null) 
         and a.deleted_at is null 
         and d.id_user = ? 
+        and is_read = '0'
         and (d.id_group = ? or d.id_group is null)",
             [$request->user()->id_user, session('id_group')]
         )[0]->total;
