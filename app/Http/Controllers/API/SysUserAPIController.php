@@ -5,7 +5,9 @@ use App\Http\Controllers\BaseResourceController;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+
 
 /**
  * Class SysUserAPIController
@@ -47,7 +49,8 @@ class SysUserAPIController extends BaseResourceController
 
     public function update($id = null, Request $request): JsonResponse
     {
-
+        $arr_group = $request->get('dataAll');
+        $request->request->remove('dataAll');
         $this->model->rules['password'] = 'string|max:255';
         $request->validate($this->model->rules);
 
@@ -65,10 +68,22 @@ class SysUserAPIController extends BaseResourceController
         $updateData['password'] = Hash::make($request->password);}
 
         $ret = $this->model->update($id, $updateData, $data_before);
-        // if (!$ret) {
-        //     return $this->fail($this->model->errors());
-        // }
+
+        DB::beginTransaction();
+        $ret = DB::table('sys_user_group')->where('id_user','=',$id)->delete();
+        if($ret){
+            foreach($arr_group as $v){
+                $v['id_user'] = $id;
+                $ret = DB::table('sys_user_group')->insert($v);
+            }
+            if($ret){
+                DB::commit();
+            }else{
+                DB::rollBack();
+            }
+        }
+
         $updateData['id_user'] = $id;
-        return $this->respond($updateData, 200, 'data updated');
+        return $this->respond($arr_group[0]['id_group'], 200, 'data updated');
     }
 }
