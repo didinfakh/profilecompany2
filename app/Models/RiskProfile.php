@@ -1005,6 +1005,9 @@ class RiskProfile extends BaseModel
         if (isset($filter['group']) && $filter['group'] != 'null') {
             $group = str_replace(["'", '"'], "", $filter['group']);
         }
+        if ($group == 'id_kategori_dampak')
+            $group = "is_kuantitatif";
+
         if (isset($filter['id_kelompok_bisnis']) && $filter['id_kelompok_bisnis'] != 'null') {
             $where .= " and rr.id_kelompok_bisnis = ?";
             $params[] = $filter['id_kelompok_bisnis'];
@@ -1065,7 +1068,8 @@ class RiskProfile extends BaseModel
         $tablearr["id_risk_agregasi_risiko"] = "mt_risk_agregasi_risiko";
         foreach ($rows as &$r) {
             if ($group == "is_kuantitatif") {
-                $r->nama_group = [1 => "Kuantitatis", 0 => "Kualitatif"];
+                $r->id_kategori_dampak = $r->is_kuantitatif;
+                $r->nama_group = [1 => "Kuantitatif", 0 => "Kualitatif"][$r->is_kuantitatif];
             } else {
                 $rs = DB::select("select nama from $tablearr[$group] where $group = ?", [$r->{$group}]);
                 if ($rs)
@@ -1162,7 +1166,7 @@ class RiskProfile extends BaseModel
         mrm1.id_tingkat as id_tingkat_realisasi,
         case when mrm.skala <= mrm1.skala then 'Efektif' else 'Tidak Efektif' end as efektifitas
         from risk_profile_target_residual rptr
-        join risk_profile_realisasi_residual rprr on rptr.id_risk_profile = rprr.id_risk_profile 
+        left join risk_profile_realisasi_residual rprr on rptr.id_risk_profile = rprr.id_risk_profile 
         and substring(rptr.periode from 1 for 4)||((replace(rptr.periode,substring(rptr.periode from 1 for 4)||'q','')::int)*3)::text >= rprr.periode
         join risk_profile rp on rprr.id_risk_profile = rp.id_risk_profile and rp.deleted_at is null
         join risk_register rr on rr.id_register = rp.id_register and rr.deleted_at is null
@@ -1261,25 +1265,7 @@ class RiskProfile extends BaseModel
             $params[] = session('id_kelompok_bisnis');
         }
 
-        $sql = "select 
-        rp.*,
-        rpk.id_kri,
-        rpk.nama as nama_kri,
-        rpk.satuan,
-        rpk.target_mulai,
-        rpk.target_sampai,
-        rpk.keterangan,
-        rpk.polaritas,
-        rpk.batas_bawah,
-        rpk.batas_atas,
-        rpk.is_kuantitatif,
-        rpk.aman,
-        rpk.hati_hati,
-        rpk.bahaya,
-        mrmi.id_tingkat id_tingkat_inheren, 
-        mrmt.id_tingkat id_tingkat_target, 
-        mrmr.id_tingkat id_tingkat_real
-        from
+        $from = "from
         risk_profile rp 
         join risk_register rr on rp.id_register = rr.id_register and rr.deleted_at is null
         left join risk_profile_target_residual rpts on rp.id_risk_profile = rpts.id_risk_profile
@@ -1300,8 +1286,28 @@ class RiskProfile extends BaseModel
         and mrmr.jenis = rp.jenis
         left join mt_sdm_kelompok_bisnis mskb on rr.id_kelompok_bisnis = mskb.id_kelompok_bisnis and mskb.deleted_at is null
         left join mt_risk_taksonomi mrt on rp.id_taksonomi = mrt.id_taksonomi and mrt.deleted_at is null 
-        left join risk_profile_kri rpk on rp.id_risk_profile = rpk.id_risk_profile and rpk.deleted_at is null
+        join risk_profile_kri rpk on rp.id_risk_profile = rpk.id_risk_profile and rpk.deleted_at is null and rpk.nama <> 'null'
         where 1=1 $where";
+
+        $sql = "select 
+        rp.*,
+        rpk.id_kri,
+        rpk.nama as nama_kri,
+        rpk.satuan,
+        rpk.target_mulai,
+        rpk.target_sampai,
+        rpk.keterangan,
+        rpk.polaritas,
+        rpk.batas_bawah,
+        rpk.batas_atas,
+        rpk.is_kuantitatif,
+        rpk.aman,
+        rpk.hati_hati,
+        rpk.bahaya,
+        mrmi.id_tingkat id_tingkat_inheren, 
+        mrmt.id_tingkat id_tingkat_target, 
+        mrmr.id_tingkat id_tingkat_real
+        $from";
 
         $rows = DB::select($sql, $params);
 

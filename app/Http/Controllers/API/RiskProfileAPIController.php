@@ -97,14 +97,8 @@ class RiskProfileAPIController extends RiskProfileResourceController
             $rmt[$rm->id_kemungkinan][$rm->id_dampak] = $rm;
         }
 
-        $rrm = new \App\Models\RiskRegister();
-
         $items = [];
         foreach ($data->items() as $r) {
-            $rrg = $rrm->find($r->id_register);
-            $r->nama_risk_register = $rrg->nama;
-            $r->id_kelompok_bisnis = $rrg->id_kelompok_bisnis;
-            $r->id_unit = $rrg->id_unit;
 
             $tahun = date("Y", strtotime($r->tgl_risiko));
             $r->eksposur_risiko = $r->nilai_dampak_inheren * $r->nilai_kemungkinan / 100;
@@ -168,12 +162,11 @@ class RiskProfileAPIController extends RiskProfileResourceController
 
     public function search(Request $request): JsonResponse
     {
-        $search = $request->get('q');
-        if ($search) {
-            if (!empty($search['nama']))
-                $search['nama'] = "%" . $search['nama'] . "%";
-            if (!empty($search['kode']))
-                $search['kode'] = "%" . $search['kode'] . "%";
+        $q = $request->get('q');
+        $search = [];
+        if ($q) {
+            $search['nama'] = "%" . $q . "%";
+            $search['deskripsi'] = "%" . $q . "%";
         }
         // $filter = $request->get('q');
         $page = $request->get('page') ?? 1;
@@ -219,23 +212,35 @@ class RiskProfileAPIController extends RiskProfileResourceController
         // 	'totalPage' => $this->model->pager->getPageCount(),
         // ];
         // dd($data->items);
-        $mts = DB::select("select a.id_kemungkinan, a.id_dampak, a.skala, b.nama, b.warna, b.penanganan 
+        $mts = DB::select("select a.jenis, a.id_kemungkinan, a.id_dampak, a.skala, b.nama, b.warna, b.penanganan 
         from mt_risk_matrix a 
         join mt_risk_tingkat b on a.id_tingkat = b.id_tingkat
         where a.deleted_at is null 
-        and b.deleted_at is null 
-        and a.jenis = ?", [$search['jenis']]);
+        and b.deleted_at is null ");
         $rmt = [];
         foreach ($mts as $rm) {
-            $rmt[$rm->id_kemungkinan][$rm->id_dampak] = $rm;
+            $rmt[$rm->id_kemungkinan][$rm->id_dampak][$rm->jenis] = $rm;
         }
+
+        $rrm = new \App\Models\RiskRegister();
+        $rrm1 = new \App\Models\MtAssessmentType();
+        $rrm2 = new \App\Models\MtSdmUnit();
+        $rrm3 = new \App\Models\MtSdmKelompokBisnis();
 
         $items = [];
         foreach ($data->items() as $r) {
+            $rrg = $rrm->find($r->id_register);
+            $r->nama_risk_register = $rrg->nama;
+            $r->id_kelompok_bisnis = $rrg->id_kelompok_bisnis;
+            $r->nama_kelompok_bisnis = $rrm3->find($rrg->id_kelompok_bisnis)->nama;
+            $r->id_assessment_type = $rrg->id_assessment_type;
+            $r->nama_assessment_type =  $rrm1->find($rrg->id_assessment_type)->nama;
+            $r->id_unit = $rrg->id_unit;
+            $r->nama_unit = $rrm2->find($rrg->id_unit)->nama;
 
             $r->eksposur_risiko = $r->nilai_dampak_inheren * $r->nilai_kemungkinan / 100;
             if ($r->id_kemungkinan_inheren && $r->id_dampak_inheren)
-                $r->level_inheren = $rmt[$r->id_kemungkinan_inheren][$r->id_dampak_inheren];
+                $r->level_inheren = $rmt[$r->id_kemungkinan_inheren][$r->id_dampak_inheren][$r->jenis];
 
             $rows1 = DB::select("select rptr.*, 
             coalesce(rptr.nilai_dampak,0)*coalesce(rptr.nilai_kemungkinan,0)/100 as eksposur_risiko
@@ -245,10 +250,10 @@ class RiskProfileAPIController extends RiskProfileResourceController
             foreach ($rows1 as $r1) {
                 $periode = str_replace(date("Y", strtotime($r->tgl_risiko)), "", $r1->periode);
                 $r->{"res_eksposur_risiko" . $periode} = $r1->eksposur_risiko;
-                $r->{"res_level" . $periode} = $rmt[$r1->id_kemungkinan][$r1->id_dampak];
+                $r->{"res_level" . $periode} = $rmt[$r1->id_kemungkinan][$r1->id_dampak][$r->jenis];
 
                 $r->{"res_eksposur_risiko"} = $r1->eksposur_risiko;
-                $r->{"res_level"} = $rmt[$r1->id_kemungkinan][$r1->id_dampak];
+                $r->{"res_level"} = $rmt[$r1->id_kemungkinan][$r1->id_dampak][$r->jenis];
             }
 
 
@@ -273,11 +278,11 @@ class RiskProfileAPIController extends RiskProfileResourceController
 
                 $r->{"real_eksposur_risikoq" . $periode} = $r1->eksposur_risiko;
                 if ($r1->id_kemungkinan && $r1->id_dampak)
-                    $r->{"real_levelq" . $periode} = $rmt[$r1->id_kemungkinan][$r1->id_dampak];
+                    $r->{"real_levelq" . $periode} = $rmt[$r1->id_kemungkinan][$r1->id_dampak][$r->jenis];
 
-                $r->{"real_eksposur_risikoq"} = $r1->eksposur_risiko;
+                $r->{"real_eksposur_risiko"} = $r1->eksposur_risiko;
                 if ($r1->id_kemungkinan && $r1->id_dampak)
-                    $r->{"real_levelq"} = $rmt[$r1->id_kemungkinan][$r1->id_dampak];
+                    $r->{"real_level"} = $rmt[$r1->id_kemungkinan][$r1->id_dampak][$r->jenis];
             }
 
             $items[] = $r;
