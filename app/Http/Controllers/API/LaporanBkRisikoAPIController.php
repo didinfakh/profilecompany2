@@ -24,6 +24,49 @@ class LaporanBkRisikoAPIController extends BaseResourceController
         return $this->respond($this->headereasyui($this->header()));
     }
 
+    private function tgl_indo($tanggal){
+        $bulan = array (
+            1 =>   'Januari',
+            'Februari',
+            'Maret',
+            'April',
+            'Mei',
+            'Juni',
+            'Juli',
+            'Agustus',
+            'September',
+            'Oktober',
+            'November',
+            'Desember'
+        );
+        $tgl_dan_tahun = explode('-', $tanggal);
+        
+        // variabel pecahkan 0 = tanggal
+        // variabel pecahkan 1 = bulan
+        // variabel pecahkan 2 = tahun
+     
+        return $tgl_dan_tahun[2] . ' ' . $bulan[ (int)$tgl_dan_tahun[1] ] . ' ' . $tgl_dan_tahun[0];
+    }
+
+    private function get_tanda_tangan ($id_register=null,$id_status_pengajuan=null){
+        $where = '';
+        $params = [];
+        if($id_register){
+            $where .= ' and id_register = ?';
+            $params[] = $id_register;
+        }   
+
+        if($id_status_pengajuan){
+            $where .= ' and id_status_pengajuan = ?';
+            $params[] = $id_status_pengajuan;
+        }
+
+        $sql= "select max(created_at) as tanggal_aprove from risk_msg where deleted_at is null " . $where;
+        $query = DB::select($sql,$params);
+        $ret = $query[0]->tanggal_aprove;
+        return $ret;
+    }
+
     private function headereasyui($rows)
     {
         $ret = [];
@@ -357,7 +400,21 @@ class LaporanBkRisikoAPIController extends BaseResourceController
             $this->data['nama_unit'] = $dataUnit[0]->nama;
 
         };
-        $this->data['tanggal'] = date("d M Y");
+        $id_status_pengajuan = '';
+        if($data['id_template_laporan'] < 6){
+            $id_status_pengajuan = '9';
+        }else{
+            $id_status_pengajuan = '14';
+        }
+        $id_register = $data['id_register'];
+        if($id_register){
+            $tanggal_tanda_tangan = $this->get_tanda_tangan($id_register,$id_status_pengajuan);
+            if($tanggal_tanda_tangan){
+                $this->data['tanggal'] = $this->tgl_indo(date( 'Y-m-d', strtotime($tanggal_tanda_tangan) ));
+            }else{
+                $this->data['tanggal'] = ' ';
+            }
+        }
         $this->data['header'] = [];
         $this->data['cols'] = [];
         $this->levelHeader(
@@ -400,6 +457,11 @@ class LaporanBkRisikoAPIController extends BaseResourceController
     public function printmatrik(Request $request)
     {
         $data = $request->all();
+        // $id_register = $request->get('id_register');
+        // if($id_register){
+        //     $tanggal_tanda_tangan = $this->get_tanda_tangan($id_register,'9');
+        //     $this->data['tanggal_tanda_tangan'] = date( 'd M Y', strtotime($tanggal_tanda_tangan[0]->tanggal_aprove) );
+        // }
         $this->data['title'] = 'Metrik Strategi Risiko';
         $this->data['tahun'] = $data['tahun'];
         $this->data['rowslimit'] = \App\Models\RiskCapacityLimit::laporan($data);
@@ -436,11 +498,22 @@ class LaporanBkRisikoAPIController extends BaseResourceController
     public function printlossevent(Request $request)
     {
         $data = $request->all();
+        $id_status_pengajuan = '14';
+        
+        $id_register = $data['id_register'];
+        if($id_register){
+            $tanggal_tanda_tangan = $this->get_tanda_tangan($id_register,$id_status_pengajuan);
+            if($tanggal_tanda_tangan){
+                $this->data['tanggal'] = $this->tgl_indo(date( 'Y-m-d', strtotime($tanggal_tanda_tangan) ));
+            }else{
+                $this->data['tanggal'] = ' ';
+            }}
         $this->data['title'] = 'Loss Event Report';
         $this->data['tahun'] = 'Periode TW I/II/III/IV Tahun' . ' ' . $data['tahun'];
         $this->data['nama_unit'] = null;
         $this->data['nama_jabatan'] = null;
-        $this->data['tanggal'] = date("d M Y");
+        // $this->data['tanggal'] = date("d M Y");
+      
 
 
 if(isset($data['id_register']) && $data['id_register'] != 'null'){

@@ -36,13 +36,15 @@ sort($retstr);
         font-family: aptos;
     }
 </style>
+
 <div>
+
     <h4 style="text-align: center; margin-bottom: 0px;"><?= $title ?></h5>
         <h4 style="text-align: center; margin-top: 0px;"><?= $tahun ?></h4>
         <?php if (isset($nama_unit)) { ?>
             <h4 style="margin: 0px;">Unit Kerja : <?= $nama_unit ?></h4>
         <?php } ?>
-</div>
+
 
 <table style="width: 100%;">
     <thead>
@@ -204,7 +206,6 @@ sort($retstr);
 
 <div style=" display: inline-block;width:100%">
     <?php if (isset($nama_jabatan)) { ?>
-
         <p style=" text-align: right; margin: 0px;">Jakarta,<?= $tanggal ?></p>
         <p style=" text-align: right; margin: 0px;">Mengetahui,</p>
         <p style=" text-align: right; margin: 0px; margin-bottom: 40px;"><?= $nama_unit ?></p>
@@ -212,10 +213,8 @@ sort($retstr);
         <p style="text-align:right; margin: 0px;">&nbsp;</p>
         <p style=" text-align: right; margin: 0px;"><?= $nama_user ?></p>
         <p style=" text-align: right; margin: 0px;"><?= $nama_jabatan ?></p>
-
     <?php } ?>
-
-
+</div>
 </div>
 
 <style>
