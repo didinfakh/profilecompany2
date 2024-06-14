@@ -278,9 +278,14 @@ class BaseModel extends Model
     //  */
     public function update($id = null, $data = null, $data_before = []): bool
     {
+        if (!$id)
+            return false;
 
-        if (!$data_before) {
-            $data_before = $this->find($id)->get()->toArray()[0];
+        if (!$data_before && $id) {
+            // print_r($id);
+            $data_before = $this->where($this->primaryKey, $id)->first();
+            // print_r( DB::getQueryLog());
+            // print_r($data_before);
             if (!$data_before)
                 return false;
         }

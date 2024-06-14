@@ -8,7 +8,7 @@ class RiskMsgPenerima extends BaseModel
 {
     public $table = 'risk_msg_penerima';
 
-    protected $primaryKey = 'id_msg';
+    public $primaryKey = 'id_msg_penerima';
 
     public $fillable = [
         'is_read',

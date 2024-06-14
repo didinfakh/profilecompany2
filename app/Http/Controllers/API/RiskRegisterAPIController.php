@@ -496,6 +496,26 @@ class RiskRegisterAPIController extends BaseResourceController
             $ret = $rmp->insert($record);
         }
 
+
+        $penerima_view_all = DB::select(
+            "select distinct id_user, id_group
+            from sys_user_group a 
+
+            where exists(select 1 
+            from sys_group_menu b 
+            join sys_menu c on b.id_menu = c.id_menu  and c.deleted_at is null
+            join sys_group_action d on b.id_group_menu = d.id_group_menu  and d.deleted_at is null
+            join sys_action e on d.id_action = e.id_action and c.id_menu = e.id_menu and e.deleted_at is null
+            where a.id_group = b.id_group
+            and a.deleted_at is null
+            and 
+                (
+                    (c.url = 'dashboard' and e.nama = 'view_all') 
+                )
+            )  and a.deleted_at is null 
+            and a.id_user is not null"
+        );
+
         if ($ret) {
             if ($jenis == 1) {
                 if ($id_status_pengajuan == 5) {
@@ -509,6 +529,7 @@ class RiskRegisterAPIController extends BaseResourceController
                 }
 
                 #realisasi disetujui koordinator
+                #notifikasi untuk EWS KRI
                 if ($id_status_pengajuan == 10 && $rr->id_status_pengajuan == 14 && $ret) {
                     $mrl = new \App\Models\RiskProfileRealisasiResidual();
                     $mrp = new \App\Models\RiskProfile();
@@ -546,7 +567,19 @@ class RiskRegisterAPIController extends BaseResourceController
                                         12 => "Desember",
                                     ][substr($rk->periode, 4)] . " " . substr($rk->periode, 0, 4) . " dalam status \"" . $rk->status . "\"",
                                 ];
-                                $ret = $rm->insert($rcm);
+                                $ret = $id_msg = $rm->insert($rcm);
+
+                                foreach ($penerima_view_all as $r) {
+                                    if (!$ret)
+                                        break;
+
+                                    $record = [];
+                                    $record["id_msg"] = $id_msg;
+                                    $record["id_user"] = $r->id_user;
+                                    $record["id_group"] = $r->id_group;
+                                    // var_dump($record);
+                                    $ret = $rmp->insert($record);
+                                }
                             }
                         }
 
@@ -555,6 +588,7 @@ class RiskRegisterAPIController extends BaseResourceController
                 }
 
                 #disetujui owner
+                #notifikasi untuk EWS Lost Event
                 if ($rr->id_status_pengajuan == 12 && ($id_status_pengajuan == 13 || $id_status_pengajuan == 14)) {
                     $le = new \App\Models\LostEvent();
                     $rowsn = $le->where("id_register", $rr->id_register)->where("status", "Draft")->get();
@@ -568,7 +602,19 @@ class RiskRegisterAPIController extends BaseResourceController
                             "url" => "/lost_event/" . $rr->id_register . '/detail/' . $rn->id_lost_event,
                             "msg" => "Terjadi Lost Event \"" . $rr->nama_kejadian . "\"",
                         ];
-                        $ret = $rm->insert($rcm);
+                        $ret = $id_msg = $rm->insert($rcm);
+
+                        foreach ($penerima_view_all as $r) {
+                            if (!$ret)
+                                break;
+
+                            $record = [];
+                            $record["id_msg"] = $id_msg;
+                            $record["id_user"] = $r->id_user;
+                            $record["id_group"] = $r->id_group;
+                            // var_dump($record);
+                            $ret = $rmp->insert($record);
+                        }
 
                         if ($ret)
                             $ret = $le->where("id_lost_event", $rn->id_lost_event)->update(["status" => "Aktif"]);
@@ -599,7 +645,6 @@ class RiskRegisterAPIController extends BaseResourceController
          * ]
          */
         $rmp = new \App\Models\RiskMsgPenerima();
-        $data = $request->all();
         $id_msg_penerima = $rmp->where("id_msg", $id_msg)
             ->where("id_user", $request->user()->id_user)
             ->first()->id_msg_penerima;
@@ -607,20 +652,32 @@ class RiskRegisterAPIController extends BaseResourceController
         $ret = $rmp->update($id_msg_penerima, ["is_read" => 1]);
 
         if ($ret)
-            return $this->respondCreated($data, 'data created');
+            return $this->respondCreated(["is_read" => 1], 'data created');
         else
             return $this->fail("Failed");
     }
 
     public function notif(Request $request): JsonResponse
     {
-        $total = DB::select(
+        $total_task = DB::select(
             "SELECT count(1) total 
         FROM public.risk_msg a
         left join sys_group b on a.id_group = b.id_group and b.deleted_at is null 
         left join mt_status_pengajuan c on a.id_status_pengajuan = c.id_status_pengajuan and c.deleted_at is null
         join risk_msg_penerima d on a.id_msg = d.id_msg and d.deleted_at is null
-        where a.deleted_at is null 
+        where (a.id_kri_hasil is null and a.id_lost_event is null) 
+        and a.deleted_at is null 
+        and d.id_user = ? 
+        and (d.id_group = ? or d.id_group is null)",
+            [$request->user()->id_user, session('id_group')]
+        )[0]->total;
+
+        $total_ews = DB::select(
+            "SELECT count(1) total 
+        FROM public.risk_msg a
+        join risk_msg_penerima d on a.id_msg = d.id_msg and d.deleted_at is null
+        where (a.id_kri_hasil is not null or a.id_lost_event is not null) 
+        and a.deleted_at is null 
         and d.id_user = ? 
         and (d.id_group = ? or d.id_group is null)",
             [$request->user()->id_user, session('id_group')]
@@ -639,6 +696,6 @@ class RiskRegisterAPIController extends BaseResourceController
         limit 10
         ", [$request->user()->id_user, session('id_group')]);
 
-        return $this->respond(["data" => $respond, "total" => $total]);
+        return $this->respond(["data" => $respond, "total_task" => $total_task, "total_ews" => $total_ews]);
     }
 }
