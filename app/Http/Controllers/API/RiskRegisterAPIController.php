@@ -229,6 +229,11 @@ class RiskRegisterAPIController extends BaseResourceController
 
     public function getdetail($id = null, Request $request): JsonResponse
     {
+        // Mail::to("solikul.arip@gmail.com")->send(new Notif([
+        //     "link" => "http://google.com",
+        //     "pesan" => "test"
+        // ]));
+
         $record = $this->model->find($id);
         if (!$record) {
             return $this->failNotFound(sprintf(
