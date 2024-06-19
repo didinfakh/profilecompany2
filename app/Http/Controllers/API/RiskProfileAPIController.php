@@ -320,10 +320,6 @@ class RiskProfileAPIController extends RiskProfileResourceController
             $request->request->add(['kri_new' => 'true']);
         }
 
-        if($request->get('page_name') == 'risk_profile_analisa_risiko_inheren'){
-            // $request->validate([])
-        }
-
         // if($request->get('page') == 'rencana_perlakuan_risiko'){
         //     unset($this->model->rules);
         //     $this->model->rules = [
@@ -354,11 +350,6 @@ class RiskProfileAPIController extends RiskProfileResourceController
             $request->request->remove('page_name');
             $request->validate(['penjelasan_dampak' => 'required|string|max:2000',
         'nilai_dampak_inheren' => 'required|numeric','id_dampak_inheren' => 'required','nilai_kemungkinan' => 'required|numeric','id_kemungkinan_inheren' => 'required']);
-        }elseif(!empty($request->get('page_name')) && $request->get('page_name') == 'risk_profile_analisa_risiko_residual'){
-            $request->request->remove('page_name');
-            $request->validate(['nilai_dampak' => 'required',
-        'nilai_dampak.*' => 'required','id_dampak' => 'required','id_dampak.*' => 'required','id_kemungkinan' => 'required','id_kemungkinan.*' => 'required',]);
-
         }
         else{
             $request->validate($this->model->rules);
