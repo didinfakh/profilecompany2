@@ -567,7 +567,7 @@ class RiskRegisterAPIController extends BaseResourceController
                             $rowskri = DB::select("select a.*, b.nama, c.jenis from risk_profile_kri_hasil a 
                             join risk_profile_kri b on a.id_kri = b.id_kri and b.deleted_at is null
                             join risk_profile c on c.id_risk_profile = b.id_risk_profile and c.deleted_at is null
-                            where deleted_at is null 
+                            where a.deleted_at is null 
                             and c.id_risk_profile = ? 
                             and a.periode = ? 
                             and (a.status = ? or a.status = ?)", [$rmrr->id_risk_profile, $rmrr->periode, "Bahaya", "Hati-hati"]);

@@ -350,8 +350,9 @@ class RiskProfileAPIController extends RiskProfileResourceController
             $request->request->remove('page_name');
             $request->validate(['penjelasan_dampak' => 'required|string|max:2000',
         'nilai_dampak_inheren' => 'required|numeric','id_dampak_inheren' => 'required','nilai_kemungkinan' => 'required|numeric','id_kemungkinan_inheren' => 'required']);
-        }
-        else{
+    
+        
+    }else{
             $request->validate($this->model->rules);
         }
 

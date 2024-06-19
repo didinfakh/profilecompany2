@@ -79,10 +79,40 @@ class RiskProfileTargetResidualAPIController extends RiskProfileResourceControll
             return $this->failNotFound('item with id %d not found');
         }
         if(!empty($request->get('page_name')) && $request->get('page_name') == 'risk_profile_analisa_risiko_residual'){
-            $request->request->remove('page_name');
-            $request->validate(['nilai_dampak' => 'required|array',
-        'nilai_dampak.*' => 'required','id_dampak' => 'required|array','id_dampak.*' => 'required','id_kemungkinan' => 'required','id_kemungkinan.*' => 'required', 'nilai_kemungkinan' => 'required', 'nilai_kemungkinan.*' => 'required']);
+        $nilai_dampak =  $request->get('nilai_dampak');
+        $request->request->add(['Nilai_dampak'=>'true']);
+        foreach($nilai_dampak as $v){
+            if($v == '' || $v == 'null'){
+                $request->request->add(['Nilai_dampak'=>'']);
+            }
         }
+
+        $id_dampak =  $request->get('id_dampak');
+        $request->request->add(['Id_dampak'=>'true']);
+        foreach($id_dampak as $v){
+            if($v == '' || $v == 'null'){
+                $request->request->add(['Id_dampak'=>'']);
+            }
+        }
+        
+        $nilai_kemungkinan =  $request->get('nilai_kemungkinan');
+        $request->request->add(['Nilai_kemungkinan'=>'true']);
+        foreach($nilai_kemungkinan as $v){
+            if($v == '' || $v == 'null'){
+                $request->request->add(['Nilai_kemungkinan'=>'']);
+            }
+        }
+
+        $id_kemungkinan =  $request->get('id_kemungkinan');
+        $request->request->add(['Id_kemungkinan'=>'true']);
+        foreach($id_kemungkinan as $v){
+            if($v == '' || $v == 'null'){
+                $request->request->add(['Id_kemungkinan'=>'']);
+            }
+        }
+
+        $request->validate(['Nilai_kemungkinan' => 'required','Id_kemungkinan' => 'required','Nilai_dampak' => 'required','Id_dampak' => 'required']);
+    }
         $data = $request->all();
         $datat = [];
         $datat["nilai_dampak"] = $data["nilai_dampak"];
