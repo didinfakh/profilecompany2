@@ -32,7 +32,7 @@ return [
     |            "postmark", "log", "array", "failover"
     |
     */
-
+    'enable' => env('MAIL_ENABLE', 0),
     'to' => 'solikul.arip@gmail.com', //Dev
     'mailers' => [
         'smtp' => [
