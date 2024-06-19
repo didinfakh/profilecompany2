@@ -429,6 +429,7 @@ class LaporanBkRisikoAPIController extends BaseResourceController
         $this->data['rows'] = [];
         // $rws = [$rows[0]];
         $this->data['cols_color'] = $cols_color = [
+            "skala_probabilitas_warna",
             "skala_dampak_warna",
             "level_risiko_warna",
             "res_skala_dampakq1_warna",
