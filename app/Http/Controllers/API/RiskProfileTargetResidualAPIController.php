@@ -78,7 +78,11 @@ class RiskProfileTargetResidualAPIController extends RiskProfileResourceControll
         if (!$this->data['rowheader'] || !$this->data['rowheader1']) {
             return $this->failNotFound('item with id %d not found');
         }
-
+        if(!empty($request->get('page_name')) && $request->get('page_name') == 'risk_profile_analisa_risiko_residual'){
+            $request->request->remove('page_name');
+            $request->validate(['nilai_dampak' => 'required|array',
+        'nilai_dampak.*' => 'required','id_dampak' => 'required|array','id_dampak.*' => 'required','id_kemungkinan' => 'required','id_kemungkinan.*' => 'required', 'nilai_kemungkinan' => 'required', 'nilai_kemungkinan.*' => 'required']);
+        }
         $data = $request->all();
         $datat = [];
         $datat["nilai_dampak"] = $data["nilai_dampak"];

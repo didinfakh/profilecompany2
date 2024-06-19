@@ -193,6 +193,7 @@ class RiskProfile extends BaseModel
         mrd.nama skala_dampak,
         mrd.warna as skala_dampak_warna,
         mrk.nama skala_probabilitas,
+        mrk.warna as skala_probabilitas_warna,
         coalesce(rp.nilai_dampak_inheren,0)*coalesce(rp.nilai_kemungkinan,0)/100 as eksposur_risiko,
         mrm.skala as skala_risiko,
         mrtk.nama as level_risiko,
@@ -688,7 +689,7 @@ class RiskProfile extends BaseModel
         }
 
         if (isset($filter['id_kelompok_bisnis']) && $filter['id_kelompok_bisnis'] != 'null') {
-            $where .= ' and rr.id_kelompok_bisnis = ?';
+            $where .= ' and rr.id_kelompok_bisnis = ? ';
             $params[] = $filter['id_kelompok_bisnis'];
         }
 
