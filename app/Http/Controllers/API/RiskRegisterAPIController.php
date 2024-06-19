@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 
 use App\Http\Controllers\BaseResourceController;
 use App\Mail\Notif;
+use App\Models\MtAssessmentType;
+use App\Models\MtStatusPengajuan;
+use App\Models\SysUser;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -226,11 +229,6 @@ class RiskRegisterAPIController extends BaseResourceController
 
     public function getdetail($id = null, Request $request): JsonResponse
     {
-        // Mail::to(config('mail.to'))->send(new Notif([
-        //     "link" => "https://www.google.com",
-        //     "pesan" => "Test Email"
-        // ]));
-
         $record = $this->model->find($id);
         if (!$record) {
             return $this->failNotFound(sprintf(
@@ -494,30 +492,51 @@ class RiskRegisterAPIController extends BaseResourceController
             $record["id_group"] = $r->id_group;
             // var_dump($record);
             $ret = $rmp->insert($record);
+
+            if ($ret) {
+                $to = SysUser::find($r->id_user)->email;
+                if (config('mail.to'))
+                    $to = config('mail.to');
+
+                $nama_ajuan = MtStatusPengajuan::find($id_status_pengajuan)->nama;
+                $nama_assessment_type = MtAssessmentType::find($rr->id_assessment_type)->nama;
+                $pesan = "";
+                if ($jenis) {
+                    //Pengajuan BK1 sd BK6 Divisi/AP/Dept SPI ke Risk Owner
+                    $pesan = "Pengajuan " . str_replace(" ke ", " " . $nama_assessment_type . "\"" . $rr->nama . "\" ke ", $nama_ajuan);
+                } else {
+                    //BK1 sd BK6 Divisi/AP/Dept SPI Dikembalikan
+                    $pesan = str_replace("Dikembalikan", "$nama_assessment_type \"" . $rr->nama . "\"", $nama_ajuan) . " Dikembalikan";
+                }
+
+                Mail::to($to)->send(new Notif([
+                    "link" => "https://www.google.com",
+                    "pesan" => $pesan
+                ]));
+            }
         }
-
-
-        $penerima_view_all = DB::select(
-            "select distinct id_user, id_group
-            from sys_user_group a 
-
-            where exists(select 1 
-            from sys_group_menu b 
-            join sys_menu c on b.id_menu = c.id_menu  and c.deleted_at is null
-            join sys_group_action d on b.id_group_menu = d.id_group_menu  and d.deleted_at is null
-            join sys_action e on d.id_action = e.id_action and c.id_menu = e.id_menu and e.deleted_at is null
-            where a.id_group = b.id_group
-            and a.deleted_at is null
-            and 
-                (
-                    (c.url = 'dashboard' and e.nama = 'view_all') 
-                )
-            )  and a.deleted_at is null 
-            and a.id_user is not null"
-        );
 
         if ($ret) {
             if ($jenis == 1) {
+                $penerima_view_all = DB::select(
+                    "select distinct id_user, id_group
+                    from sys_user_group a 
+        
+                    where exists(select 1 
+                    from sys_group_menu b 
+                    join sys_menu c on b.id_menu = c.id_menu  and c.deleted_at is null
+                    join sys_group_action d on b.id_group_menu = d.id_group_menu  and d.deleted_at is null
+                    join sys_action e on d.id_action = e.id_action and c.id_menu = e.id_menu and e.deleted_at is null
+                    where a.id_group = b.id_group
+                    and a.deleted_at is null
+                    and 
+                        (
+                            (c.url = 'dashboard' and e.nama = 'view_all') 
+                        )
+                    )  and a.deleted_at is null 
+                    and a.id_user is not null"
+                );
+
                 if ($id_status_pengajuan == 5) {
                     $mrl = new \App\Models\RiskCapacityLimit();
                     $ret = $mrl->where("id_register", $rr->id_register)->update(["status" => "Aktif"]);
