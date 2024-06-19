@@ -494,25 +494,30 @@ class RiskRegisterAPIController extends BaseResourceController
             $ret = $rmp->insert($record);
 
             if ($ret) {
-                $to = SysUser::find($r->id_user)->email;
-                if (config('mail.to'))
-                    $to = config('mail.to');
 
-                $nama_ajuan = MtStatusPengajuan::find($id_status_pengajuan)->nama;
-                $nama_assessment_type = MtAssessmentType::find($rr->id_assessment_type)->nama;
-                $pesan = "";
-                if ($jenis) {
-                    //Pengajuan BK1 sd BK6 Divisi/AP/Dept SPI ke Risk Owner
-                    $pesan = "Pengajuan " . str_replace(" ke ", " " . $nama_assessment_type . "\"" . $rr->nama . "\" ke ", $nama_ajuan);
-                } else {
-                    //BK1 sd BK6 Divisi/AP/Dept SPI Dikembalikan
-                    $pesan = str_replace("Dikembalikan", "$nama_assessment_type \"" . $rr->nama . "\"", $nama_ajuan) . " Dikembalikan";
+                if (config("mail.enable")) {
+
+                    $nama_ajuan = MtStatusPengajuan::find($id_status_pengajuan)->nama;
+                    $nama_assessment_type = MtAssessmentType::find($rr->id_assessment_type)->nama;
+
+                    $pesan = "";
+                    if ($jenis) {
+                        //Pengajuan BK1 sd BK6 Divisi/AP/Dept SPI ke Risk Owner
+                        $pesan = "Pengajuan " . str_replace(" ke ", " " . $nama_assessment_type . "\"" . $rr->nama . "\" ke ", $nama_ajuan);
+                    } else {
+                        //BK1 sd BK6 Divisi/AP/Dept SPI Dikembalikan
+                        $pesan = str_replace("Dikembalikan", "$nama_assessment_type \"" . $rr->nama . "\"", $nama_ajuan) . " Dikembalikan";
+                    }
+
+                    $to = SysUser::find($r->id_user)->email;
+                    if (config('mail.to'))
+                        $to = config('mail.to');
+
+                    Mail::to($to)->send(new Notif([
+                        "link" => config("app.frontend_url") . $url,
+                        "pesan" => $pesan
+                    ]));
                 }
-
-                Mail::to($to)->send(new Notif([
-                    "link" => "https://www.google.com",
-                    "pesan" => $pesan
-                ]));
             }
         }
 
@@ -598,6 +603,19 @@ class RiskRegisterAPIController extends BaseResourceController
                                     $record["id_group"] = $r->id_group;
                                     // var_dump($record);
                                     $ret = $rmp->insert($record);
+
+                                    if ($ret) {
+                                        if (config("mail.enable")) {
+                                            $to = SysUser::find($r->id_user)->email;
+                                            if (config('mail.to'))
+                                                $to = config('mail.to');
+
+                                            Mail::to($to)->send(new Notif([
+                                                "link" => config("app.frontend_url") . $rcm['url'],
+                                                "pesan" => $rcm["msg"]
+                                            ]));
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -633,6 +651,19 @@ class RiskRegisterAPIController extends BaseResourceController
                             $record["id_group"] = $r->id_group;
                             // var_dump($record);
                             $ret = $rmp->insert($record);
+
+                            if ($ret) {
+                                if (config("mail.enable")) {
+                                    $to = SysUser::find($r->id_user)->email;
+                                    if (config('mail.to'))
+                                        $to = config('mail.to');
+
+                                    Mail::to($to)->send(new Notif([
+                                        "link" => config("app.frontend_url") . $rcm['url'],
+                                        "pesan" => $rcm["msg"]
+                                    ]));
+                                }
+                            }
                         }
 
                         if ($ret)
