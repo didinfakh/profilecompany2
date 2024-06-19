@@ -27,7 +27,7 @@ class ViewGenerator extends ModelGenerator
         // $this->path = $this->config->paths->model;
         // $this->path = 'D:/CLOUD/BITBUCKET/hk_rms_frontend';
         // $this->path = 'F:/xamp/htdocs/hk_rms_frontend';
-        $this->path = 'D:/Dev/web/hk_rms_frontend';
+        $this->path = 'D:/Dev/web/hk_rms_client';
         $this->fileName = $this->config->modelNames->name . '.php';
     }
 
@@ -40,13 +40,13 @@ class ViewGenerator extends ModelGenerator
         $templateData1 = view($viewName1, $this->variables())->render();
         $templateData2 = view($viewName2, $this->variables())->render();
 
-        if (!file_exists($this->path . '/src/app/(app)/' . $this->config->tableName))
-            mkdir($this->path . '/src/app/(app)/' . $this->config->tableName);
-        if (!file_exists($this->path . "/src/app/(app)/" . $this->config->tableName . '/[...slug]'))
-            mkdir($this->path . "/src/app/(app)/" . $this->config->tableName . '/[...slug]');
+        if (!file_exists($this->path . '/src/pages/(app)/' . $this->config->tableName))
+            mkdir($this->path . '/src/pages/(app)/' . $this->config->tableName);
+        if (!file_exists($this->path . "/src/pages/(app)/" . $this->config->tableName . '/[...slug]'))
+            mkdir($this->path . "/src/pages/(app)/" . $this->config->tableName . '/[...slug]');
 
-        g_filesystem()->createFile($this->path . '/src/app/(app)/' . $this->config->tableName . '/page.js', $templateData1);
-        g_filesystem()->createFile($this->path . "/src/app/(app)/" . $this->config->tableName . '/[...slug]' . '/page.js', $templateData2);
+        g_filesystem()->createFile($this->path . '/src/pages/(app)/' . $this->config->tableName . '/page.js', $templateData1);
+        g_filesystem()->createFile($this->path . "/src/pages/(app)/" . $this->config->tableName . '/[...slug]' . '/page.js', $templateData2);
 
         $this->config->commandComment(infy_nl() . 'Model created: ');
         $this->config->commandInfo($this->fileName);

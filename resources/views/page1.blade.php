@@ -3,14 +3,14 @@
 "use client"
 
 import React, { useState, useEffect, useRef } from 'react';
-import HeaderApp from '@/components/HeaderApp';
-import { checkNotAuthorized, initAccessMethod } from '@/app/Utils';
+import HeaderApp from 'components/HeaderApp';
+import { checkNotAuthorized, initAccessMethod } from 'pages/Utils';
 
-import BtnIconAct from '@/components/BtnIconAct';
-import Pagination from '@/components/Pagination';
-import { api_services } from '@/hooks/api_services';
-import TableHead from '@/components/TableHead';
-import EditDelete from '@/components/EditDelete';
+import BtnIconAct from 'components/BtnIconAct';
+import Pagination from 'components/Pagination';
+import { api_services } from 'hooks/api_services';
+import TableHead from 'components/TableHead';
+import EditDelete from 'components/EditDelete';
 
 const titlePage = "{!!$titlePageFrontend!!}"
 
@@ -48,8 +48,8 @@ const {{ucfirst($config->tableName)}} = (props) => {
         if (!initialized.current) {
             handleInitAccessMethod()
             {!!$getDataReferensiFrontend!!}
-            initialized.current = true
-        } else {
+            //initialized.current = true
+        //} else {
             handleget{{$config->tableName}}()
         }
     }, [filter, datafilter.paginate.pagesize, datafilter.paginate.page, order])

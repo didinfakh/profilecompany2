@@ -18,6 +18,9 @@ class Notif extends Mailable
     public function __construct($data)
     {
         $this->data = $data;
+        if ($data['subject']) {
+            $this->subject = $data['subject'];
+        }
     }
 
     /**
