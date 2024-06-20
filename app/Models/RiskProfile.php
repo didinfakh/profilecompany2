@@ -1447,13 +1447,13 @@ class RiskProfile extends BaseModel
             $row = DB::select("select tgl_mulai, tgl_selesai 
             from risk_jadwal_pelaporan 
             where jenis = 'BK1-BK2' 
-            and id_assessment_type = ? 
+            and id_assessment_type = ?  and deleted_at is null
             and tahun = ?
             and bulan = ?", [$r->id_assessment_type, $tahun, $bulan]);
             $row1 = DB::select("select tgl_mulai, tgl_selesai 
             from risk_jadwal_pelaporan 
             where jenis = 'BK1-BK2' 
-            and id_assessment_type = ? 
+            and id_assessment_type = ?  and deleted_at is null
             and tahun = ?
             and bulan = ?", [$r->id_assessment_type, $tahun1, $bulan1]);
 
@@ -1462,7 +1462,7 @@ class RiskProfile extends BaseModel
                 max(created_at) tgl, 
                 EXTRACT(DAY FROM max(created_at) - '{$row[0]->tgl_selesai}') as hari
                 from risk_msg 
-                where id_register = ? 
+                where id_register = ?  and deleted_at is null
                 and created_at between ? and ? 
                 and id_status_pengajuan = 5
                 and id_status_pengajuan_sebelumnya = 4", [$r->id_register, $row[0]->tgl_mulai, $row1[0]->tgl_mulai]);
@@ -1473,12 +1473,12 @@ class RiskProfile extends BaseModel
             $row = DB::select("select tgl_mulai, tgl_selesai 
             from risk_jadwal_pelaporan 
             where jenis = 'BK3-BK6' 
-            and id_assessment_type = ? 
+            and id_assessment_type = ?  and deleted_at is null
             and tahun = ?
             and bulan = ?", [$r->id_assessment_type, $tahun, $bulan]);
             $row1 = DB::select("select tgl_mulai, tgl_selesai 
             from risk_jadwal_pelaporan 
-            where jenis = 'BK3-BK6' 
+            where jenis = 'BK3-BK6'  and deleted_at is null
             and id_assessment_type = ? 
             and tahun = ?
             and bulan = ?", [$r->id_assessment_type, $tahun1, $bulan1]);
@@ -1487,7 +1487,7 @@ class RiskProfile extends BaseModel
                 $row = DB::select("select max(created_at) tgl, 
                 EXTRACT(DAY FROM max(created_at) - '{$row[0]->tgl_selesai}') as hari
                 from risk_msg 
-                where id_register = ? 
+                where id_register = ?  and deleted_at is null
                 and created_at between ? and ? 
                 and id_status_pengajuan = 10
                 and id_status_pengajuan_sebelumnya = 9", [$r->id_register, $row[0]->tgl_mulai, $row1[0]->tgl_mulai]);
@@ -1497,13 +1497,13 @@ class RiskProfile extends BaseModel
 
             $row = DB::select("select tgl_mulai, tgl_selesai 
             from risk_jadwal_pelaporan 
-            where jenis = 'BK7-BK8' 
+            where jenis = 'BK7-BK8'  and deleted_at is null
             and id_assessment_type = ? 
             and tahun = ?
             and bulan = ?", [$r->id_assessment_type, $tahun, $bulan]);
             $row1 = DB::select("select tgl_mulai, tgl_selesai 
-            from risk_jadwal_pelaporan 
-            where jenis = 'BK7-BK8' 
+            from risk_jadwal_pelaporan
+            where jenis = 'BK7-BK8'   and deleted_at is null
             and id_assessment_type = ? 
             and tahun = ?
             and bulan = ?", [$r->id_assessment_type, $tahun1, $bulan1]);
@@ -1512,7 +1512,7 @@ class RiskProfile extends BaseModel
                 $row = DB::select("select max(created_at) tgl, 
                 EXTRACT(DAY FROM max(created_at) - '{$row[0]->tgl_selesai}') as hari
                 from risk_msg 
-                where id_register = ? 
+                where id_register = ?  and deleted_at is null
                 and created_at between ? and ? 
                 and id_status_pengajuan = 10
                 and id_status_pengajuan_sebelumnya = 14", [$r->id_register, $row[0]->tgl_mulai, $row1[0]->tgl_mulai]);
@@ -1522,13 +1522,13 @@ class RiskProfile extends BaseModel
 
             $row = DB::select("select tgl_mulai, tgl_selesai 
             from risk_jadwal_pelaporan 
-            where jenis = 'BK9-BK10' 
+            where jenis = 'BK9-BK10'  and deleted_at is null
             and id_assessment_type = ? 
             and tahun = ?
             and bulan = ?", [$r->id_assessment_type, $tahun, $bulan]);
             $row1 = DB::select("select tgl_mulai, tgl_selesai 
             from risk_jadwal_pelaporan 
-            where jenis = 'BK9-BK10' 
+            where jenis = 'BK9-BK10'  and deleted_at is null
             and id_assessment_type = ? 
             and tahun = ?
             and bulan = ?", [$r->id_assessment_type, $tahun1, $bulan1]);
@@ -1537,7 +1537,7 @@ class RiskProfile extends BaseModel
                 $row = DB::select("select max(created_at) tgl, 
                 EXTRACT(DAY FROM max(created_at) - '{$row[0]->tgl_selesai}') as hari
                 from risk_msg 
-                where id_register = ? 
+                where id_register = ?  and deleted_at is null
                 and created_at between ? and ? 
                 and id_status_pengajuan = 10
                 and id_status_pengajuan_sebelumnya = 14", [$r->id_register, $row[0]->tgl_mulai, $row1[0]->tgl_mulai]);
