@@ -44,7 +44,7 @@ class RiskProfileMitigasiRealisasi extends BaseModel
     public array $rules = [
         'id_mitigasi' => 'nullable',
         'periode' => 'nullable|string|max:20',
-        'bulan' => 'required',
+        'bulan' => 'nullable',
         'id_status_rencana_perlakuan' => 'nullable',
         'penjelasan_status_rencana_perlakuan' => 'nullable|string|max:3000',
         'progress' => 'nullable|numeric',

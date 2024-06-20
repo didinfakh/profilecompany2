@@ -98,9 +98,91 @@ class RiskProfileMitigasiRealisasiAPIController extends RiskProfileResourceContr
         return $this->respond($record);
     }
 
+    public function store($id_register = null, Request $request): JsonResponse
+    {
+        if(!empty($request->get('page_name')) && $request->get('page_name') == 'risk_profile_realisasi_pelaksanaan_perlakuan_risiko_dan_biaya'){
+            $request->request->remove('page_name');
+            $kri_kuantitatif = $request->get('kri_kuantitatif');
+            $kri_kualitatif = $request->get('kri_kualitatif');
+
+            $rules = [
+                'Hasil_kuantitatif' => 'required',
+                'Hasil_kualitatif' => 'required',
+                'mitigasi' => 'required|array',
+                'bulan' => 'required',
+            ];
+            if(!empty($kri_kuantitatif)){
+                unset($rules['Hasil_kualitatif']);
+                $request->request->add(['Hasil_kuantitatif'=>'true']);
+                foreach($kri_kuantitatif as $v){
+                if($v['nilai_kuantitatif'] == '' || $v['nilai_kuantitatif'] == 'null'){
+                    $request->request->add(['Hasil_kuantitatif'=>'']);
+                    }
+                }
+            }
+            if(!empty($kri_kualitatif)){
+                unset($rules['Hasil_kuantitatif']);
+                $request->request->add(['Hasil_kualitatif'=>'true']);
+                foreach($kri_kualitatif as $v){
+                if($v['nilai_kualitatif'] == '' || $v['nilai_kualitatif'] == 'null'){
+                    $request->request->add(['Hasil_kualitatif'=>'']);
+                    }
+                }
+            }
+
+            $request->validate($rules);
+            
+        }else{
+            $request->validate($this->model->rules);
+        }
+        
+        $this->_beforeDetail($id_register);
+
+        $data = $request->all();
+        $ret = $this->upsert(null, $data);
+        if ($ret)
+            return $this->respondCreated($data, 'data created');
+        else
+            return $this->fail("insert failed");
+    }
+
     public function update($id_risk_profile = null, $periode = null, Request $request): JsonResponse
     {
-        $request->validate($this->model->rules);
+        if(!empty($request->get('page_name')) && $request->get('page_name') == 'risk_profile_realisasi_pelaksanaan_perlakuan_risiko_dan_biaya'){
+            $request->request->remove('page_name');
+            $kri_kuantitatif = $request->get('kri_kuantitatif');
+            $kri_kualitatif = $request->get('kri_kualitatif');
+
+            $rules = [
+                'Hasil_kuantitatif' => 'required',
+                'Hasil_kualitatif' => 'required',
+                'mitigasi' => 'required|array',
+                'bulan' => 'required',
+            ];
+            if(!empty($kri_kuantitatif)){
+                unset($rules['Hasil_kualitatif']);
+                $request->request->add(['Hasil_kuantitatif'=>'true']);
+                foreach($kri_kuantitatif as $v){
+                if($v['nilai_kuantitatif'] == '' || $v['nilai_kuantitatif'] == 'null'){
+                    $request->request->add(['Hasil_kuantitatif'=>'']);
+                    }
+                }
+            }
+            if(!empty($kri_kualitatif)){
+                unset($rules['Hasil_kuantitatif']);
+                $request->request->add(['Hasil_kualitatif'=>'true']);
+                foreach($kri_kualitatif as $v){
+                if($v['nilai_kualitatif'] == '' || $v['nilai_kualitatif'] == 'null'){
+                    $request->request->add(['Hasil_kualitatif'=>'']);
+                    }
+                }
+            }
+
+            $request->validate($rules);
+            
+        }else{
+            $request->validate($this->model->rules);
+        }
 
         $this->_beforeDetailRisiko($id_risk_profile);
 

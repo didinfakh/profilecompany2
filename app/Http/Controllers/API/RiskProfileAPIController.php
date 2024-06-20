@@ -316,19 +316,19 @@ class RiskProfileAPIController extends RiskProfileResourceController
             unset($this->model->rules['kri_new']);
             unset($this->model->rules['control']);
         }
+
         if (!empty($request->get('kri_kualitatif')) || !empty($request->get('kri_kuantitatif'))) {
             $request->request->add(['kri_new' => 'true']);
         }
-
-        // if($request->get('page') == 'rencana_perlakuan_risiko'){
-        //     unset($this->model->rules);
-        //     $this->model->rules = [
-        //         'nama' => 'true',
-
-        //     ];
-        // }
-
-        $request->validate($this->model->rules);
+        if( !empty($request->get('page_name')) && $request->get('page_name') == 'analisa_risiko_inheren'){
+            $request->request->remove('page_name');
+            $request->validate(['penjelasan_dampak' => 'required|string|max:2000',
+        'nilai_dampak_inheren' => 'required|numeric','id_dampak_inheren' => 'required','nilai_kemungkinan' => 'required|numeric','id_kemungkinan_inheren' => 'required']);
+    
+        
+    }else{
+            $request->validate($this->model->rules);
+        }
 
         $this->_beforeDetail($id_register);
 

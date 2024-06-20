@@ -69,6 +69,56 @@ class RiskProfileTargetResidualAPIController extends RiskProfileResourceControll
         return $this->respond($record);
     }
 
+    public function store($id_register = null, Request $request): JsonResponse
+    {
+        if(!empty($request->get('page_name')) && $request->get('page_name') == 'risk_profile_analisa_risiko_residual'){
+            $nilai_dampak =  $request->get('nilai_dampak');
+            $request->request->add(['Nilai_dampak'=>'true']);
+            foreach($nilai_dampak as $v){
+                if($v == '' || $v == 'null'){
+                    $request->request->add(['Nilai_dampak'=>'']);
+                }
+            }
+    
+            $id_dampak =  $request->get('id_dampak');
+            $request->request->add(['Id_dampak'=>'true']);
+            foreach($id_dampak as $v){
+                if($v == '' || $v == 'null'){
+                    $request->request->add(['Id_dampak'=>'']);
+                }
+            }
+            
+            $nilai_kemungkinan =  $request->get('nilai_kemungkinan');
+            $request->request->add(['Nilai_kemungkinan'=>'true']);
+            foreach($nilai_kemungkinan as $v){
+                if($v == '' || $v == 'null'){
+                    $request->request->add(['Nilai_kemungkinan'=>'']);
+                }
+            }
+    
+            $id_kemungkinan =  $request->get('id_kemungkinan');
+            $request->request->add(['Id_kemungkinan'=>'true']);
+            foreach($id_kemungkinan as $v){
+                if($v == '' || $v == 'null'){
+                    $request->request->add(['Id_kemungkinan'=>'']);
+                }
+            }
+    
+            $request->validate(['Nilai_kemungkinan' => 'required','Id_kemungkinan' => 'required','Nilai_dampak' => 'required','Id_dampak' => 'required']);
+        }else{
+            $request->validate($this->model->rules);
+        }
+
+        $this->_beforeDetail($id_register);
+
+        $data = $request->all();
+        $ret = $this->upsert(null, $data);
+        if ($ret)
+            return $this->respondCreated($data, 'data created');
+        else
+            return $this->fail("insert failed");
+    }
+
     public function update($id_register = null, $id_risk_profile = null, Request $request): JsonResponse
     {
         // $request->validate($this->model->rules);
@@ -112,6 +162,8 @@ class RiskProfileTargetResidualAPIController extends RiskProfileResourceControll
         }
 
         $request->validate(['Nilai_kemungkinan' => 'required','Id_kemungkinan' => 'required','Nilai_dampak' => 'required','Id_dampak' => 'required']);
+    }else{
+        $request->validate($this->model->rules);
     }
         $data = $request->all();
         $datat = [];
