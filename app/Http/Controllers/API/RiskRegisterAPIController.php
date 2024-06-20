@@ -666,7 +666,7 @@ class RiskRegisterAPIController extends BaseResourceController
                             "id_lost_event" => $rn->id_lost_event,
                             "id_register" => $rr->id_register,
                             "url" => "/lost_event/" . $rr->id_register . '/detail/' . $rn->id_lost_event,
-                            "msg" => "Terjadi Lost Event \"" . $rr->nama_kejadian . "\"",
+                            "msg" => "Terjadi Lost Event \"" . $rn->nama_kejadian . "\"",
                         ];
                         $ret = $id_msg = $rm->insert($rcm);
 

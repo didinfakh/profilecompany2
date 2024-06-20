@@ -1317,4 +1317,51 @@ class RiskProfile extends BaseModel
         }
         return $rows;
     }
+
+    public function laporan_unit_kerja($filter = [])
+    {
+
+        $where = '';
+        $params = [];
+        if (isset($filter['id_assessment_type']) && $filter['id_assessment_type'] != 'null') {
+            $where .= " and rr.id_assessment_type = ?";
+            $params[] = $filter['id_assessment_type'];
+        }
+
+        if (isset($filter['tahun']) && $filter['tahun'] != 'null') {
+            $where .= " and to_char(coalesce(rr.periode_mulai,to_date(?,'YYYY')),'YYYY') <= ? and to_char(coalesce(rr.periode_selesai,to_date(?,'YYYY')),'YYYY') >= ?";
+            $params[] = $filter['tahun'];
+        }
+
+        $sql = "select * from risk_register where 1=1 " . $where;
+        $rows = DB::select($sql, $params);
+
+        foreach ($rows as &$r) {
+            $cek = DB::select("select 1 from risk_metrik_strategi_risiko where id_register = ?", [$r->id_register]);
+            if ($cek)
+                $cek = DB::select("select 1 from risk_sasaran where id_register = ?", [$r->id_register]);
+            if ($cek)
+                $cek = DB::select("select 1 from risk_capacity_limit where id_register = ?", [$r->id_register]);
+            $r->kelengkapan['bk1-bk2'] = $cek;
+
+            $cek = DB::select("select 1 from risk_profile where id_register = ?", [$r->id_register]);
+            $r->kelengkapan['bk3-bk6'] = $cek;
+
+            $cek = DB::select("select 1 from risk_profile_realisasi_residual where id_register = ?", [$r->id_register]);
+            if ($cek)
+                $cek = DB::select("select 1 from risk_profile_mitigasi_realisasi where id_register = ?", [$r->id_register]);
+            $r->kelengkapan['bk7-bk8'] = $cek;
+
+            $cek = DB::select("select 1 from internal_control_testing where id_register = ?", [$r->id_register]);
+            if ($cek)
+                $cek = DB::select("select 1 from lost_event where id_register = ?", [$r->id_register]);
+            $r->kelengkapan['bk9-bk10'] = $cek;
+
+            $r->tgl_approve['bk1-bk2'];
+            $r->tgl_approve['bk3-bk6'];
+            $r->tgl_approve['bk7-bk8'];
+            $r->tgl_approve['bk9-bk10'];
+        }
+        return $rows;
+    }
 }
