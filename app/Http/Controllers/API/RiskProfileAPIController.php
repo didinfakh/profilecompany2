@@ -702,4 +702,13 @@ class RiskProfileAPIController extends RiskProfileResourceController
 
         return $this->respond($response);
     }
+
+    public function laporan_unit_kerja(Request $request)
+    {
+        $filter = $request->get('q');
+        $response = $this->model->laporan_unit_kerja($filter);
+
+
+        return $this->respond($response);
+    }
 }

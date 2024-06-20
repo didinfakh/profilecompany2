@@ -1318,6 +1318,27 @@ class RiskProfile extends BaseModel
         return $rows;
     }
 
+    private function prosentasehari($hari)
+    {
+        if ($hari <= 0)
+            return 100;
+        if ($hari = 1)
+            return 90;
+        if ($hari = 2)
+            return 80;
+        if ($hari = 3)
+            return 70;
+        if ($hari = 4)
+            return 60;
+        if ($hari = 5)
+            return 45;
+        if ($hari = 6)
+            return 30;
+        if ($hari = 7)
+            return 15;
+        return 0;
+    }
+
     public function laporan_unit_kerja($filter = [])
     {
 
@@ -1328,39 +1349,175 @@ class RiskProfile extends BaseModel
             $params[] = $filter['id_assessment_type'];
         }
 
+        $tahun = date("Y");
         if (isset($filter['tahun']) && $filter['tahun'] != 'null') {
-            $where .= " and to_char(coalesce(rr.periode_mulai,to_date(?,'YYYY')),'YYYY') <= ? and to_char(coalesce(rr.periode_selesai,to_date(?,'YYYY')),'YYYY') >= ?";
-            $params[] = $filter['tahun'];
+            $tahun = $filter['tahun'];
         }
+
+        $bulan = date("m");
+        if (isset($filter['bulan']) && $filter['bulan'] != 'null') {
+            $bulan = $filter['bulan'];
+        }
+
+        $where .= " and to_char(coalesce(rr.periode_mulai,to_date(?,'YYYYMM')),'YYYYMM') <= ? and to_char(coalesce(rr.periode_selesai,to_date(?,'YYYYMM')),'YYYYMM') >= ?";
+        $params[] = $tahun . $bulan;
+
+        $periode = $tahun . (int)$bulan;
 
         $sql = "select * from risk_register where 1=1 " . $where;
         $rows = DB::select($sql, $params);
 
         foreach ($rows as &$r) {
-            $cek = DB::select("select 1 from risk_metrik_strategi_risiko where id_register = ?", [$r->id_register]);
-            if ($cek)
-                $cek = DB::select("select 1 from risk_sasaran where id_register = ?", [$r->id_register]);
-            if ($cek)
-                $cek = DB::select("select 1 from risk_capacity_limit where id_register = ?", [$r->id_register]);
-            $r->kelengkapan['bk1-bk2'] = $cek;
+            // $cek = DB::select("select 1 from risk_metrik_strategi_risiko 
+            // where id_register = ?", [$r->id_register]);
+            // if ($cek)
+            //     $cek = DB::select("select 1 from risk_sasaran 
+            //     where id_register = ?", [$r->id_register]);
+            // if ($cek)
+            $cek = DB::select("select 1 from risk_capacity_limit 
+            where tahun = ? and id_register = ?", [$tahun, $r->id_register]);
+            $r->kelengkapan['bk1-bk2'] = $cek ? 100 : 0;
 
-            $cek = DB::select("select 1 from risk_profile where id_register = ?", [$r->id_register]);
-            $r->kelengkapan['bk3-bk6'] = $cek;
+            $cek = DB::select("select 1 from risk_profile 
+            where to_char(tgl_risiko, 'YYYY') = ? and id_register = ?", [$tahun, $r->id_register]);
+            $r->kelengkapan['bk3-bk6'] = $cek ? 100 : 0;
 
-            $cek = DB::select("select 1 from risk_profile_realisasi_residual where id_register = ?", [$r->id_register]);
+            $cek = DB::select("select 1 from risk_profile_realisasi_residual a 
+            where periode = ? 
+            and exists (
+                select 1 
+                from risk_profile b 
+                where a.id_risk_profile = b.id_risk_profile 
+                and b.id_register = ?
+            )", [$periode, $r->id_register]);
             if ($cek)
-                $cek = DB::select("select 1 from risk_profile_mitigasi_realisasi where id_register = ?", [$r->id_register]);
-            $r->kelengkapan['bk7-bk8'] = $cek;
+                $cek = DB::select("select 1 from risk_profile_mitigasi_realisasi a 
+                where periode = ? 
+                and exists (
+                    select 1 
+                    from risk_profile b 
+                    join risk_profil_mitigasi c on c.id_risk_profile = b.id_risk_profile 
+                    where c.id_mitigasi = a.id_mitigasi
+                    and b.id_register = ?
+                )", [$periode, $r->id_register]);
+            $r->kelengkapan['bk7-bk8'] = $cek ? 100 : 0;
 
-            $cek = DB::select("select 1 from internal_control_testing where id_register = ?", [$r->id_register]);
+            $cek = DB::select("select 1 from internal_control_testing 
+            where to_char(created_at, 'YYYYMM') = ? and id_register = ?", [$tahun . $bulan, $r->id_register]);
             if ($cek)
-                $cek = DB::select("select 1 from lost_event where id_register = ?", [$r->id_register]);
-            $r->kelengkapan['bk9-bk10'] = $cek;
+                $cek = DB::select("select 1 from lost_event 
+                where to_char(created_at, 'YYYYMM') = ? and id_register = ?", [$tahun . $bulan, $r->id_register]);
+            $r->kelengkapan['bk9-bk10'] = $cek ? 100 : 0;
 
-            $r->tgl_approve['bk1-bk2'];
-            $r->tgl_approve['bk3-bk6'];
-            $r->tgl_approve['bk7-bk8'];
-            $r->tgl_approve['bk9-bk10'];
+            $bulan1 = (int)$bulan;
+            $tahun1 = (int)$tahun;
+            if (($bulan1 % 12)) {
+                $bulan1 = str_pad($bulan1 + 1, 2, '0', STR_PAD_LEFT);
+            } else {
+                $bulan1 = str_pad(1, 2, '0', STR_PAD_LEFT);
+                $tahun1 = (int)$tahun + 1;
+            }
+
+            $row = DB::select("select tgl_mulai, tgl_selesai 
+            from risk_jadwal_pelaporan 
+            where jenis = 'BK1-BK2' 
+            and id_assessment_type = ? 
+            and tahun = ?
+            and bulan = ?", [$r->id_assessment_type, $tahun, $bulan]);
+            $row1 = DB::select("select tgl_mulai, tgl_selesai 
+            from risk_jadwal_pelaporan 
+            where jenis = 'BK1-BK2' 
+            and id_assessment_type = ? 
+            and tahun = ?
+            and bulan = ?", [$r->id_assessment_type, $tahun1, $bulan1]);
+
+            if ($row) {
+                $row = DB::select("select 
+                max(created_at) tgl, 
+                EXTRACT(DAY FROM max(created_at) - '{$row[0]->tgl_selesai}') as hari
+                from risk_msg 
+                where id_register ? 
+                and created_at between ? and ? 
+                and id_status_pengajuan = 5
+                and id_status_pengajuan_sebelumnya = 4", [$r->id_register, $row[0]->tgl_mulai, $row1[0]->tgl_mulai]);
+                $r->tgl_approve['bk1-bk2'] = $row[0]->tgl;
+                $r->porsentase['bk1-bk2'] = $this->prosentasehari($row[0]->hari);
+            }
+
+            $row = DB::select("select tgl_mulai, tgl_selesai 
+            from risk_jadwal_pelaporan 
+            where jenis = 'BK3-BK6' 
+            and id_assessment_type = ? 
+            and tahun = ?
+            and bulan = ?", [$r->id_assessment_type, $tahun, $bulan]);
+            $row1 = DB::select("select tgl_mulai, tgl_selesai 
+            from risk_jadwal_pelaporan 
+            where jenis = 'BK3-BK6' 
+            and id_assessment_type = ? 
+            and tahun = ?
+            and bulan = ?", [$r->id_assessment_type, $tahun1, $bulan1]);
+
+            if ($row) {
+                $row = DB::select("select max(created_at) tgl, 
+                EXTRACT(DAY FROM max(created_at) - '{$row[0]->tgl_selesai}') as hari
+                from risk_msg 
+                where id_register ? 
+                and created_at between ? and ? 
+                and id_status_pengajuan = 10
+                and id_status_pengajuan_sebelumnya = 9", [$r->id_register, $row[0]->tgl_mulai, $row1[0]->tgl_mulai]);
+                $r->tgl_approve['bk3-bk6'] = $row[0]->tgl;
+                $r->porsentase['bk3-bk6'] = $this->prosentasehari($row[0]->hari);
+            }
+
+            $row = DB::select("select tgl_mulai, tgl_selesai 
+            from risk_jadwal_pelaporan 
+            where jenis = 'BK7-BK8' 
+            and id_assessment_type = ? 
+            and tahun = ?
+            and bulan = ?", [$r->id_assessment_type, $tahun, $bulan]);
+            $row1 = DB::select("select tgl_mulai, tgl_selesai 
+            from risk_jadwal_pelaporan 
+            where jenis = 'BK7-BK8' 
+            and id_assessment_type = ? 
+            and tahun = ?
+            and bulan = ?", [$r->id_assessment_type, $tahun1, $bulan1]);
+
+            if ($row) {
+                $row = DB::select("select max(created_at) tgl, 
+                EXTRACT(DAY FROM max(created_at) - '{$row[0]->tgl_selesai}') as hari
+                from risk_msg 
+                where id_register ? 
+                and created_at between ? and ? 
+                and id_status_pengajuan = 10
+                and id_status_pengajuan_sebelumnya = 14", [$r->id_register, $row[0]->tgl_mulai, $row1[0]->tgl_mulai]);
+                $r->tgl_approve['bk7-bk8'] = $row[0]->tgl;
+                $r->porsentase['bk7-bk8'] = $this->prosentasehari($row[0]->hari);
+            }
+
+            $row = DB::select("select tgl_mulai, tgl_selesai 
+            from risk_jadwal_pelaporan 
+            where jenis = 'BK9-BK10' 
+            and id_assessment_type = ? 
+            and tahun = ?
+            and bulan = ?", [$r->id_assessment_type, $tahun, $bulan]);
+            $row1 = DB::select("select tgl_mulai, tgl_selesai 
+            from risk_jadwal_pelaporan 
+            where jenis = 'BK9-BK10' 
+            and id_assessment_type = ? 
+            and tahun = ?
+            and bulan = ?", [$r->id_assessment_type, $tahun1, $bulan1]);
+
+            if ($row) {
+                $row = DB::select("select max(created_at) tgl, 
+                EXTRACT(DAY FROM max(created_at) - '{$row[0]->tgl_selesai}') as hari
+                from risk_msg 
+                where id_register ? 
+                and created_at between ? and ? 
+                and id_status_pengajuan = 10
+                and id_status_pengajuan_sebelumnya = 14", [$r->id_register, $row[0]->tgl_mulai, $row1[0]->tgl_mulai]);
+                $r->tgl_approve['bk9-bk10'] = $row[0]->tgl;
+                $r->porsentase['bk9-bk10'] = $this->prosentasehari($row[0]->hari);
+            }
         }
         return $rows;
     }

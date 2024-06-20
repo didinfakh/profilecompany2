@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\API;
+
 use App\Http\Controllers\BaseResourceController;
 
 use Illuminate\Http\JsonResponse;
@@ -64,26 +65,51 @@ class SysUserAPIController extends BaseResourceController
         // $data       = $request->getRawInput();		
         // $updateData = array_filter($data);
         $updateData = $request->all();
-        if($request->password){
-        $updateData['password'] = Hash::make($request->password);}
+        if ($request->password) {
+            $updateData['password'] = Hash::make($request->password);
+        }
 
         $ret = $this->model->update($id, $updateData, $data_before);
 
         DB::beginTransaction();
-        $ret = DB::table('sys_user_group')->where('id_user','=',$id)->delete();
-        if($ret){
-            foreach($arr_group as $v){
+        $ret = DB::table('sys_user_group')->where('id_user', '=', $id)->delete();
+        if ($ret) {
+            foreach ($arr_group as $v) {
                 $v['id_user'] = $id;
                 $ret = DB::table('sys_user_group')->insert($v);
             }
-            if($ret){
+            if ($ret) {
                 DB::commit();
-            }else{
+            } else {
                 DB::rollBack();
             }
         }
 
         $updateData['id_user'] = $id;
         return $this->respond($arr_group[0]['id_group'], 200, 'data updated');
+    }
+
+    public function update_profile(Request $request): JsonResponse
+    {
+        $this->model->rules['password'] = 'string|max:255';
+        $request->validate($this->model->rules);
+
+        $id = $request->user()->id_user;
+        if (!$data_before = $this->model->find($id)) {
+            return $this->failNotFound(sprintf(
+                'item with id %d not found',
+                $id
+            ));
+        }
+        
+        $updateData = $request->all();
+        if ($request->password) {
+            $updateData['password'] = Hash::make($request->password);
+        }
+
+        $ret = $this->model->update($id, $updateData, $data_before);
+
+        $updateData['id_user'] = $id;
+        return $this->respond($updateData, 200, 'data updated');
     }
 }

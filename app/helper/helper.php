@@ -19,4 +19,6 @@ function rupiah($number)
     return rupiah1(round($number / 1000000000)) . ' M';
   if ($number > 1000000000000)
     return rupiah1(round($number / 1000000)) . ' Jt';
+
+  return rupiah1($number);
 }
