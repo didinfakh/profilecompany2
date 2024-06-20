@@ -38,8 +38,7 @@ class RiskProfileRealisasiResidual extends BaseModel
     ];
 
     public array $rules = [
-        'periode' => 'nullable|string|max:20',
-        'bulan' => 'required',
+        'periode' => 'required|string|max:20',
         'penjelasan_dampak' => 'required|string|max:2000',
         'nilai_dampak' => 'required|numeric',
         'id_dampak' => 'required',
