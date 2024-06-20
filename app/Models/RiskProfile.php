@@ -1339,6 +1339,28 @@ class RiskProfile extends BaseModel
         return 0;
     }
 
+    public function laporan_unit($filter = [], $rs = [])
+    {
+        unset($filter['id_assessment_type']);
+
+        if (!$rs)
+            $rs = $this->laporan_unit_kerja($filter);
+        $rows = [];
+        foreach ($rs as $r) {
+            $rows[$r->id_unit][$r->id_assessment_type][] = $r->nilai_rata_rata;
+        }
+        $rows1 = [];
+        foreach ($rows as $id_unit => $rws) {
+            foreach ($rws as $id_assessment_type => $arr) {
+                $rows1[$id_unit]['assessment_type'][$id_assessment_type] = array_sum($arr) / count($arr);
+            }
+        }
+        foreach ($rows1 as $id_unit => $rws) {
+            $rows1[$id_unit]['total'] = array_sum($rows1[$id_unit]['assessment_type']) / count($rows1[$id_unit]['assessment_type']);
+        }
+        return $rows1;
+    }
+
     public function laporan_unit_kerja($filter = [])
     {
 
@@ -1361,10 +1383,13 @@ class RiskProfile extends BaseModel
 
         $where .= " and to_char(coalesce(rr.periode_mulai,to_date(?,'YYYYMM')),'YYYYMM') <= ? and to_char(coalesce(rr.periode_selesai,to_date(?,'YYYYMM')),'YYYYMM') >= ?";
         $params[] = $tahun . $bulan;
+        $params[] = $tahun . $bulan;
+        $params[] = $tahun . $bulan;
+        $params[] = $tahun . $bulan;
 
         $periode = $tahun . (int)$bulan;
 
-        $sql = "select * from risk_register where 1=1 " . $where;
+        $sql = "select * from risk_register rr where deleted_at is null and id_assessment_type is not null and id_unit is not null " . $where;
         $rows = DB::select($sql, $params);
 
         foreach ($rows as &$r) {
@@ -1375,38 +1400,38 @@ class RiskProfile extends BaseModel
             //     where id_register = ?", [$r->id_register]);
             // if ($cek)
             $cek = DB::select("select 1 from risk_capacity_limit 
-            where tahun = ? and id_register = ?", [$tahun, $r->id_register]);
+            where tahun = ? and deleted_at is null and id_register = ?", [$tahun, $r->id_register]);
             $r->kelengkapan['bk1-bk2'] = $cek ? 100 : 0;
 
             $cek = DB::select("select 1 from risk_profile 
-            where to_char(tgl_risiko, 'YYYY') = ? and id_register = ?", [$tahun, $r->id_register]);
+            where to_char(tgl_risiko, 'YYYY') = ? and deleted_at is null and id_register = ?", [$tahun, $r->id_register]);
             $r->kelengkapan['bk3-bk6'] = $cek ? 100 : 0;
 
             $cek = DB::select("select 1 from risk_profile_realisasi_residual a 
-            where periode = ? 
+            where periode = ?  and deleted_at is null
             and exists (
                 select 1 
                 from risk_profile b 
                 where a.id_risk_profile = b.id_risk_profile 
-                and b.id_register = ?
+                and b.id_register = ?  and b.deleted_at is null
             )", [$periode, $r->id_register]);
             if ($cek)
                 $cek = DB::select("select 1 from risk_profile_mitigasi_realisasi a 
-                where periode = ? 
+                where periode = ?  and deleted_at is null
                 and exists (
                     select 1 
                     from risk_profile b 
-                    join risk_profil_mitigasi c on c.id_risk_profile = b.id_risk_profile 
-                    where c.id_mitigasi = a.id_mitigasi
+                    join risk_profile_mitigasi c on c.id_risk_profile = b.id_risk_profile and c.deleted_at is null
+                    where c.id_mitigasi = a.id_mitigasi and b.deleted_at is null
                     and b.id_register = ?
                 )", [$periode, $r->id_register]);
             $r->kelengkapan['bk7-bk8'] = $cek ? 100 : 0;
 
             $cek = DB::select("select 1 from internal_control_testing 
-            where to_char(created_at, 'YYYYMM') = ? and id_register = ?", [$tahun . $bulan, $r->id_register]);
+            where to_char(created_at, 'YYYYMM') = ? and deleted_at is null and id_register = ?", [$tahun . $bulan, $r->id_register]);
             if ($cek)
                 $cek = DB::select("select 1 from lost_event 
-                where to_char(created_at, 'YYYYMM') = ? and id_register = ?", [$tahun . $bulan, $r->id_register]);
+                where to_char(created_at, 'YYYYMM') = ? and deleted_at is null and id_register = ?", [$tahun . $bulan, $r->id_register]);
             $r->kelengkapan['bk9-bk10'] = $cek ? 100 : 0;
 
             $bulan1 = (int)$bulan;
@@ -1417,6 +1442,7 @@ class RiskProfile extends BaseModel
                 $bulan1 = str_pad(1, 2, '0', STR_PAD_LEFT);
                 $tahun1 = (int)$tahun + 1;
             }
+            $r->persentase = [];
 
             $row = DB::select("select tgl_mulai, tgl_selesai 
             from risk_jadwal_pelaporan 
@@ -1436,12 +1462,12 @@ class RiskProfile extends BaseModel
                 max(created_at) tgl, 
                 EXTRACT(DAY FROM max(created_at) - '{$row[0]->tgl_selesai}') as hari
                 from risk_msg 
-                where id_register ? 
+                where id_register = ? 
                 and created_at between ? and ? 
                 and id_status_pengajuan = 5
                 and id_status_pengajuan_sebelumnya = 4", [$r->id_register, $row[0]->tgl_mulai, $row1[0]->tgl_mulai]);
                 $r->tgl_approve['bk1-bk2'] = $row[0]->tgl;
-                $r->porsentase['bk1-bk2'] = $this->prosentasehari($row[0]->hari);
+                $r->persentase['bk1-bk2'] = $this->prosentasehari($row[0]->hari);
             }
 
             $row = DB::select("select tgl_mulai, tgl_selesai 
@@ -1461,12 +1487,12 @@ class RiskProfile extends BaseModel
                 $row = DB::select("select max(created_at) tgl, 
                 EXTRACT(DAY FROM max(created_at) - '{$row[0]->tgl_selesai}') as hari
                 from risk_msg 
-                where id_register ? 
+                where id_register = ? 
                 and created_at between ? and ? 
                 and id_status_pengajuan = 10
                 and id_status_pengajuan_sebelumnya = 9", [$r->id_register, $row[0]->tgl_mulai, $row1[0]->tgl_mulai]);
                 $r->tgl_approve['bk3-bk6'] = $row[0]->tgl;
-                $r->porsentase['bk3-bk6'] = $this->prosentasehari($row[0]->hari);
+                $r->persentase['bk3-bk6'] = $this->prosentasehari($row[0]->hari);
             }
 
             $row = DB::select("select tgl_mulai, tgl_selesai 
@@ -1486,12 +1512,12 @@ class RiskProfile extends BaseModel
                 $row = DB::select("select max(created_at) tgl, 
                 EXTRACT(DAY FROM max(created_at) - '{$row[0]->tgl_selesai}') as hari
                 from risk_msg 
-                where id_register ? 
+                where id_register = ? 
                 and created_at between ? and ? 
                 and id_status_pengajuan = 10
                 and id_status_pengajuan_sebelumnya = 14", [$r->id_register, $row[0]->tgl_mulai, $row1[0]->tgl_mulai]);
                 $r->tgl_approve['bk7-bk8'] = $row[0]->tgl;
-                $r->porsentase['bk7-bk8'] = $this->prosentasehari($row[0]->hari);
+                $r->persentase['bk7-bk8'] = $this->prosentasehari($row[0]->hari);
             }
 
             $row = DB::select("select tgl_mulai, tgl_selesai 
@@ -1511,13 +1537,15 @@ class RiskProfile extends BaseModel
                 $row = DB::select("select max(created_at) tgl, 
                 EXTRACT(DAY FROM max(created_at) - '{$row[0]->tgl_selesai}') as hari
                 from risk_msg 
-                where id_register ? 
+                where id_register = ? 
                 and created_at between ? and ? 
                 and id_status_pengajuan = 10
                 and id_status_pengajuan_sebelumnya = 14", [$r->id_register, $row[0]->tgl_mulai, $row1[0]->tgl_mulai]);
                 $r->tgl_approve['bk9-bk10'] = $row[0]->tgl;
-                $r->porsentase['bk9-bk10'] = $this->prosentasehari($row[0]->hari);
+                $r->persentase['bk9-bk10'] = $this->prosentasehari($row[0]->hari);
             }
+
+            $r->nilai_rata_rata = !count($r->persentase) ? 0 : array_sum($r->persentase) / count($r->persentase);
         }
         return $rows;
     }
