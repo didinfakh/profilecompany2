@@ -15,6 +15,8 @@ class RiskJadwalPelaporan extends BaseModel
         'tgl_mulai',
         'tgl_selesai',
         'jenis',
+        'bulan',
+        'tahun',
         'created_by',
         'updated_by',
         'deleted_by',

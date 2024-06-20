@@ -223,6 +223,7 @@ Route::get('risk_profile/top_risk', [App\Http\Controllers\API\RiskProfileAPICont
 Route::get('risk_profile/top_risk_agregasi', [App\Http\Controllers\API\RiskProfileAPIController::class, 'top_risk_agregasi']);
 Route::get('risk_profile/sebaran_risiko', [App\Http\Controllers\API\RiskProfileAPIController::class, 'sebaran_risiko']);
 Route::get('risk_profile/progress_efektifitas', [App\Http\Controllers\API\RiskProfileAPIController::class, 'progress_efektifitas']);
+Route::get('risk_profile/laporan_unit_kerja', [App\Http\Controllers\API\RiskProfileAPIController::class, 'laporan_unit_kerja']);
 Route::get('risk_profile/kri', [App\Http\Controllers\API\RiskProfileAPIController::class, 'kri']);
 routeRiskRegister('risk_metrik_strategi_risiko', App\Http\Controllers\API\RiskMetrikStrategiRisikoAPIController::class);
 routeRiskRegister('risk_profile', App\Http\Controllers\API\RiskProfileAPIController::class);
@@ -373,6 +374,7 @@ Route::resource('risk_profile_mitigasi_jenis', App\Http\Controllers\API\RiskProf
 
 Route::get('risk_profile_realisasi_residual/{id_risk_profile}/{periode}', [App\Http\Controllers\API\RiskProfileRealisasiResidualAPIController::class, 'show']);
 Route::post('risk_profile_realisasi_residual/{id_risk_profile}/{periode}', [App\Http\Controllers\API\RiskProfileRealisasiResidualAPIController::class, 'update']);
+Route::post('update_profile', [App\Http\Controllers\API\SysUserAPIController::class, 'update_profile']);
 
 // Route::resource('risk_profile_realisasi_residual', App\Http\Controllers\API\RiskProfileRealisasiResidualAPIController::class)
 //     ->except(['create', 'edit']);
