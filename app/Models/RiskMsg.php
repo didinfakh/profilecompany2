@@ -21,6 +21,7 @@ class RiskMsg extends BaseModel
         'deleted_by_desc',
         'id_register',
         'id_status_pengajuan',
+        'id_status_pengajuan_sebelumnya',
         'id_group',
         'id_kri_hasil',
         'id_lost_event'

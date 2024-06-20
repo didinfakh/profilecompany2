@@ -475,3 +475,7 @@ Route::resource('sys_log', App\Http\Controllers\API\SysLogAPIController::class)
 
 Route::resource('sys_setting', App\Http\Controllers\API\SysSettingAPIController::class)
     ->except(['create', 'edit']);
+
+
+Route::resource('risk_jadwal_pelaporan', App\Http\Controllers\API\RiskJadwalPelaporanAPIController::class)
+    ->except(['create', 'edit']);

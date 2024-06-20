@@ -3,13 +3,13 @@
 "use client"
 
 import React, { useState, useEffect, useRef } from 'react';
-import HeaderApp from '@/components/HeaderApp';
-import { checkNotAuthorized, initAccessMethod } from '@/app/Utils';
+import HeaderApp from 'components/HeaderApp';
+import { checkNotAuthorized, initAccessMethod } from 'app/Utils';
 
-import BtnIconAct from '@/components/BtnIconAct';
-import Pagination from '@/components/Pagination';
-import { api_services } from '@/hooks/api_services';
-import TableHead from '@/components/TableHead';
+import BtnIconAct from 'components/BtnIconAct';
+import Pagination from 'components/Pagination';
+import { api_services } from 'hooks/api_services';
+import TableHead from 'components/TableHead';
 
 const titlePage = "{!!$titlePageFrontend!!}"
 

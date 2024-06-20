@@ -23,7 +23,7 @@ class BaseModel extends Model
             foreach ($search as $k => $v) {
                 $hasLikeExpression = $this->getLikeExpression($v);
                 if (!is_null($hasLikeExpression)) {
-                    $ret = $ret->whereRaw("lower(" . $this->escape($k) . ") like ?", strtolower($v));
+                    $ret = $ret->whereRaw("lower(" . $this->escape($k) . ") like ?", [strtolower($v)]);
                 } else {
                     $ret = $ret->where($k, $v);
                 }

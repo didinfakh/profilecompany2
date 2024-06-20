@@ -230,8 +230,9 @@ class RiskRegisterAPIController extends BaseResourceController
     public function getdetail($id = null, Request $request): JsonResponse
     {
         // Mail::to("solikul.arip@gmail.com")->send(new Notif([
+        //     "subject" => "Coba kirim notif",
         //     "link" => "http://google.com",
-        //     "pesan" => "test"
+        //     "pesan" => "test coba kirim"
         // ]));
 
         $record = $this->model->find($id);
@@ -403,6 +404,7 @@ class RiskRegisterAPIController extends BaseResourceController
 
     public function ajukan($jenis = null, Request $request): JsonResponse
     {
+        config(["app.frontend_url" => $request->headers->get('origin')]);
         /**
          * [
          * "msg",id_register
@@ -442,6 +444,7 @@ class RiskRegisterAPIController extends BaseResourceController
         $record = [
             "id_register" => $rr->id_register,
             "id_group" => $id_group,
+            "id_status_pengajuan_sebelumnya" => $rr->id_status_pengajuan,
             "id_status_pengajuan" => $id_status_pengajuan,
             "msg" => $data["msg"],
             "url" => $url
@@ -459,7 +462,14 @@ class RiskRegisterAPIController extends BaseResourceController
             where a.id_group = b.id_group 
             and b.deleted_at is null
             and b.id_assessment_type = ? 
-            and b.id_status_pengajuan = ?) 
+            and (b.id_status_pengajuan = ? or (b.id_status_pengajuan = 1 and not exists(
+            select 1 
+            from mt_status_pengajuan_penerima bb 
+            where b.id_group = bb.id_group 
+            and bb.deleted_at is null 
+            and b.id_assessment_type = bb.id_assessment_type 
+            and bb.id_status_pengajuan = ?
+            )))) 
 
             and exists(select 1 
             from sys_group_menu b 
@@ -484,9 +494,10 @@ class RiskRegisterAPIController extends BaseResourceController
                 )
             )  and a.deleted_at is null 
             and a.id_user is not null",
-            [$rr->id_assessment_type, $id_status_pengajuan, $rr->id_unit]
+            [$rr->id_assessment_type, $id_status_pengajuan, $id_status_pengajuan, $rr->id_unit]
         );
         // $penerima
+        $toarr = [];
         foreach ($penerima as $r) {
             if (!$ret)
                 break;
@@ -499,30 +510,34 @@ class RiskRegisterAPIController extends BaseResourceController
             $ret = $rmp->insert($record);
 
             if ($ret) {
+                $to = SysUser::find($r->id_user)->email;
+                if (config('mail.to'))
+                    $to = config('mail.to');
 
-                if (config("mail.enable")) {
+                $toarr[] = $to;
+            }
+        }
 
-                    $nama_ajuan = MtStatusPengajuan::find($id_status_pengajuan)->nama;
-                    $nama_assessment_type = MtAssessmentType::find($rr->id_assessment_type)->nama;
+        if ($ret) {
+            if (config("mail.enable")) {
+                $nama_ajuan = MtStatusPengajuan::find($id_status_pengajuan)->nama;
+                $nama_assessment_type = MtAssessmentType::find($rr->id_assessment_type)->nama;
 
-                    $pesan = "";
-                    if ($jenis) {
-                        //Pengajuan BK1 sd BK6 Divisi/AP/Dept SPI ke Risk Owner
-                        $pesan = "Pengajuan " . str_replace(" ke ", " " . $nama_assessment_type . "\"" . $rr->nama . "\" ke ", $nama_ajuan);
-                    } else {
-                        //BK1 sd BK6 Divisi/AP/Dept SPI Dikembalikan
-                        $pesan = str_replace("Dikembalikan", "$nama_assessment_type \"" . $rr->nama . "\"", $nama_ajuan) . " Dikembalikan";
-                    }
+                $pesan = "";
+                if ($jenis) {
+                    //Pengajuan BK1 sd BK6 Divisi/AP/Dept SPI ke Risk Owner
+                    $pesan = "Pengajuan " . str_replace(" ke ", " " . $nama_assessment_type . " \"" . $rr->nama . "\" ke ", $nama_ajuan);
+                } else {
+                    //BK1 sd BK6 Divisi/AP/Dept SPI Dikembalikan
+                    $pesan = str_replace("Dikembalikan", "$nama_assessment_type \"" . $rr->nama . "\" ", $nama_ajuan) . " Dikembalikan";
+                }
 
-                    $to = SysUser::find($r->id_user)->email;
-                    if (config('mail.to'))
-                        $to = config('mail.to');
-
-                    Mail::to($to)->send(new Notif([
+                if ($toarr)
+                    Mail::to(implode(",", array_unique($toarr)))->send(new Notif([
+                        "subject" => "Notifikasi RMS | " . $nama_ajuan,
                         "link" => config("app.frontend_url") . $url,
                         "pesan" => $pesan
                     ]));
-                }
             }
         }
 
@@ -598,6 +613,7 @@ class RiskRegisterAPIController extends BaseResourceController
                                 ];
                                 $ret = $id_msg = $rm->insert($rcm);
 
+                                $toarr = [];
                                 foreach ($penerima_view_all as $r) {
                                     if (!$ret)
                                         break;
@@ -610,12 +626,20 @@ class RiskRegisterAPIController extends BaseResourceController
                                     $ret = $rmp->insert($record);
 
                                     if ($ret) {
-                                        if (config("mail.enable")) {
-                                            $to = SysUser::find($r->id_user)->email;
-                                            if (config('mail.to'))
-                                                $to = config('mail.to');
+                                        $to = SysUser::find($r->id_user)->email;
+                                        if (config('mail.to'))
+                                            $to = config('mail.to');
 
-                                            Mail::to($to)->send(new Notif([
+                                        $toarr[] = $to;
+                                    }
+                                }
+
+
+                                if ($ret) {
+                                    if (config("mail.enable")) {
+                                        if ($toarr) {
+                                            Mail::to(implode(",", array_unique($toarr)))->send(new Notif([
+                                                "subject" => "Notifikasi RMS | EWS KRI",
                                                 "link" => config("app.frontend_url") . $rcm['url'],
                                                 "pesan" => $rcm["msg"]
                                             ]));
@@ -642,10 +666,11 @@ class RiskRegisterAPIController extends BaseResourceController
                             "id_lost_event" => $rn->id_lost_event,
                             "id_register" => $rr->id_register,
                             "url" => "/lost_event/" . $rr->id_register . '/detail/' . $rn->id_lost_event,
-                            "msg" => "Terjadi Lost Event \"" . $rr->nama_kejadian . "\"",
+                            "msg" => "Terjadi Lost Event \"" . $rn->nama_kejadian . "\"",
                         ];
                         $ret = $id_msg = $rm->insert($rcm);
 
+                        $toarr = [];
                         foreach ($penerima_view_all as $r) {
                             if (!$ret)
                                 break;
@@ -656,18 +681,22 @@ class RiskRegisterAPIController extends BaseResourceController
                             $record["id_group"] = $r->id_group;
                             // var_dump($record);
                             $ret = $rmp->insert($record);
-
                             if ($ret) {
-                                if (config("mail.enable")) {
-                                    $to = SysUser::find($r->id_user)->email;
-                                    if (config('mail.to'))
-                                        $to = config('mail.to');
+                                $to = SysUser::find($r->id_user)->email;
+                                if (config('mail.to'))
+                                    $to = config('mail.to');
 
-                                    Mail::to($to)->send(new Notif([
-                                        "link" => config("app.frontend_url") . $rcm['url'],
-                                        "pesan" => $rcm["msg"]
-                                    ]));
-                                }
+                                $toarr[] = $to;
+                            }
+                        }
+
+                        if ($ret) {
+                            if (config("mail.enable")) {
+                                Mail::to(implode(",", array_unique($toarr)))->send(new Notif([
+                                    "subject" => "Notifikasi RMS | EWS Lost Event",
+                                    "link" => config("app.frontend_url") . $rcm['url'],
+                                    "pesan" => $rcm["msg"]
+                                ]));
                             }
                         }
 

@@ -1,16 +1,16 @@
 "use client"
 
 import React, { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation'
-import HeaderApp from '@/components/HeaderApp';
-import { checkNotAuthorized, initAccessMethod } from '@/app/Utils';
-import InputSelect from '@/components/InputSelect';
-import InputCheckbox from '@/components/InputCheckbox';
-import InputNumeric from '@/components/InputNumeric';
-import Input from '@/components/Input';
-import Button from '@/components/Button';
-import InputRadio from '@/components/InputRadio';
-import { api_services } from '@/hooks/api_services';
+import { useRouter } from 'components/Navigation';
+import HeaderApp from 'components/HeaderApp';
+import { checkNotAuthorized, initAccessMethod } from 'pages/Utils';
+import InputSelect from 'components/InputSelect';
+import InputCheckbox from 'components/InputCheckbox';
+import InputNumeric from 'components/InputNumeric';
+import Input from 'components/Input';
+import Button from 'components/Button';
+import InputRadio from 'components/InputRadio';
+import { api_services } from 'hooks/api_services';
 
 const titlePage = "{!!$titlePageFrontend!!}"
 
@@ -42,7 +42,7 @@ const {{ucfirst($config->tableName)}}edit = (props) => {
     useEffect(() => {
         //first load
         if (!initialized.current) {
-            initialized.current = true
+            //initialized.current = true
             handleInitAccessMethod()
             handleget{{$config->tableName}}id()
 

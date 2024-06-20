@@ -15,7 +15,7 @@ class {{ $config->modelNames->name }} extends BaseModel
 @if($config->options->tests or $config->options->factory){{ infy_tab().'use HasFactory;' }}@endif
     public $table = '{{ $config->tableName }}';
 
-@if($customPrimaryKey)@tab()protected $primaryKey = '{{ $customPrimaryKey }}';@nls(2)@endif
+@if($customPrimaryKey)@tab()public $primaryKey = '{{ $customPrimaryKey }}';@nls(2)@endif
 @if($config->connection)@tab()protected $connection = '{{ $config->connection }}';@nls(2)@endif
 @if(!$timestamps)@tab()public $timestamps = false;@nls(2)@endif
 @if($customSoftDelete)@tab()protected $dates = ['{{ $customSoftDelete }}'];@nls(2)@endif

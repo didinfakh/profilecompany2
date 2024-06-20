@@ -6,13 +6,13 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation'
-import HeaderApp from '@/components/HeaderApp';
-import { checkNotAuthorized, initAccessMethod } from '@/app/Utils';
-import InputSelect from '@/components/InputSelect';
-import Input from '@/components/Input';
-import Button from '@/components/Button';
-import InputRadio from '@/components/InputRadio';
-import { api_services } from '@/hooks/api_services';
+import HeaderApp from 'components/HeaderApp';
+import { checkNotAuthorized, initAccessMethod } from 'app/Utils';
+import InputSelect from 'components/InputSelect';
+import Input from 'components/Input';
+import Button from 'components/Button';
+import InputRadio from 'components/InputRadio';
+import { api_services } from 'hooks/api_services';
 
 const rules = {
     @foreach($this->config->fields as $fields)

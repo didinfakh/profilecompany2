@@ -164,14 +164,11 @@ class RiskProfileAPIController extends RiskProfileResourceController
     {
         $q = $request->get('q');
         $search = [];
-        if ($q) {
-            $search['nama'] = "%" . $q . "%";
-            $search['deskripsi'] = "%" . $q . "%";
-        }
         // $filter = $request->get('q');
         $page = $request->get('page') ?? 1;
         $limit = $request->get('pagesize') ?? $this->limit;
-        $db = $this->model->search($search);
+        $db = $this->model;
+        $db = $db->whereRaw("(lower(nama) like ? or lower(deskripsi) like ?)", [strtolower("%$q%"), strtolower("%$q%")]);
 
         if (empty(session('access')["dashboard"]["view_all"])) {
             $db = $db->whereRaw("exists (
@@ -346,13 +343,13 @@ class RiskProfileAPIController extends RiskProfileResourceController
         if (!empty($request->get('kri_kualitatif')) || !empty($request->get('kri_kuantitatif'))) {
             $request->request->add(['kri_new' => 'true']);
         }
-        if( !empty($request->get('page_name')) && $request->get('page_name') == 'analisa_risiko_inheren'){
+        if (!empty($request->get('page_name')) && $request->get('page_name') == 'analisa_risiko_inheren') {
             $request->request->remove('page_name');
-            $request->validate(['penjelasan_dampak' => 'required|string|max:2000',
-        'nilai_dampak_inheren' => 'required|numeric','id_dampak_inheren' => 'required','nilai_kemungkinan' => 'required|numeric','id_kemungkinan_inheren' => 'required']);
-    
-        
-    }else{
+            $request->validate([
+                'penjelasan_dampak' => 'required|string|max:2000',
+                'nilai_dampak_inheren' => 'required|numeric', 'id_dampak_inheren' => 'required', 'nilai_kemungkinan' => 'required|numeric', 'id_kemungkinan_inheren' => 'required'
+            ]);
+        } else {
             $request->validate($this->model->rules);
         }
 
