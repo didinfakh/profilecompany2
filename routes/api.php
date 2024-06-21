@@ -156,6 +156,7 @@ Route::resource('mt_sdm_pegawai', App\Http\Controllers\API\MtSdmPegawaiAPIContro
 
 
 Route::get('risk_register/tree', [App\Http\Controllers\API\RiskRegisterAPIController::class, 'tree']);
+Route::get('risk_register/without_tree', [App\Http\Controllers\API\RiskRegisterAPIController::class, 'show_without_tree']);
 
 Route::get('risk_register/getdetail/{id}', [App\Http\Controllers\API\RiskRegisterAPIController::class, 'getdetail']);
 Route::post('risk_register/ajukan/{jenis}', [App\Http\Controllers\API\RiskRegisterAPIController::class, 'ajukan']);
